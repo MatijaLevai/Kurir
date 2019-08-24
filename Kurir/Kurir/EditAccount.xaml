@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.EditAccount"
+             BindingContext="Kurir.Models.RegisterUserModel">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+            <Label Text="First Name:"/>
+            <Entry x:Name="FirstName"  MaxLength="25"  VerticalOptions="StartAndExpand"  
+                HorizontalOptions="Fill" Text="{Binding Name}"></Entry>
+            <Label Text="Last Name:"/>
+            <Entry x:Name="LastName" MaxLength="25" VerticalOptions="StartAndExpand" 
+                HorizontalOptions="Fill" Text="{Binding LastName}"></Entry>
+            <Label Text="Phone Number:"/>
+            <Entry x:Name="Phone" MaxLength="20" VerticalOptions="StartAndExpand" 
+                HorizontalOptions="Fill"  Text="{Binding Phone}" ></Entry>
+            <Label Text="E-mail:"/>
+            <Entry x:Name="Mail" MaxLength="50" VerticalOptions="StartAndExpand" 
+                HorizontalOptions="Fill"  Text="{Binding Mail}"></Entry>
+            <Label Text="Password:"/>
+            <Entry x:Name="Pass" IsPassword="true" MaxLength="30" VerticalOptions="StartAndExpand" 
+                HorizontalOptions="Fill" Text="{Binding Pass}"></Entry>
+            <Label Text="Confirm password:"/>
+            <Entry x:Name="PassConfirm" IsPassword="true" MaxLength="30" VerticalOptions="StartAndExpand" 
+                HorizontalOptions="Fill"  Text="{Binding PassConfirm}"></Entry>
+            <Button x:Name="Edit" Text=" Edit Account " Clicked="Edit_Clicked" BackgroundColor="ForestGreen"   VerticalOptions="Center" 
+                HorizontalOptions="Center"></Button>
+        </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

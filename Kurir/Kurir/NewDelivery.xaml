@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.NewDelivery">
+    <ContentPage.Content  >
+
+        <ScrollView>
+            <StackLayout BackgroundColor="white">
+            
+                <Label  FontSize="Medium"  Text="Create delivery and order it." VerticalOptions="Center"  HorizontalOptions="Center" />
+                <Label TextColor="Red" x:Name="error"/>
+                <Label FontSize="Medium"   Text="1. Name of person who will give the package."/>
+                <Entry  x:Name="StartName" FontSize="Medium" BackgroundColor="LightSteelBlue" PropertyChanged="Notify"  VerticalOptions="Center"  HorizontalOptions="FillAndExpand"></Entry>
+                <Label FontSize="Medium"  Text="2. Phone Number of person from who courier will give the package." Margin="8"/>
+                <Entry  x:Name="StartPhone" PropertyChanged="NotifyPhone" FontSize="Medium" BackgroundColor="LightSteelBlue"   VerticalOptions="Center"  HorizontalOptions="FillAndExpand"></Entry>
+                <Label FontSize="Medium"  Text="3. Address : Street building number / apartment number / floor / interphone" Margin="8"/>
+                <Entry x:Name="StartAddress" FontSize="Medium" BackgroundColor="LightSteelBlue"  PropertyChanged="NotifyAddress"  Placeholder="Bulevar Oslobodjenja 20/15/3/Rakic"  HorizontalOptions="FillAndExpand"></Entry>
+                       
+                <Label FontSize="Medium" Text="4. Name of person to who will pick up package."/>
+                <Entry PropertyChanged="Notify" FontSize="Medium" BackgroundColor="LightSteelBlue" x:Name="NameEnd"  VerticalOptions="Center"  HorizontalOptions="FillAndExpand"></Entry>
+                <Label FontSize="Medium" Text="5. Phone Number of person who will pick up package." Margin="8"/>
+                <Entry PropertyChanged="NotifyPhone" FontSize="Medium" BackgroundColor="LightSteelBlue" x:Name="PhoneEnd" VerticalOptions="Center" HorizontalOptions="FillAndExpand"></Entry>
+                <Label FontSize="Medium" Text="6. Address : StreetName Building number / apartment number / floor / interphone" Margin="8"/>
+                <Entry PropertyChanged="NotifyAddress" FontSize="Medium" BackgroundColor="LightSteelBlue" x:Name="EndAddress" Placeholder="Bulevar Oslobodjenja 155/10/3/10"  HorizontalOptions="FillAndExpand"></Entry>
+                <Label FontSize="Medium" Text="7. Chose payment type:"/>
+                <Picker FontSize="Medium" x:Name="PaymentTypePicker" PropertyChanged="NotifyPicker" BackgroundColor="LightSteelBlue" ItemDisplayBinding="{Binding PaymentTypeName}"></Picker>
+                <Label FontSize="Medium" Text="8. Chose delivery type:"/>
+                <Picker FontSize="Medium" x:Name="DeliverTypePicker" PropertyChanged="NotifyPicker" BackgroundColor="LightSteelBlue" ItemDisplayBinding="{Binding DeliveryTypeName}"></Picker>
+
+                <Label FontSize="Medium" Text="9. Enter detail of delivery if needed:" MaxLines="10"/>
+                <Editor FontSize="Medium" x:Name="DeliveryDetails" VerticalOptions="FillAndExpand" BackgroundColor="LightSteelBlue" HorizontalOptions="Fill"></Editor>
+             
+                <Button FontSize="Medium" x:Name="OrderDelivery" Text="Order" BackgroundColor="ForestGreen" Clicked="OrderDelivery_Clicked"  VerticalOptions="Center" HorizontalOptions="Center" Margin="10"></Button>
+                
+            
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
