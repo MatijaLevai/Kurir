@@ -5,28 +5,27 @@
              BindingContext="Kurir.Models.RegisterUserModel">
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout>
-            <Label Text="First Name:"/>
-            <Entry x:Name="FirstName"  MaxLength="25"  VerticalOptions="StartAndExpand"  
-                HorizontalOptions="Fill" Text="{Binding Name}"></Entry>
-            <Label Text="Last Name:"/>
-            <Entry x:Name="LastName" MaxLength="25" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill" Text="{Binding LastName}"></Entry>
-            <Label Text="Phone Number:"/>
-            <Entry x:Name="Phone" MaxLength="20" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill"  Text="{Binding Phone}" ></Entry>
-            <Label Text="E-mail:"/>
-            <Entry x:Name="Mail" MaxLength="50" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill"  Text="{Binding Mail}"></Entry>
-            <Label Text="Password:"/>
-            <Entry x:Name="Pass" IsPassword="true" MaxLength="30" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill" Text="{Binding Pass}"></Entry>
-            <Label Text="Confirm password:"/>
-            <Entry x:Name="PassConfirm" IsPassword="true" MaxLength="30" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill"  Text="{Binding PassConfirm}"></Entry>
-            <Button x:Name="Edit" Text=" Edit Account " Clicked="Edit_Clicked" BackgroundColor="ForestGreen"   VerticalOptions="Center" 
-                HorizontalOptions="Center"></Button>
-        </StackLayout>
+            <StackLayout Padding="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition  Width="2*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Text="First Name:"/>
+                    <Entry Grid.Row="0" Grid.Column="1" x:Name="FirstName"  MaxLength="25" Text="{Binding Name}"></Entry>
+                    <Label Grid.Row="1" Grid.Column="0" Text="Last Name:"/>
+                    <Entry Grid.Row="1" Grid.Column="1" x:Name="LastName" MaxLength="25" Text="{Binding LastName}"></Entry>
+                    <Label Grid.Row="2" Grid.Column="0" Text="Phone Number:"/>
+                    <Entry Grid.Row="2" Grid.Column="1" x:Name="Phone" MaxLength="20" Text="{Binding Phone}" ></Entry>
+                    <Label Grid.Row="3" Grid.Column="0" Text="E-mail:"/>
+                    <Entry Grid.Row="3" Grid.Column="1" x:Name="Mail" MaxLength="50" Text="{Binding Mail}"></Entry>
+                    <Label Grid.Row="4" Grid.Column="0" Text="Password:"/>
+                    <Entry Grid.Row="4" Grid.Column="1" x:Name="Pass" IsPassword="true" MaxLength="30" Text="{Binding Pass}"></Entry>
+                    <Label Grid.Row="5" Grid.Column="0" Text="Confirm password:"/>
+                    <Entry Grid.Row="5" Grid.Column="1" x:Name="PassConfirm" IsPassword="true" MaxLength="30" Text="{Binding PassConfirm}"></Entry>
+                    <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" x:Name="Edit" Text=" Edit Account " Clicked="Edit_Clicked" BackgroundColor="ForestGreen"></Button>
+                </Grid>     
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>

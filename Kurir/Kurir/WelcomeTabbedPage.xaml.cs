@@ -196,9 +196,13 @@ namespace Kurir
                 string jsonUser = JsonConvert.SerializeObject(user);
                 //Debug.WriteLine("user Serlijalizovan u json");
                 HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
-                var response = await _client.PostAsync(uri, httpContent);
-                if (response.IsSuccessStatusCode)
-                {//Debug.WriteLine("poslat upit serveru");
+                HttpResponseMessage response=null;
+                try { response = await _client.PostAsync(uri, httpContent); }
+                catch (Exception ex) { await DisplayAlert("Login", "Exc:"+ex.Message+"!?!?!"+ex.InnerException, "Ok"); }
+                if (response != null && response.IsSuccessStatusCode)
+                {
+                    await DisplayAlert("Error", "Check your internet connection and try again", "Ok");
+                    //Debug.WriteLine("poslat upit serveru");
                     var responseContent = await response.Content.ReadAsStringAsync();
                     //Debug.WriteLine("primljen odgovor od servera");
                     var userResponse = JsonConvert.DeserializeObject<RegisterUserModel>(responseContent);
@@ -209,12 +213,12 @@ namespace Kurir
                     if (userSQLite == null)
                     {
                         int rowsAdded = await _connection.InsertAsync(userResponse);
-                        await DisplayAlert("SQLITE", "Insert into table register model done", "OK");
+                        //await DisplayAlert("SQLITE", "Insert into table register model done", "OK");
                     }
                     else
                     {
                         var responseSQLite = await _connection.UpdateAsync(userResponse);
-                        await DisplayAlert("SQLITE", "Updated table register model done", "OK");
+                        // await DisplayAlert("SQLITE", "Updated table register model done", "OK");
                     }
                     Application.Current.Properties["Mail"] = userResponse.Mail;
                     Application.Current.Properties["UserID"] = userResponse.UserID;
@@ -222,12 +226,12 @@ namespace Kurir
 
                     //await DisplayAlert("app current", "added mail in  Application.Current.Properties[Mail]", "OK");
                     await Navigation.PushAsync(new UserRolePage(userResponse));
-                    return;
                 }
-                else await DisplayAlert("Error", "Check your internet connection and try again","Ok");
+                else { await DisplayAlert("Eror", "response contains" + response.ToString(), "try again"); }
             }
             catch (Exception ex)
             {
+                
                 Debug.WriteLine(ex.Message);
                 await DisplayAlert("Error",ex.Message,"ok");
                 return;
@@ -249,7 +253,6 @@ namespace Kurir
                     link = Application.Current.Properties["ServerLink"].ToString();
                     break;
             }
-            //await DisplayAlert("start", Application.Current.Properties["Mail"]+"|_____|"+link,"ok");
             await _connection.CreateTableAsync<LocationModel>();
             await _connection.CreateTableAsync<RegisterUserModel>();
 
@@ -259,39 +262,39 @@ namespace Kurir
                 //    var loginResponse = await DisplayActionSheet("One-Click Login",null, "different user", "Click here to Login");
                 //    if (loginResponse == "login")
                 // 
-                if (Application.Current.Properties["Mail"] != null&& Application.Current.Properties["Pass"] != null)
+                if (Application.Current.Properties["Mail"] != null && Application.Current.Properties["Pass"] != null)
                     try
-                {
-                    var user = new LoginUserModel { Pass = Application.Current.Properties["Pass"].ToString(), Mail = Application.Current.Properties["Mail"].ToString() };
-                    string uri = link + "api/users/login";
-                    string jsonUser = JsonConvert.SerializeObject(user);
-                    HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
-                    var response = await _client.PostAsync(uri, httpContent);
-                    if (response.IsSuccessStatusCode)
                     {
-                        //Debug.WriteLine("poslat upit serveru");
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        //Debug.WriteLine("primljen odgovor od servera");
-                        var userResponse = JsonConvert.DeserializeObject<RegisterUserModel>(responseContent);
-                        Application.Current.Properties["UserID"] = userResponse.UserID;
-                        await DisplayAlert("Welcome back", "login successful", "ok");
-                        await Navigation.PushAsync(new UserRolePage(userResponse));
+                        var user = new LoginUserModel { Pass = Application.Current.Properties["Pass"].ToString(), Mail = Application.Current.Properties["Mail"].ToString() };
+                        string uri = link + "api/users/login";
+                        string jsonUser = JsonConvert.SerializeObject(user);
+                        HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
+                        var response = await _client.PostAsync(uri, httpContent);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            //Debug.WriteLine("poslat upit serveru");
+                            var responseContent = await response.Content.ReadAsStringAsync();
+                            //Debug.WriteLine("primljen odgovor od servera");
+                            var userResponse = JsonConvert.DeserializeObject<RegisterUserModel>(responseContent);
+                            Application.Current.Properties["UserID"] = userResponse.UserID;
+                            //await DisplayAlert("Welcome back", "login successful", "ok");
+                            await Navigation.PushAsync(new UserRolePage(userResponse));
+                        }
+                        //}
+                        //else if (loginResponse == "different user")
+                        //{
+                        //    await DisplayAlert("Different user?", "login or register please", "ok");
+                        //    Application.Current.Properties["Mail"] = null;
+                        //    Application.Current.Properties["UserID"] = null;
+                        //    Application.Current.Properties["Pass"] = null;
+                        //}
                     }
-                    //}
-                    //else if (loginResponse == "different user")
-                    //{
-                    //    await DisplayAlert("Different user?", "login or register please", "ok");
-                    //    Application.Current.Properties["Mail"] = null;
-                    //    Application.Current.Properties["UserID"] = null;
-                    //    Application.Current.Properties["Pass"] = null;
-                    //}
-                }
-                catch (Exception ex)
-                {
-                    await DisplayAlert("error",ex.Message+ex.Source+ex.StackTrace,"ok");
-                }
+                    catch (Exception ex)
+                    {
+                        await DisplayAlert("error", ex.Message + ex.Source + ex.StackTrace, "ok");
+                    }
 
-                }
+            }
             base.OnAppearing();
         }
     }

@@ -15,10 +15,12 @@ namespace KurirServer.Controllers
     [ApiController]
     public class DeliveriesController : ControllerBase
     {
+        IDeliveryRepository deliveryRepository;
         IGeneralRepository generalRepository;
         IMapper mapper;
-        public DeliveriesController(IGeneralRepository generalRepository, IMapper mapper)
+        public DeliveriesController(IGeneralRepository generalRepository, IMapper mapper,IDeliveryRepository deliveryRepository)
         {
+            this.deliveryRepository = deliveryRepository;
             this.generalRepository = generalRepository;
             this.mapper = mapper;
         }
@@ -43,5 +45,54 @@ namespace KurirServer.Controllers
 
 
         }
+        [HttpPut]
+        [Route("EditDelivery")]
+        public async Task<ActionResult<Delivery>> EditDelivery(Delivery newDelivery)
+        {
+            try
+            {
+               var delivery =  await deliveryRepository.EditDelivery(newDelivery);
+                if (delivery!=null)
+                    {
+                        return Ok(delivery);
+                    }
+                    else
+                    {
+                        return BadRequest("Could not edit");
+                    }
+                
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+
+
+
+        }
+
+
+
+        [Route("GetDeliveriesForUser/{Userid}")]
+        [HttpGet]
+        public  ActionResult<IEnumerable<Delivery>> GetDeliveriesForUser(int Userid)
+        {
+            try
+            {
+                var deliveries =  deliveryRepository.GetAllDeliveriesAsUser(Userid);
+                if (deliveries!=null)
+                    return Ok(deliveries);
+                else
+                    return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
     }
+
 }

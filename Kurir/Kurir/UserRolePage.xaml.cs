@@ -35,13 +35,13 @@ namespace Kurir
         private async void MenuItem_ClickedAsync(object sender, EventArgs e)
         {
             UserRoleModel selected =(UserRoleModel) RoleList.SelectedItem;
-            await DisplayAlert("Chosen",selected.Name, "ok");
+           //await DisplayAlert("Chosen",selected.Name, "ok");
             string url =uri+"api/Users/ChangeCurrentUserRole/" + Application.Current.Properties["UserID"].ToString() + "/" + selected.UserRoleID;
             var response = await _client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
-                await DisplayAlert("succsses", response.StatusCode.ToString(), "ok");
+                //await DisplayAlert("succsses", response.StatusCode.ToString(), "ok");
                 switch (selected.RoleID)
                 {
                     case 1:
@@ -112,10 +112,12 @@ namespace Kurir
                     }
                 }
                 RoleList.ItemsSource = new ObservableCollection<UserRoleModel>(userroles);
+             
             }
             catch (Exception ex)
             {await DisplayAlert("Erro or not?",ex.Message,"ok?"); }
             
+        
             base.OnAppearing();
         }
     }

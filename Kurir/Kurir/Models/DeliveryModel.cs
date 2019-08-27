@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,7 @@ namespace Kurir.Models
 {
     public class DeliveryModel
     {
+        [PrimaryKey]
         public int DeliveryID { get; set; }
 
         public int CourierID { get; set; }

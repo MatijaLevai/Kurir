@@ -17,6 +17,7 @@ namespace KurirServer.Helpers
             services.AddScoped<IUserRoleRepository, UserRoleRepository>();
             services.AddScoped<IPaymentTypeRepository, PaymentTypeRepository>();
             services.AddScoped<IDeliveryTypeRepository, DeliveryTypeRepository>();
+            services.AddScoped<IDeliveryRepository,DeliveryRepository>();
             //.AddScoped<>();
             
         }
