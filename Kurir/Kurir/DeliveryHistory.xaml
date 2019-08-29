@@ -17,13 +17,15 @@
                         <ColumnDefinition Width="2*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
 
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Column="0" Text="From" />
-                    <Label Grid.Column="1" Text="To" />
-                    <Label Grid.Column="2" Text="Price"/>
-                    <Label Grid.Column="3" Text="Ordered"/>
+                    <Label Grid.Column="0" Text="From"  HorizontalTextAlignment="Start"/>
+                    <Label Grid.Column="1" Text="To"  HorizontalTextAlignment="Start"/>
+                    <Label Grid.Column="2" Text="Price"  HorizontalTextAlignment="Start"/>
+                    <Label Grid.Column="3" Text="Ordered"  HorizontalTextAlignment="Start"/>
+                    <Label Grid.Column="4" Text="Status"  HorizontalTextAlignment="Start"/>
 
 
                 </Grid>
@@ -32,7 +34,7 @@
                     <DataTemplate>
                             <ViewCell>
                                 <ViewCell.View>
-                                    <Grid RowSpacing="2" Padding="5">
+                                    <Grid RowSpacing="2" Padding="5" >
 
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="2*"></RowDefinition>
@@ -46,23 +48,24 @@
                                             <ColumnDefinition Width="*"></ColumnDefinition>
                                             
                                             <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
                                             
                                            
                                             
                                         </Grid.ColumnDefinitions>
 
-                                        
-                                        <Label Grid.Column="0" Text="{Binding StartAddress}" />
-                                        
-                                        <Label Grid.Column="1" Text="{Binding EndAddress}" />
-                                        
-                                        <Label Grid.Column="2" Text="{Binding DeliveryPrice}" />
-                                        
-                                        <Label Grid.Column="3" Text="{Binding CreateTime}" />
-                                       
-                                       
-                                        
-                                        
+
+                                        <Label Grid.Column="0" Text="{Binding StartAddress}"  HorizontalTextAlignment="Start"/>
+
+                                        <Label Grid.Column="1" Text="{Binding EndAddress}"  HorizontalTextAlignment="Start"/>
+
+                                        <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
+
+                                        <Label Grid.Column="3" Text="{Binding CreateTime}"  HorizontalTextAlignment="Start"/>
+
+                                        <Image Grid.Column="4" Source="{Binding DeliveryStatusImageSource}" Aspect="AspectFit"></Image>
+
+
                                     </Grid>
                                 </ViewCell.View>
                             </ViewCell>

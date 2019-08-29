@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace Kurir.Models
 {
@@ -46,6 +47,6 @@ namespace Kurir.Models
 
         public int DeliveryTypeID { get; set; }
         public int PaymentTypeID { get; set; }
-
+        public string DeliveryStatusImageSource { get; set; }
     }
 }

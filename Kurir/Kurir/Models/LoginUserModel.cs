@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kurir.Models
 {
-    class LoginUserModel
+    public class LoginUserModel
     {
         public string Mail { get; set; }
 

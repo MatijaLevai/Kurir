@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kurir.Persistance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,17 @@ using Xamarin.Forms.Xaml;
 namespace Kurir
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class UserHomePageDetail : ContentPage
+    public partial class Logout : ContentPage
     {
-        public UserHomePageDetail()
+        private UserService userService;
+        public Logout()
         {
+            userService = new UserService();
             InitializeComponent();
-           logo.Source = ImageSource.FromResource("Kurir.Images.eko-kurir-logo.png");
+        }
+        protected async override void OnAppearing()
+        {
+            base.OnAppearing();
            
         }
     }

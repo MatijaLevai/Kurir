@@ -21,8 +21,10 @@ namespace Kurir
     {
         private HttpClient _client = new HttpClient();
         private SQLiteAsyncConnection _connection;
+        private UserService userService;
         public EditAccount()
         {
+            userService = new UserService();
             InitializeComponent();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
            
@@ -128,13 +130,7 @@ namespace Kurir
                     };
                     if (userNew.Mail != Application.Current.Properties["Mail"].ToString())
                     {
-                        string uri = Application.Current.Properties["ServerLink"].ToString()+"api/users/GetUserByEmail/" + userNew.Mail;
-
-                        var response = await _client.GetAsync(uri);
-
-                        var responseString = await response.Content.ReadAsStringAsync();
-                        var responseBool = JsonConvert.DeserializeObject<Boolean>(responseString);
-                        userNew.Valid = responseBool;
+                        userNew.Valid = await userService.GetUserByEmail(userNew.Mail);
 
                     }
                     if (userNew.Valid)
@@ -148,7 +144,7 @@ namespace Kurir
                         else
                         {
                             userNew.Valid = true;
-                            userNew.Message = "Edit is successful";
+
                         }
 
                     }
@@ -161,27 +157,15 @@ namespace Kurir
                     if (userNew.Valid)
                     {
 
-                        string uri = Application.Current.Properties["ServerLink"].ToString()+"api/users/EditUser/"+ Application.Current.Properties["UserID"].ToString();
-                        string jsonUser = JsonConvert.SerializeObject(userNew);
-                        HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
-                        HttpResponseMessage msg = await _client.PutAsync(uri, httpContent);
-                        if (msg.IsSuccessStatusCode)
+                       userNew = await userService.EditUser(userNew);
+                        if (string.IsNullOrWhiteSpace(userNew.Message))
                         {
-                            await DisplayAlert("Succses", "Acccount edit is successful", "Ok.");
-                            var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userNew.UserID).FirstOrDefaultAsync();
-                            if (userSQLite == null)
-                            {
-                                int rowsAdded = await _connection.InsertAsync(userNew);
-                                await DisplayAlert("SQLITE", "Insert into table register model done", "OK");
-                            }
-                            else
-                            {
-                                var responseSQLite = await _connection.UpdateAsync(userNew);
-                                await DisplayAlert("SQLITE", "Updated table register model done", "OK");
-                            }
-                            Application.Current.Properties["Mail"] = userNew.Mail;
-
+                            userNew.Message = "Edit is successful";
+                            
                         }
+                        await DisplayAlert(" ", userNew.Message.ToString(), "ok");
+
+
                     }
                     else await DisplayAlert("Atention!", userNew.Message.ToString(), "ok?");
                 }

@@ -27,11 +27,16 @@ namespace Kurir
        
         public  UserRolePage(RegisterUserModel user)
         {
+            NavigationPage.SetHasBackButton(this, false);
             _user = user;
             InitializeComponent();
             
         }
-
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+            //return base.OnBackButtonPressed();
+        }
         private async void MenuItem_ClickedAsync(object sender, EventArgs e)
         {
             UserRoleModel selected =(UserRoleModel) RoleList.SelectedItem;
@@ -119,6 +124,11 @@ namespace Kurir
             
         
             base.OnAppearing();
+        }
+
+        private void ToolbarItem_Clicked(object sender, EventArgs e)
+        {
+
         }
     }
 }

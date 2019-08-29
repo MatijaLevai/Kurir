@@ -23,13 +23,14 @@ namespace Kurir
         private HttpClient _client = new HttpClient();
         private SQLiteAsyncConnection _connection;
         private string link;
+        private UserService userService;
 
         public WelcomeTabbedPage()
         {
+            NavigationPage.SetHasBackButton(this, false);
             InitializeComponent();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
-           
-
+            userService = new UserService();
         }
 
 
@@ -104,9 +105,6 @@ namespace Kurir
             {
                 try
                 {
-
-
-
                     MailAddress email = new MailAddress(Mail.Text);
 
                     var userNew = new RegisterUserModel()
@@ -119,13 +117,7 @@ namespace Kurir
                         PassConfirm = PassConfirm.Text.Trim()
 
                     };
-
-                    string uri = link+"api/users/GetUserByEmail/" + userNew.Mail;
-
-                    var response = await _client.GetAsync(uri);
-
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    var responseBool = JsonConvert.DeserializeObject<Boolean>(responseString);
+                    var responseBool =await userService.GetUserByEmail(userNew.Mail);
                     if (responseBool)
                     {
                         if (userNew.Pass != userNew.PassConfirm)
@@ -149,31 +141,19 @@ namespace Kurir
 
                     if (userNew.Valid)
                     {
-                       
-                        uri = link + "api/users/Register";
-                        string jsonUser = JsonConvert.SerializeObject(userNew);
-                        HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
-                        HttpResponseMessage msg = await _client.PostAsync(uri, httpContent);
-                        if (msg.IsSuccessStatusCode)
-                        {
-                            await DisplayAlert("Registration successful", "Welcome to Eko Kurir App", "Ok.");
-                            var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userNew.UserID).FirstOrDefaultAsync();
-                            if (userSQLite == null)
-                            {
-                                int rowsAdded = await _connection.InsertAsync(userNew);
-                                await DisplayAlert("SQLITE", "Insert into table register model done", "OK");
-                            }
-                            else
-                            {
-                                var responseSQLite = await _connection.UpdateAsync(userNew);
-                                await DisplayAlert("SQLITE", "Updated table register model done", "OK");
-                            }
-                            Application.Current.Properties["Mail"] = userNew.Mail;
-                            Application.Current.Properties["UserID"] = userNew.UserID;
-                            Application.Current.Properties["Pass"] = userNew.Pass;
-                            await Navigation.PushAsync(new UserHomePage());
 
+                       var userNewer = await userService.Register(userNew);
+                        if (userNewer != null)
+                        {
+                            Application.Current.Properties["Mail"] = userNewer.Mail;
+                            Application.Current.Properties["UserID"] = userNewer.UserID;
+                            Application.Current.Properties["Pass"] = userNewer.Pass;
+                            Application.Current.Properties["Name"] = userNewer.FirstName;
+                            await Navigation.PushAsync(new UserHomePage());
                         }
+                        else
+                            await DisplayAlert("Atention!", "Server Connection problem. Try again please.", "ok?");
+
                     }
                     else await DisplayAlert("Atention!", userNew.Message.ToString(), "ok?");
                 }
@@ -191,43 +171,21 @@ namespace Kurir
             try
             {
                 var user = new LoginUserModel { Pass = LoginPass.Text, Mail = LoginMail.Text };
-                string uri = link+"api/users/login";
-              
-                string jsonUser = JsonConvert.SerializeObject(user);
-                //Debug.WriteLine("user Serlijalizovan u json");
-                HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
-                HttpResponseMessage response=null;
-                try { response = await _client.PostAsync(uri, httpContent); }
-                catch (Exception ex) { await DisplayAlert("Login", "Exc:"+ex.Message+"!?!?!"+ex.InnerException, "Ok"); }
-                if (response != null && response.IsSuccessStatusCode)
+                var userResponse =await userService.Login(user);
+                if (string.IsNullOrWhiteSpace(userResponse.Message))
                 {
-                    await DisplayAlert("Error", "Check your internet connection and try again", "Ok");
-                    //Debug.WriteLine("poslat upit serveru");
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    //Debug.WriteLine("primljen odgovor od servera");
-                    var userResponse = JsonConvert.DeserializeObject<RegisterUserModel>(responseContent);
-                    // Debug.WriteLine("deserijalizovvan objekat od servera");
-                    // await DisplayAlert("Login","Uspesno ste se ulogovali!","Ok");
-                    // Debug.WriteLine("dodeljena textualna vrednost labeli");
-                    var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userResponse.UserID).FirstOrDefaultAsync();
-                    if (userSQLite == null)
-                    {
-                        int rowsAdded = await _connection.InsertAsync(userResponse);
-                        //await DisplayAlert("SQLITE", "Insert into table register model done", "OK");
-                    }
-                    else
-                    {
-                        var responseSQLite = await _connection.UpdateAsync(userResponse);
-                        // await DisplayAlert("SQLITE", "Updated table register model done", "OK");
-                    }
                     Application.Current.Properties["Mail"] = userResponse.Mail;
                     Application.Current.Properties["UserID"] = userResponse.UserID;
                     Application.Current.Properties["Pass"] = userResponse.Pass;
+                    Application.Current.Properties["Name"] = userResponse.FirstName;
 
-                    //await DisplayAlert("app current", "added mail in  Application.Current.Properties[Mail]", "OK");
                     await Navigation.PushAsync(new UserRolePage(userResponse));
                 }
-                else { await DisplayAlert("Eror", "response contains" + response.ToString(), "try again"); }
+                else
+                {
+                    await DisplayAlert("Eror", "response contains" + userResponse.Message, "try again.");
+                }
+                
             }
             catch (Exception ex)
             {
@@ -250,6 +208,8 @@ namespace Kurir
                 //    break;
                 //case Device.UWP:
                 default:
+                    BarTextColor = Color.White;
+                    BackgroundColor = Color.FromHex("#666666");
                     link = Application.Current.Properties["ServerLink"].ToString();
                     break;
             }
@@ -258,44 +218,60 @@ namespace Kurir
 
             if (Application.Current.Properties.ContainsKey("Mail") && Application.Current.Properties.ContainsKey("Pass"))
             {
-
-                //    var loginResponse = await DisplayActionSheet("One-Click Login",null, "different user", "Click here to Login");
-                //    if (loginResponse == "login")
-                // 
                 if (Application.Current.Properties["Mail"] != null && Application.Current.Properties["Pass"] != null)
-                    try
+                {
+                    String[] parts = Application.Current.Properties["Mail"].ToString().Split(new[] { '@' });
+                    String username = parts[0];
+                    var loginResponse = await DisplayActionSheet("Welcome back " + username, null, "different user", "Click here to Login");
+                    if (loginResponse == "Click here to Login")
                     {
-                        var user = new LoginUserModel { Pass = Application.Current.Properties["Pass"].ToString(), Mail = Application.Current.Properties["Mail"].ToString() };
-                        string uri = link + "api/users/login";
-                        string jsonUser = JsonConvert.SerializeObject(user);
-                        HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
-                        var response = await _client.PostAsync(uri, httpContent);
-                        if (response.IsSuccessStatusCode)
+
+                        try
                         {
-                            //Debug.WriteLine("poslat upit serveru");
-                            var responseContent = await response.Content.ReadAsStringAsync();
-                            //Debug.WriteLine("primljen odgovor od servera");
-                            var userResponse = JsonConvert.DeserializeObject<RegisterUserModel>(responseContent);
-                            Application.Current.Properties["UserID"] = userResponse.UserID;
-                            //await DisplayAlert("Welcome back", "login successful", "ok");
-                            await Navigation.PushAsync(new UserRolePage(userResponse));
+                            var user = new LoginUserModel { Pass = Application.Current.Properties["Pass"].ToString(), Mail = Application.Current.Properties["Mail"].ToString() };
+
+                            var userResponse = await userService.Login(user);
+                            if (string.IsNullOrWhiteSpace(userResponse.Message))
+                            {
+                                Application.Current.Properties["Mail"] = userResponse.Mail;
+                                Application.Current.Properties["UserID"] = userResponse.UserID;
+                                Application.Current.Properties["Pass"] = userResponse.Pass;
+                                Application.Current.Properties["Name"] = userResponse.FirstName;
+
+                                await Navigation.PushAsync(new UserRolePage(userResponse));
+                            }
+                            else
+                            {
+                                await DisplayAlert("Eror",userResponse.Message+". Please try again.", "ok.");
+                            }
+
                         }
-                        //}
-                        //else if (loginResponse == "different user")
-                        //{
-                        //    await DisplayAlert("Different user?", "login or register please", "ok");
-                        //    Application.Current.Properties["Mail"] = null;
-                        //    Application.Current.Properties["UserID"] = null;
-                        //    Application.Current.Properties["Pass"] = null;
-                        //}
+                        catch (Exception ex)
+                        {
+
+                            Debug.WriteLine(ex.Message);
+                            await DisplayAlert("Error", ex.Message, "ok");
+                            return;
+                        }
+
                     }
-                    catch (Exception ex)
+                    else if (loginResponse == "different user")
                     {
-                        await DisplayAlert("error", ex.Message + ex.Source + ex.StackTrace, "ok");
+                        Application.Current.Properties["Mail"] = null;
+                        Application.Current.Properties["UserID"] = null;
+                        Application.Current.Properties["Pass"] = null;
+
+                        Application.Current.Properties["Name"] = null;
                     }
 
+                }
             }
             base.OnAppearing();
+        }
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+            //return base.OnBackButtonPressed();
         }
     }
            

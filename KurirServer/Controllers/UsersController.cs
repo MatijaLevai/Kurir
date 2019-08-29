@@ -126,6 +126,11 @@ namespace KurirServer.Controllers
 
             
         }
+        /// <summary>
+        /// accepts email of user and check if ther is one in db, return true if there is not one, and false if it finds one
+        /// </summary>
+        /// <param name="mail"></param>
+        /// <returns></returns>
         [Route("GetUserByEmail/{mail}")]
         [HttpGet]
         public async Task<string> GetUserByEmail(string mail)
@@ -151,8 +156,8 @@ namespace KurirServer.Controllers
                 if (user.IsActive == true)
                 {
                     mapper.Map(editUser, user);
-
-                    if (await generalRepository.SaveChangesAsync())
+                    
+                    if (await generalRepository.Update(user))
                     {
                         return Ok();
                     }

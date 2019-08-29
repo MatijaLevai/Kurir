@@ -11,6 +11,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\delivered.png" />
+    <None Remove="Images\eko-kurir-logo.png" />
+    <None Remove="Images\zeleni50.png" />
+    <None Remove="Images\zuti50.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="delivered.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Images\eko-kurir-logo.png" />
+    <EmbeddedResource Include="zeleni50.png" />
+    <EmbeddedResource Include="zuti50.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
@@ -47,6 +64,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="EditAccount.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Logout.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="NewDelivery.xaml">

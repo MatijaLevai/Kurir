@@ -21,47 +21,71 @@ namespace Kurir
         private List<DeliveryModel> listOfDeliveries;
         private Frame ekoFrame;
         private SQLiteAsyncConnection _connection;
+        private DeliveryService deliveryService;
 
         public DeliveryHistory()
         {
+            deliveryService = new DeliveryService();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             InitializeComponent();
         }
         protected async override void OnAppearing()
         {
+            await GetDeliveriesFromServer();
+            base.OnAppearing();
+        }
 
-            var res = await client.GetAsync(Application.Current.Properties["ServerLink"].ToString() + "api/deliveries/GetDeliveriesForUser/" + Application.Current.Properties["UserID"].ToString());
-            if (res.StatusCode==System.Net.HttpStatusCode.OK)
+        private async Task<bool> GetDeliveriesFromServer()
+        {
+            if (Application.Current.Properties.ContainsKey("UserID"))
             {
-                var resString = await res.Content.ReadAsStringAsync();
 
-                listOfDeliveries = JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
-                if (listOfDeliveries.Count() > 0)
+
+                var list = await deliveryService.GetDeliveriesForUser();
+                if (list != null)
                 {
+                    listOfDeliveries = new List<DeliveryModel>(list);
                     //await _connection.DropTableAsync<DeliveryModel>();
                     await _connection.CreateTableAsync<DeliveryModel>();
-
+                     DateTime dt = new DateTime(1,1,1,0,0,0,0);
                     foreach (var item in listOfDeliveries)
                     {
-                       int x = await _connection.UpdateAsync(item);
-                        if (x==0)
-                        { await _connection.InsertAsync(item);
+                        //Delivery detail image 
+                        if (item.EndTime > dt)
+                        {
+                            item.DeliveryStatusImageSource ="delivered.png";
                         }
+                        else if (item.StartTime > dt)
+                        {
+                            item.DeliveryStatusImageSource ="zeleni50.png";
+                        }
+                        else
+                        {
+                            item.DeliveryStatusImageSource ="zuti50.png";
+                        }
+
+                        int x = await _connection.UpdateAsync(item);
+                        if (x == 0)
+                        {
+                            await _connection.InsertAsync(item);
+                        }
+                        
+
                     }
+
                     DeliveryList.ItemsSource = listOfDeliveries;
+                    
+                    return true;
                 }
                 else
                 {
                     Message.Text = "No deliveries to show.";
+                    return false;
                 }
 
             }
-
-
-            base.OnAppearing();
+            else return false;
         }
-
-
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var item =(DeliveryModel) e.SelectedItem;
@@ -80,8 +104,23 @@ namespace Kurir
 
         private async void DeliveryList_Refreshing(object sender, EventArgs e)
         {
-            DeliveryList.ItemsSource = await _connection.Table<DeliveryModel>().ToListAsync();
+            await GetDeliveriesFromServer();
             DeliveryList.EndRefresh();
         }
+        //private string SwitchImageSource(string s)
+        //{
+        //    switch (Device.RuntimePlatform)
+        //    {
+        //        case Device.UWP:
+        //            s= "Kurir." + s;
+        //            break;
+        //        case Device.Android:
+        //            s = "Kurir." + s;
+        //            break;
+                
+        //    }
+        //    return s;
+
+        //}
     }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kurir.Persistance;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,11 +17,12 @@ namespace Kurir
     public partial class UserHomePageMaster : ContentPage
     {
         public ListView ListView;
-
+        private UserService userService;
+        
         public UserHomePageMaster()
         {
             InitializeComponent();
-
+            userService = new UserService();
             BindingContext = new UserHomePageMasterViewModel();
             ListView = MenuItemsListView;
         }
@@ -49,6 +51,29 @@ namespace Kurir
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             #endregion
+            
         }
+        private async void ToolbarItem_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                int usrID = Int32.Parse(Application.Current.Properties["UserID"].ToString());
+
+                if (await userService.LogOut(usrID))
+                {
+
+                    Application.Current.Properties.Remove("Mail");
+                    Application.Current.Properties.Remove("UserID");
+                    Application.Current.Properties.Remove("Pass");
+                    Application.Current.Properties.Remove("Name");
+                    await Navigation.PushAsync(new WelcomeTabbedPage());
+
+                }
+                else await DisplayAlert("error", "Server Error", "ok.");
+            }
+            catch (Exception ex)
+            { await DisplayAlert("error", ex.Message, "ok."); }
+        }
+
     }
 }

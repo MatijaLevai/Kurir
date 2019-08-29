@@ -46,6 +46,18 @@ namespace KurirServer.Repositories
         {
             return (await context.SaveChangesAsync()) > 0;
         }
+
+        public async Task<bool> Update<T>(T entity) where T : class
+        {
+            try
+            {
+                context.Update<T>(entity);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch { return false; }
+            
+        }
     }
 }
 

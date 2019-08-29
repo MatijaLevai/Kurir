@@ -2,55 +2,62 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:models="clr-namespace:Kurir.Models"
-            x:Class="Kurir.WelcomeTabbedPage">
-    <ContentPage Title="Register" >
-        <ContentPage.Content FontSize="15">
+            x:Class="Kurir.WelcomeTabbedPage"
+            >
+    <ContentPage Title="Register">
+        <ContentPage.Content>
             <ScrollView>
-                <StackLayout  Padding="0,25,10,0" >
-                <Label FontSize="18" Text="Welcome to EkoKurirApp. Register to continue."
-                VerticalOptions="Center" 
-                HorizontalOptions="CenterAndExpand" />
-                <Label Text="First Name:"/>
-                    <Entry  x:Name="FirstName"  MaxLength="25"  VerticalOptions="StartAndExpand"  
-                HorizontalOptions="Fill" Text="{Binding FirstName}"></Entry>
-                <Label  Text="Last Name:"/>
-                    <Entry  x:Name="LastName" MaxLength="25" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill" Text="{Binding LastName}"></Entry>
-                    <Label  Text="Phone Number:"/>
-                    <Entry  x:Name="Phone" MaxLength="20" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill"  Text="{Binding Phone}" ></Entry>
-                    <Label  Text="E-mail:"/>
-                    <Entry  x:Name="Mail" MaxLength="50" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill"  Text="{Binding Mail}"></Entry>
-                    <Label Text="Password:"/>
-                    <Entry  x:Name="Pass" IsPassword="true" MaxLength="30" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill" Text="{Binding Pas}"></Entry>
-                    <Label Text="Confirm password:"/>
-                    <Entry  x:Name="PassConfirm" IsPassword="true" MaxLength="30" VerticalOptions="StartAndExpand" 
-                HorizontalOptions="Fill"  Text="{Binding ConfirmPass}"></Entry>
-                    <Button  x:Name="Register" Text=" Register " BackgroundColor="ForestGreen" Clicked="Register_Clicked"  VerticalOptions="Center" 
-                HorizontalOptions="Center"></Button>
-           
-            </StackLayout>
+                <StackLayout  Padding="0,25,10,0" VerticalOptions="StartAndExpand" 
+                HorizontalOptions="StartAndExpand">
+                <Label FontSize="Medium" Text="Welcome to EkoKurirApp." VerticalOptions="Center" HorizontalOptions="CenterAndExpand" />
+                <Label FontSize="Medium" Text="Register to continue." VerticalOptions="Center" HorizontalOptions="CenterAndExpand" />
+                    <Grid>
+                       
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+
+                        </Grid.ColumnDefinitions>
+                        <Label  Grid.Row="0"  Grid.Column="0" Text="First Name:" HorizontalTextAlignment="End"  FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="0"  Grid.Column="1" x:Name="FirstName"  MaxLength="25" Text="{Binding FirstName}"></Entry>
+                        <Label Grid.Row="1"  Grid.Column="0" Text="Last Name:" HorizontalTextAlignment="End"  FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="1"  Grid.Column="1" x:Name="LastName" MaxLength="25" Text="{Binding LastName}"></Entry>
+                        <Label Grid.Row="2"  Grid.Column="0" Text="Phone Number:" HorizontalTextAlignment="End"  FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="2"  Grid.Column="1" x:Name="Phone" MaxLength="20"  Text="{Binding Phone}" ></Entry>
+                        <Label Grid.Row="3"  Grid.Column="0" Text="E-mail:" HorizontalTextAlignment="End"  FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="3"  Grid.Column="1" x:Name="Mail" MaxLength="50" Text="{Binding Mail}"></Entry>
+                        <Label Grid.Row="4"  Grid.Column="0" Text="Password:" HorizontalTextAlignment="End" FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="4"  Grid.Column="1" x:Name="Pass" IsPassword="true" MaxLength="30" VerticalOptions="StartAndExpand" Text="{Binding Pas}"></Entry>
+                        <Label Grid.Row="5"  Grid.Column="0" Text="Confirm password:" HorizontalTextAlignment="End" FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="5"  Grid.Column="1" x:Name="PassConfirm" IsPassword="true" MaxLength="30"   Text="{Binding ConfirmPass}"></Entry>
+                    </Grid>
+                    <Button  x:Name="Register" HorizontalOptions="CenterAndExpand" FontSize="Medium" Text=" Register " BackgroundColor="ForestGreen" Clicked="Register_Clicked"></Button>
+
+                </StackLayout>
             </ScrollView>
         </ContentPage.Content>
     </ContentPage>
     <ContentPage Title="Login">
         <ContentPage.Content>
-            <StackLayout VerticalOptions="Fill" 
-                HorizontalOptions="Fill">
-                <Label Text="Welcome to EkoKurirApp. Login to continue."
-                VerticalOptions="Center" 
-                HorizontalOptions="Center" />
-                <Label Text="E-mail:"/>
-                <Entry x:Name="LoginMail"  VerticalOptions="Center" 
-                HorizontalOptions="Fill"></Entry>
-                <Label Text="Password:"/>
-                <Entry x:Name="LoginPass" IsPassword="true"  VerticalOptions="Center" 
-                HorizontalOptions="Fill"></Entry>
-                <Button x:Name="Login" Text=" Login " Clicked="Login_Clicked"  BackgroundColor="ForestGreen" VerticalOptions="Center" 
-                HorizontalOptions="Center"></Button>
-                <Label x:Name="lblTxt"/>
+            <StackLayout VerticalOptions="StartAndExpand" 
+                HorizontalOptions="StartAndExpand" Padding="0,25,10,0">
+                <Label FontSize="Medium"  Text="Welcome to EkoKurirApp." VerticalOptions="Center" HorizontalOptions="Center" />
+                <Label FontSize="Medium" Text="Login to continue." VerticalOptions="Center" HorizontalOptions="Center" />
+
+                <Label  x:Name="lblTxt"/>
+                <Grid HorizontalOptions="Center"  VerticalOptions="Center">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label  Grid.Row="0"  Grid.Column="0" Text="E-mail:" HorizontalTextAlignment="End" FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="0"  Grid.Column="1"  x:Name="LoginMail" ></Entry>
+                    <Label  Grid.Row="1"  Grid.Column="0"  Text="Password:" HorizontalTextAlignment="End" FontSize="Medium"/>
+                    <Entry BackgroundColor="#41A85F" Grid.Row="1"  Grid.Column="1"  x:Name="LoginPass" IsPassword="true" ></Entry>
+                </Grid>
+                <Button HorizontalOptions="CenterAndExpand" FontSize="Medium" x:Name="Login" Text=" Login " Clicked="Login_Clicked" BackgroundColor="#41A85F"></Button>
+               
             </StackLayout>
         </ContentPage.Content>
     </ContentPage>

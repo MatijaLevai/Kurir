@@ -63,6 +63,7 @@ namespace KurirServer.Repositories
                 query = query.Where(u => u.UserID == id);
                 var usr = query.First();
                 usr.IsActive = false;
+                usr.ActiveUserRoleID = 0;
                 context.Update(usr);
                 await context.SaveChangesAsync();
                 return true;

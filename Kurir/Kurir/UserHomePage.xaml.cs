@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kurir.Persistance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +13,10 @@ namespace Kurir
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class UserHomePage : MasterDetailPage
     {
+       
         public UserHomePage()
         {
+            NavigationPage.SetHasBackButton(this, false);
             InitializeComponent();
             MasterPage.ListView.ItemSelected += ListView_ItemSelected;
         }
@@ -32,5 +35,12 @@ namespace Kurir
 
             MasterPage.ListView.SelectedItem = null;
         }
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+            //return base.OnBackButtonPressed();
+        }
+
+        
     }
 }

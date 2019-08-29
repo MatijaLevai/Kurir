@@ -18,11 +18,13 @@ namespace Kurir
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewDelivery : ContentPage
     {
+        private SQLiteHelper liteHelper;
         private readonly HttpClient _client = new HttpClient();
         private readonly SQLiteAsyncConnection _connection;
         private  List<PaymentTypeModel> paymentTypes;
         private  List<DeliveryTypeModel> deliveryTypes;
         private DeliveryModel delivery;
+        private DeliveryService deliveryService;
         Func<string, bool> selector = delegate (string c)
         {
             var s = c.ToCharArray();
@@ -45,8 +47,8 @@ namespace Kurir
         };
         public NewDelivery()
         {
-           
-            
+            liteHelper = new SQLiteHelper();
+            deliveryService = new DeliveryService();
             InitializeComponent();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
         }
@@ -83,41 +85,31 @@ namespace Kurir
                 if (OrderDelivery.Text == "Edit")
                 { try
                     {
-                        string uri = Application.Current.Properties["ServerLink"].ToString() + "api/deliveries/EditDelivery/";
-                        string jsonD = JsonConvert.SerializeObject(newDelivery);
-                        HttpContent httpContent = new StringContent(jsonD, Encoding.UTF8, "application/json");
-                        HttpResponseMessage msg = await _client.PutAsync(uri, httpContent);
-                        if (msg.IsSuccessStatusCode)
+                      var delivery = await  deliveryService.EditDelivery(newDelivery);
+                        if (delivery != null)
                         {
-                            var stringD = await msg.Content.ReadAsStringAsync();
-                            var d = JsonConvert.DeserializeObject<DeliveryModel>(stringD);
-                            delivery = d;
+                            await DisplayAlert("All Done.", "Your order is placed.", "Confirm.");
+                            await Navigation.PopAsync();
                         }
+                        else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
                     }
                     catch (Exception ex) { await DisplayAlert("error", "msg: " + ex.Message + "IE : " + ex.InnerException, "jbg"); }
                 }
                 else {
                     try
                     {
-                        var jsonObject = JsonConvert.SerializeObject(newDelivery);
-                        HttpContent httpContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-                        var uri = Application.Current.Properties["ServerLink"].ToString() + "api/Deliveries/NewDelivery";
-                        var response = _client.PostAsync(uri, httpContent);
-                        if (response.Result.IsSuccessStatusCode)
+                        var delivery = await deliveryService.CreateDelivery(newDelivery);
+                        if (delivery !=null)
                         {
-
-                            var responseContent = await response.Result.Content.ReadAsStringAsync();
-                            //Debug.WriteLine("primljen odgovor od servera");
-                            var userResponse = JsonConvert.DeserializeObject<RegisterUserModel>(responseContent);
                             await DisplayAlert("All Done.", "Your order is placed.", "Confirm.");
                             await Navigation.PopAsync();
                         }
-                        else await DisplayAlert("No good", response.Result.StatusCode.ToString() + "InnerExc" + response.Result.ReasonPhrase, "ok");
+                        else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
+
                     }
                     catch (Exception ex)
                     {
-                        await DisplayAlert("No good", ex.Message, "ok");
-
+                        await DisplayAlert("Something went wrong.", "Please try again."+ ex.Message, "ok");
                     }
                 }
                 
@@ -126,19 +118,15 @@ namespace Kurir
             }
             else await DisplayAlert("Atention!", "Please fill Entrys correctly.", "ok?");
         }
-        private async Task<bool> DelAndPayTypes()
+        private async Task<bool> DelAndPayTypes() 
         {
             try {
-                string uriPaymentTypes = Application.Current.Properties["ServerLink"].ToString() + "api/PaymentTypes/GetPaymentTypes";
-                string uriDeliveryTypes = Application.Current.Properties["ServerLink"].ToString() + "api/DeliveryTypes/GetDeliveryTypes";
-                var responsePaymentTypes = await _client.GetAsync(uriPaymentTypes);
-                var responseDeliveryTypes = await _client.GetAsync(uriDeliveryTypes);
-                if (responsePaymentTypes.StatusCode == System.Net.HttpStatusCode.OK && responseDeliveryTypes.StatusCode == System.Net.HttpStatusCode.OK)
+               
+                if (await liteHelper.UpdateSQLiteDb())
                 {
-                    var responseContentPaymentTypes = await responsePaymentTypes.Content.ReadAsStringAsync();
-                    var responseContentDeliveryTypes = await responseDeliveryTypes.Content.ReadAsStringAsync();
-                    paymentTypes = JsonConvert.DeserializeObject<List<PaymentTypeModel>>(responseContentPaymentTypes);
-                    deliveryTypes = JsonConvert.DeserializeObject<List<DeliveryTypeModel>>(responseContentDeliveryTypes);
+                    
+                    paymentTypes =  await _connection.Table<PaymentTypeModel>().ToListAsync();
+                    deliveryTypes = await _connection.Table<DeliveryTypeModel>().ToListAsync();
                     PaymentTypePicker.ItemsSource = paymentTypes;
                     DeliverTypePicker.ItemsSource = deliveryTypes;
                     PaymentTypePicker.SelectedIndex = 0;
