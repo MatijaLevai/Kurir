@@ -27,12 +27,24 @@
     <Compile Remove="Migrations\20190820150940_addedDeliveryType.Designer.cs" />
     <Compile Remove="Migrations\20190820151614_Initital.cs" />
     <Compile Remove="Migrations\20190820151614_Initital.Designer.cs" />
+    <Compile Remove="Migrations\20190904103056_initial.cs" />
+    <Compile Remove="Migrations\20190904103056_initial.Designer.cs" />
+    <Compile Remove="Migrations\20190904131601_initial.cs" />
+    <Compile Remove="Migrations\20190904131601_initial.Designer.cs" />
+    <Compile Remove="Migrations\20190911173416_initial.cs" />
+    <Compile Remove="Migrations\20190911173416_initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Hubs\DeliveryHub.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />

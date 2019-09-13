@@ -25,6 +25,9 @@ namespace KurirServer.Entities
         [Required]
         public DateTime RegistrationDate { get; set; }
         public int ActiveUserRoleID{get;set;}
+        public virtual ICollection<Delivery> UsersDeliveries { get; set; }
+        public virtual ICollection<UserRole> UserRoles { get; set; }
+
         public override string ToString()
         {
             return "FirstName"+ FirstName+"__"+ "LastName"+ LastName;

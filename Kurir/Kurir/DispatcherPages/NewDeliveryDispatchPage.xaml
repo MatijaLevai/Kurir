@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.DispatcherPages.NewDeliveryDispatchPage">
+    <ContentPage.Content>
+        <ScrollView>
+        <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                <Grid ColumnSpacing="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="80"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="Titlelbl" Text="Create Delivery and order it"  FontSize="15"   VerticalOptions="Center"  HorizontalOptions="Center" />
+                    <Label Grid.Row="1" Grid.Column="0" FontSize="15"   Text="1. Senders Name :"/>
+                    <Entry Grid.Row="1" Grid.Column="1"   x:Name="StartName" FontSize="15" BackgroundColor="#02ce0a" PropertyChanged="Notify"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"></Entry>
+
+                    <Label Grid.Row="2" Grid.Column="0" FontSize="15"  Text="2. Senders Phone Number :" />
+                    <Entry Grid.Row="2" Grid.Column="1" x:Name="StartPhone" Keyboard="Numeric" PropertyChanged="NotifyPhone" FontSize="15" BackgroundColor="#02ce0a"   VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"></Entry>
+                    
+                    <Label Grid.Row="3" Grid.Column="0" FontSize="15"  Text="3. Senders Address :"/>
+                    <Entry Grid.Row="3" Grid.Column="1"  x:Name="StartAddress" FontSize="15" BackgroundColor="#02ce0a"  PropertyChanged="NotifyAddressStart"  Placeholder="Name of street building number / apartment / floor / interphone" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsTextPredictionEnabled="True"></Entry>
+                    <ListView Grid.Row="4" Grid.Column="1" x:Name="listStartAddres"  ItemsSource="{Binding streets}" HorizontalOptions="Start" ItemSelected="ListStartAddres_SelectedIndexChanged"></ListView>
+                    <Label Grid.Row="5" Grid.Column="0" FontSize="15" Text="4. Zone Start : " x:Name="ZoneStartSteplbl"/>
+                    <Stepper Grid.Row="5" Grid.Column="1" x:Name="ZoneStart" PropertyChanged="ZoneStart_PropertyChanged" Minimum="1" Maximum="4"></Stepper>
+
+
+                    <Label Grid.Row="6" Grid.Column="0" FontSize="15" Text="5. Recipients Name."/>
+                    <Entry Grid.Row="6" Grid.Column="1" PropertyChanged="Notify" FontSize="15" BackgroundColor="#02ce0a" x:Name="NameEnd"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"></Entry>
+
+                    <Label Grid.Row="7" Grid.Column="0" FontSize="15" Text="6. Recipients Phone Number."/>
+                    <Entry Grid.Row="7" Grid.Column="1" PropertyChanged="NotifyPhone" Keyboard="Numeric" FontSize="15" BackgroundColor="#02ce0a" x:Name="PhoneEnd" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"></Entry>
+                    
+                    <Label Grid.Row="8" Grid.Column="0" FontSize="15" Text="7.Recipients Address : " />
+                    <Entry Grid.Row="8" Grid.Column="1" PropertyChanged="NotifyAddressEnd" FontSize="15" BackgroundColor="#02ce0a" x:Name="EndAddress" Placeholder="Name of street building number / apartment / floor / interphone" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" IsTextPredictionEnabled="True"></Entry>
+                    <ListView  Grid.Row="9" Grid.Column="1" x:Name="listEndAddres"  ItemsSource="{Binding streets}" ItemSelected="ListEndAddres_SelectedIndexChanged" HorizontalOptions="Start" ></ListView>
+                    <Label Grid.Row="10" Grid.Column="0" FontSize="15" Text="8. Zone End: "  x:Name="ZoneEndSteplbl" />
+                  <Stepper Grid.Row="10" Grid.Column="1" x:Name="ZoneEnd" PropertyChanged="ZoneEnd_PropertyChanged"  Maximum="4" Minimum="1" Increment="1" ></Stepper>
+
+
+                    <Label Grid.Row="11" Grid.Column="0" FontSize="15" Text="9. Price : " /> 
+                    <Entry Grid.Row="11" Grid.Column="1" x:Name="Price" Keyboard="Numeric" PropertyChanged="Price_PropertyChanged"  BackgroundColor="#02ce0a"/>
+                    <Label Grid.Row="12" Grid.Column="0" FontSize="15" Text="10. Chose payment type : " />
+                    <Picker Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" FontSize="15" x:Name="PaymentTypePicker" PropertyChanged="NotifyPicker" TextColor="Black"  ItemDisplayBinding="{Binding PaymentTypeName}"></Picker>
+                    <Label Grid.Row="14" Grid.Column="0" FontSize="15" Text="11. Chose delivery type:" />
+                    <Picker Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2"   FontSize="15" x:Name="DeliverTypePicker" PropertyChanged="NotifyPicker"  TextColor="Black"  ItemDisplayBinding="{Binding DeliveryTypeName}"></Picker>
+                    <Label Grid.Row="16" Grid.Column="0" FontSize="15" Text="12. Chose Courier:" />
+                    <Picker Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" FontSize="15" x:Name="CourierPicker" PropertyChanged="NotifyPicker"   ItemDisplayBinding="{Binding CourierFullName}" TextColor="Black" ></Picker>
+
+                    <Label  Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2"  FontSize="15" Text="13. Enter detail of delivery if needed:" />
+                    <Editor Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2"  MaxLength="512" FontSize="15" x:Name="DeliveryDetails" VerticalOptions="FillAndExpand" TextColor="Black" BackgroundColor="#02ce0a" HorizontalOptions="Fill"></Editor>
+                </Grid>
+                <Button x:Name="DeliveryButton" Clicked="DeliveryButton_Clicked" Text="Create"/>
+        </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

@@ -32,3 +32,10 @@ using Android.App;
 // Add some common permissions, these can be removed if not needed
 [assembly: UsesPermission(Android.Manifest.Permission.Internet)]
 [assembly: UsesPermission(Android.Manifest.Permission.WriteExternalStorage)]
+[assembly: UsesPermission(Android.Manifest.Permission.AccessCoarseLocation)]
+[assembly: UsesPermission(Android.Manifest.Permission.AccessFineLocation)]
+[assembly: UsesPermission(Android.Manifest.Permission.AccessLocationExtraCommands)]
+
+[assembly: UsesFeature("android.hardware.location", Required = true)]
+[assembly: UsesFeature("android.hardware.location.gps", Required = true)]
+[assembly: UsesFeature("android.hardware.location.network", Required = true)]

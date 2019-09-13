@@ -21,7 +21,7 @@ namespace Kurir
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class UserRolePage : ContentPage
     {
-        private HttpClient _client = new HttpClient();
+        private HttpClient _client = App.client;
         private RegisterUserModel _user;
         private string uri;
        
@@ -62,7 +62,7 @@ namespace Kurir
                         await Navigation.PushAsync(new DefaultCourierPage());
                         break;
                     case 5:
-                        await Navigation.PushAsync(new DefaultDispatcherPage());
+                        await Navigation.PushAsync(new DispatcherHomePage());
                         break;
                 }
             }

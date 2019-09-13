@@ -17,7 +17,7 @@ namespace Kurir
     public partial class UserHomePageMaster : ContentPage
     {
         public ListView ListView;
-        private UserService userService;
+        private readonly UserService userService;
         
         public UserHomePageMaster()
         {

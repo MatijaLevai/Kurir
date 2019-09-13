@@ -53,5 +53,6 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <uap4:Capability Name="offlineMapsManagement"/>
+    <DeviceCapability Name="location"/>
   </Capabilities>
 </Package>

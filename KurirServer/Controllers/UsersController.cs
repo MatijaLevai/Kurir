@@ -32,7 +32,7 @@ namespace KurirServer.Controllers
 
         [Route("Register")]
         [HttpPost]
-        public async Task<ActionResult<User>> RegisterUser(RegistrationModel userModel)
+        public async Task<ActionResult<int>> RegisterUser(RegistrationModel userModel)
         {
             try
                 {
@@ -47,7 +47,7 @@ namespace KurirServer.Controllers
                     {
                         if (await userRepository.ChangeCurrentUserRole(user.UserID, intResponse))
                         {
-                        return Created($"/api/users/{user.Mail}", user);
+                        return Ok(user.UserID);
                         }
                         else
                         {
@@ -87,7 +87,31 @@ namespace KurirServer.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+        }//GetCourierModel
+        [Route("GetCourierModel/{id}")]
+        [HttpGet]
+        public async Task<ActionResult<string>> GetCourierModel(int id)
+        {
+            try
+            { 
+                User usr = await userRepository.GetUserAsync(id);
+                if (usr != null)
+                {
+                    ActiveCourierModel courierModel = new ActiveCourierModel { CourierFullName = usr.FirstName + " " + usr.LastName, CourierID = usr.UserID };
+                    // var statuscode = StatusCode(StatusCodes.Status302Found);
+                    return StatusCode(StatusCodes.Status302Found, JsonConvert.SerializeObject(usr));
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status404NotFound, "Not Found");
+                }
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
+        
         [Route("GetUser/{id}")]
         [HttpGet]
         public async Task<string> GetUser(int id)
@@ -178,6 +202,25 @@ namespace KurirServer.Controllers
             }
         }
 
+
+        [Route("GetActiveCouriers")]
+        [HttpGet]
+        public async Task<ActionResult<string>> GetActiveCouriers()
+        {
+            try
+            {
+                var x = await userRepository.GetActiveCouriers();
+
+                if (x != null)
+                {
+                    string jsonX = JsonConvert.SerializeObject(x);
+
+                    return Ok(jsonX);
+                }
+                else return NotFound();
+            }
+            catch(Exception ex) { return StatusCode(StatusCodes.Status500InternalServerError, ex.Message); }
+        }
 
     }
 }

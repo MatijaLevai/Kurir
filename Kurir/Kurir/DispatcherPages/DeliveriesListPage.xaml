@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Kurir.DeliveryHistory"
-             xmlns:local="clr-namespace:Kurir;assembly=Kurir">
+             x:Class="Kurir.DispatcherPages.DeliveriesListPage">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
-        <Label x:Name="Message" FontSize="Medium"/>
+                <Label x:Name="Message" FontSize="Medium"/>
                 <Grid RowSpacing="2" Padding="5" >
 
                     <Grid.RowDefinitions>
@@ -30,8 +29,8 @@
 
                 </Grid>
                 <ListView x:Name="DeliveryList" ItemSelected="OnItemSelected" IsPullToRefreshEnabled="True" Refreshing="DeliveryList_Refreshing" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
                             <ViewCell>
                                 <ViewCell.View>
                                     <Grid RowSpacing="2" Padding="5" >
@@ -40,18 +39,18 @@
                                             <RowDefinition Height="2*"></RowDefinition>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            
+
                                             <ColumnDefinition Width="2*"></ColumnDefinition>
-                                            
+
                                             <ColumnDefinition Width="2*"></ColumnDefinition>
-                                           
+
                                             <ColumnDefinition Width="*"></ColumnDefinition>
-                                            
+
                                             <ColumnDefinition Width="2*"></ColumnDefinition>
                                             <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                            
-                                           
-                                            
+
+
+
                                         </Grid.ColumnDefinitions>
 
 
@@ -70,10 +69,9 @@
                                 </ViewCell.View>
                             </ViewCell>
                         </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackLayout>
         </ScrollView >
-        
     </ContentPage.Content>
 </ContentPage>

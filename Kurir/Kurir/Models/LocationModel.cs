@@ -9,11 +9,14 @@ namespace Kurir.Models
     {
         [PrimaryKey,AutoIncrement]
         public int LocationID { get; set; }
-        public int userID { get; set; }
+        public int UserID { get; set; }
       
-        public DateTime dateTime { get; set; }
+       
         public double Latitude { get; set; }
       
         public double Longitude { get; set; }
+        public double Altitude { get; set; }
+
+        public DateTimeOffset DToffSet { get; set; }
     }
 }

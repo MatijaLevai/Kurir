@@ -1,4 +1,5 @@
 ﻿using KurirServer.Entities;
+using KurirServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace KurirServer.Intefaces
         Task<bool> MakeUserActive(int id);
         Task<bool> LogoutAsync(int id);
         Task<bool> ChangeCurrentUserRole(int Userid,int UserRoleID);
+        Task<IEnumerable<ActiveCourierModel>> GetActiveCouriers();
     }
 }

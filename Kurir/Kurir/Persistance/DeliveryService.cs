@@ -12,7 +12,7 @@ namespace Kurir.Persistance
 {
     public class DeliveryService
     {
-        private HttpClient _client = new HttpClient();
+        private HttpClient _client = App.client;
         private SQLiteAsyncConnection _connection;
         private string ServerLink;
         public DeliveryService()
@@ -38,7 +38,7 @@ namespace Kurir.Persistance
         }
         public async Task<DeliveryModel> EditDelivery(DeliveryModel newDelivery)
         {
-            string uri = ServerLink + "/EditDelivery/";
+            string uri = ServerLink + "/EditDelivery";
             string jsonD = JsonConvert.SerializeObject(newDelivery);
             HttpContent httpContent = new StringContent(jsonD, Encoding.UTF8, "application/json");
             HttpResponseMessage msg = await _client.PutAsync(uri, httpContent);
@@ -51,7 +51,6 @@ namespace Kurir.Persistance
             else return null;
 
         }
-
         public async Task<IEnumerable<DeliveryModel>> GetDeliveriesForUser()
         {
             var uri = ServerLink + "/GetDeliveriesForUser/" + Application.Current.Properties["UserID"].ToString();
@@ -65,5 +64,45 @@ namespace Kurir.Persistance
             }
             else return null;
         }
+        public async Task<IEnumerable<DeliveryModel>> GetDeliveriesForDispatcher()
+        {
+            var uri = ServerLink + "/GetDeliveriesForDispatcher/" + Application.Current.Properties["UserID"].ToString();
+            var res = await _client.GetAsync(uri);
+            if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
+
+            }
+            else return null;
+        }
+        public async Task<IEnumerable<DeliveryModel>> GetAllDeliveries()
+        {
+            var uri = ServerLink + "/ODataGet/";
+            var res = await _client.GetAsync(uri);
+            if (res.StatusCode == System.Net.HttpStatusCode.OK && res.Content!=null)
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+                
+                return JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
+
+            }
+            else return null;
+        }
+        public async Task<IEnumerable<DeliveryModel>> GetUncofirmedDeliveriesForDispatcher()
+        {
+            var uri = ServerLink + "/GetUncofirmedDeliveriesForDispatcher/";
+            var res = await _client.GetAsync(uri);
+            if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
+
+            }
+            else return null;
+        }
+        
     }
 }

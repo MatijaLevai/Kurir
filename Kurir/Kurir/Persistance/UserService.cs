@@ -1,4 +1,5 @@
-﻿using Kurir.Models;
+﻿
+using Kurir.Models;
 using Newtonsoft.Json;
 using SQLite;
 using System;
@@ -12,15 +13,19 @@ namespace Kurir.Persistance
 {
     public class UserService
     {
-        private HttpClient _client = new HttpClient();
+        private HttpClient _client = App.client;
         private SQLiteAsyncConnection _connection;
         private string ServerLink;
         public UserService()
         {
+            if (!Application.Current.Properties.ContainsKey("ServerLink"))
+            {
+                Application.Current.Properties.Add("ServerLink", "https://kurirserver.conveyor.cloud/");
+            }
             ServerLink = Application.Current.Properties["ServerLink"].ToString()+"api/Users/";
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
         }
-        public async Task<RegisterUserModel> Register(RegisterUserModel userNew)
+        public async Task<string> Register(RegisterUserModel userNew)
         {
             string uri = ServerLink + "Register";
             string jsonUser = JsonConvert.SerializeObject(userNew);
@@ -28,6 +33,10 @@ namespace Kurir.Persistance
             HttpResponseMessage msg = await _client.PostAsync(uri, httpContent);
             if (msg.IsSuccessStatusCode)
             {
+                string jsonContent = await msg.Content.ReadAsStringAsync();
+                var userID =Convert.ToInt32(jsonContent);
+                if (userID > 0)
+                    userNew.UserID = userID;
                 var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userNew.UserID).FirstOrDefaultAsync();
                 if (userSQLite == null)
                 {
@@ -37,10 +46,10 @@ namespace Kurir.Persistance
                 {
                     var responseSQLite = await _connection.UpdateAsync(userNew);
                 }
-                return userNew;
+                return userNew.UserID.ToString();
 
             }
-            else return new RegisterUserModel {Message= "Registration failed, try again." };
+            else return "Registration failed, try again.";
             }
         public async Task<RegisterUserModel> EditUser(RegisterUserModel userNew)
         {
@@ -129,6 +138,52 @@ namespace Kurir.Persistance
             }
             else return false;
 
+        }
+        //GetUser full name by ID
+        public async Task<string> GetUserByID(int id)
+        {
+            string uri = ServerLink + "GetUser/" + id;
+
+            var response = await _client.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<string>(responseString);
+            }
+            else return "Unknown User";
+
+        }
+        public async Task<ActiveCourierModel> GetCourierModelByID(int id)
+        {
+            string uri = ServerLink + "GetCourierModel/" + id;
+
+            var response = await _client.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ActiveCourierModel>(responseString);
+            }
+            else return new ActiveCourierModel() { CourierFullName = "Unknown User", CourierID = 0, Lat = 0, Long = 0 };
+
+        }
+        public async Task<IEnumerable<ActiveCourierModel>> GetActiveCouriers()
+        {
+            string uri = ServerLink + "GetActiveCouriers/";
+
+            var response = await _client.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<IEnumerable<ActiveCourierModel>>(responseString);
+            }
+            else return null;
+        }
+        public static string PopUp()
+        {
+            return "Prosao poziv metode :)";
         }
     }
 }

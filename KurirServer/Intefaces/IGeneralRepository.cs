@@ -11,5 +11,6 @@ namespace KurirServer.Intefaces
         void Delete<T>(T entity) where T : class;
         Task<bool> SaveChangesAsync();
         Task<bool> Update<T>(T entity) where T : class;
+        
     }
 }

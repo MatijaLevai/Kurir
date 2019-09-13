@@ -23,7 +23,7 @@ namespace Kurir
 
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            var item = e.SelectedItem as UserHomePageMenuItem;
+            UserHomePageMenuItem item = e.SelectedItem as UserHomePageMenuItem;
             if (item == null)
                 return;
 

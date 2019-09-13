@@ -18,13 +18,16 @@ namespace Kurir
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewDelivery : ContentPage
     {
+        #region Properties of Class New Delivery
         private SQLiteHelper liteHelper;
-        private readonly HttpClient _client = new HttpClient();
+        private readonly HttpClient _client ;
         private readonly SQLiteAsyncConnection _connection;
         private  List<PaymentTypeModel> paymentTypes;
         private  List<DeliveryTypeModel> deliveryTypes;
         private DeliveryModel delivery;
         private DeliveryService deliveryService;
+        #endregion
+
         Func<string, bool> selector = delegate (string c)
         {
             var s = c.ToCharArray();
@@ -45,22 +48,59 @@ namespace Kurir
             }
             else return false;
         };
+        #region Constructors
         public NewDelivery()
         {
+            _client = App.client;
             liteHelper = new SQLiteHelper();
             deliveryService = new DeliveryService();
-            InitializeComponent();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+            InitializeComponent();
         }
         public NewDelivery(DeliveryModel delivery)
         {
+            _client = App.client;
             if (delivery != null)
             {
                 this.delivery = delivery;
                 BindingContext = this.delivery;
             }
-            InitializeComponent();
+            liteHelper = new SQLiteHelper();
+            deliveryService = new DeliveryService();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+            InitializeComponent();
+        }
+        #endregion
+
+        protected override async void OnAppearing()
+        {
+            if (!await DelAndPayTypes())
+                await DisplayAlert("Internet", "Check Your connection settings", "Ok");
+            if (delivery == null)
+            {
+                Titlelbl.Text = "Create delivery";
+                OrderDelivery.Text = "Order";
+            }
+            else
+            {
+                Titlelbl.Text = "Edit Delivery";
+                OrderDelivery.Text = "Edit";
+            }
+            switch (Device.RuntimePlatform)
+            {
+                case Device.UWP:
+                    NewDeliveryStack.BackgroundColor = Color.Default;
+                    break;
+                case Device.Android:
+                    NewDeliveryStack.BackgroundColor = Color.White;
+                    break;
+                default:
+                    break;
+            }
+            
+            base.OnAppearing();
+
+
         }
 
         private async void OrderDelivery_Clicked(object sender, EventArgs e)
@@ -80,20 +120,33 @@ namespace Kurir
                     CreateTime = DateTime.Now,
                     PaymentTypeID = PaymentTypePicker.SelectedIndex+1,
                     DeliveryTypeID = DeliverTypePicker.SelectedIndex+1,
-                    Description = DeliveryDetails.Text
+                    Description = DeliveryDetails.Text,
+                    StartLocationID=1,
+                    EndLocationID=1,
+                    ZoneEnd = 0,
+                    ZoneStart = 0,
+                    WaitingInMinutes=0,
+                    DeliveryStatusImageSource="",
                 };
-                if (OrderDelivery.Text == "Edit")
+                if (delivery!=null)
                 { try
                     {
-                      var delivery = await  deliveryService.EditDelivery(newDelivery);
-                        if (delivery != null)
+                        newDelivery.DeliveryPrice = delivery.DeliveryPrice;
+                        newDelivery.CourierID = delivery.CourierID;
+                        newDelivery.ZoneStart = delivery.ZoneStart;
+                        newDelivery.ZoneEnd = delivery.ZoneEnd;
+                        newDelivery.DispatcherID = delivery.DispatcherID;
+                        newDelivery.DeliveryID = delivery.DeliveryID;
+
+                        var deliveryUpdate = await deliveryService.EditDelivery(newDelivery);
+                        if (deliveryUpdate != null)
                         {
                             await DisplayAlert("All Done.", "Your order is placed.", "Confirm.");
                             await Navigation.PopAsync();
                         }
                         else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
                     }
-                    catch (Exception ex) { await DisplayAlert("error", "msg: " + ex.Message + "IE : " + ex.InnerException, "jbg"); }
+                    catch (Exception ex) { await DisplayAlert("error", "msg: " + ex.Message + "IE : " + ex.InnerException, "ok"); }
                 }
                 else {
                     try
@@ -121,8 +174,9 @@ namespace Kurir
         private async Task<bool> DelAndPayTypes() 
         {
             try {
-               
-                if (await liteHelper.UpdateSQLiteDb())
+
+                var response = await liteHelper.UpdateSQLiteDb();
+                if (response)
                 {
                     
                     paymentTypes =  await _connection.Table<PaymentTypeModel>().ToListAsync();
@@ -137,6 +191,7 @@ namespace Kurir
                 {
 
                     OrderDelivery.IsEnabled = false;
+                    
                     return false;
                 }
             }
@@ -146,25 +201,6 @@ namespace Kurir
                 return false;
             }
             
-        }
-        protected override async void OnAppearing()
-        {
-
-            if (!await DelAndPayTypes())
-                await DisplayAlert("Internet", "Check Your connection settings", "Ok");
-            if (delivery == null)
-            {
-                Titlelbl.Text = "Create delivery";
-                OrderDelivery.Text = "Order";
-            }
-            else
-            {
-                Titlelbl.Text = "Edit Delivery";
-                OrderDelivery.Text = "Edit";
-            }
-            base.OnAppearing();
-
-
         }
 
         void Notify(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -222,7 +258,7 @@ namespace Kurir
             var property = sender as Picker;
             if (property.SelectedIndex>=0)
             {
-                property.BackgroundColor = Color.FromRgb(65, 168, 95);
+                property.BackgroundColor = Color.FromHex("#02ce0a");
                
             }
             else

@@ -17,7 +17,7 @@ namespace Kurir
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DeliveryDetailPage : ContentPage
     {
-        private HttpClient _client = new HttpClient();
+        private HttpClient _client = App.client;
         private DeliveryModel delivery;
         private List<PaymentTypeModel> paymentTypes;
         private List<DeliveryTypeModel> deliveryTypes;

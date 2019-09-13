@@ -2,6 +2,7 @@
 using KurirServer.Intefaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,23 +16,10 @@ namespace KurirServer.Repositories
             this.context = context;
         }
 
-        public async Task<Delivery> EditDelivery(Delivery newD)
+        public IQueryable<Delivery> ODataGet()
         {
-            if (newD != null)
-            {
-
-                var delivery = context.Deliveries.Where(d => d.DeliveryID == newD.DeliveryID).FirstOrDefault();
-                if (delivery != null)
-                {
-                    context.Update(newD);
-                    await context.SaveChangesAsync();
-                    return newD;
-                }
-                return null;
-            }
-            else return null;
+            return context.Deliveries;
         }
-
         public IEnumerable<Delivery> GetAllDeliveries()
         {
            return context.Deliveries.ToList();
@@ -133,38 +121,45 @@ namespace KurirServer.Repositories
             }
         }
 
-        public IEnumerable<Delivery> GetUncofirmed(int UserID = 0, int CourierID = 0, int DispatchID = 0)
+        public IEnumerable<Delivery> GetUncofirmedForDispatcher()
         {
-            if (UserID <= 0)
+                   
+           return context.Deliveries.ToList().Where(d => (d.DispatcherID == 0)&&(d.StartTime<d.CreateTime));
+                    
+
+
+        }
+        public IEnumerable<Delivery> GetUncofirmedForCourier(int CourierID = 0)
+        {
+            if (CourierID<=0)
             {
-                if (CourierID <= 0)
-                {
-                    if (DispatchID <= 0)
-                    {
-                        return context.Deliveries.ToList();
-                    }
-                    else
-                    {
-                        return context.Deliveries.ToList().Where(d => d.DispatcherID == DispatchID);
-                    }
-                }
-                else
-                {
-                    return context.Deliveries.ToList().Where(d => d.CourierID == CourierID); ;
-                }
+                return context.Deliveries.ToList();
             }
+
             else
             {
-                return context.Deliveries.ToList().Where(d => d.UserID == UserID); ;
-            }
-
-
-            IEnumerable<Delivery> GetByID(int deliveryID)
-            {
-                throw new NotImplementedException();
+                return context.Deliveries.ToList().Where(d => d.CourierID == CourierID); ;
             }
         }
 
-        
+
+        /*    public async Task<Delivery> EditDelivery(Delivery newD)
+            {
+                if (newD != null)
+                {
+
+                    var delivery = context.Deliveries.Where(d => d.DeliveryID == newD.DeliveryID).FirstOrDefault();
+                    if (delivery != null)
+                    {
+                        context.Update(newD);
+                        var x = await context.SaveChangesAsync();
+                        Debug.WriteLine(x);
+                        return newD;
+                    }
+                    return null;
+                }
+                else return null;
+            }
+            */
     }
 }

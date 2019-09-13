@@ -1,6 +1,7 @@
 ﻿using KurirServer.Intefaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,7 +28,6 @@ namespace KurirServer.Repositories
         {
             context.Add(entity);
         }
-
         /// <summary>
         /// Deletes defined entity from db
         /// </summary>
@@ -37,14 +37,20 @@ namespace KurirServer.Repositories
         {
             context.Remove(entity);
         }
-
         /// <summary>
         /// Saves all changes in db
         /// </summary>
         /// <returns></returns>
         public async Task<bool> SaveChangesAsync()
         {
-            return (await context.SaveChangesAsync()) > 0;
+            try
+            {
+                return (await context.SaveChangesAsync()) > 0;
+            }
+            catch (Exception ex)
+            { Debug.WriteLine(ex.Message + ex.InnerException);
+                return false;
+            }
         }
 
         public async Task<bool> Update<T>(T entity) where T : class
@@ -58,6 +64,7 @@ namespace KurirServer.Repositories
             catch { return false; }
             
         }
+
     }
 }
 

@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.DispatcherPages.StatisticsPage">
+    <ContentPage.Content>
+        <StackLayout Margin="10">
+            <Label Text="Days Between Dates"
+               Style="{DynamicResource TitleStyle}"
+               Margin="0, 20"
+               HorizontalTextAlignment="Center" />
+
+            <Label Text="Start Date:" />
+
+            <DatePicker x:Name="startDatePicker"
+                    Format="D"
+                    Margin="30, 0, 0, 30"
+                    DateSelected="OnDateSelectedStart"
+                        MinimumDate="{Binding New DateTime(2019,09.01)}"/>
+
+            <Label Text="End Date:" />
+
+            <DatePicker x:Name="endDatePicker"
+                    MinimumDate="{Binding Source={x:Reference startDatePicker},
+                                          Path=Date}"
+                    Format="D"
+                    Margin="30, 0, 0, 30"
+                    DateSelected="OnDateSelectedEnd" 
+                    MaximumDate="{Binding new DateTime.Now}"/>
+
+            <StackLayout Orientation="Horizontal"
+                     Margin="0, 0, 0, 30">
+                <Label Text="Include both days in total: "
+                   VerticalOptions="Center" />
+                <Switch x:Name="includeSwitch"
+                    Toggled="OnSwitchToggled" />
+            </StackLayout>
+
+            <Label x:Name="resultLabel"
+               FontAttributes="Bold"
+               HorizontalTextAlignment="Center" />
+            <Label x:Name="TitleLabel"
+               FontAttributes="Bold"
+               HorizontalTextAlignment="Center" />
+            
+                                <Grid RowSpacing="2" Padding="5" >
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        <RowDefinition Height="*"></RowDefinition>
+                                        
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Text="Delivered :"/>
+                                    <Label Grid.Row="0" Grid.Column="1" x:Name ="DeliveredLabel"  HorizontalTextAlignment="Start"/>
+                                    <Label Grid.Row="0" Grid.Column="2" Text="deliveries."/>
+                                    <Label Grid.Row="1" Grid.Column="0" Text="Revenue :"/>
+                                    <Label Grid.Row="1" Grid.Column="1" x:Name="RevenueLabel"  HorizontalTextAlignment="Start"/>
+                                    <Label Grid.Row="1" Grid.Column="2" Text="dinars."/>
+                                </Grid>
+            <ImageButton Source="zeleni50.png" Clicked="ImageButton_Clicked"></ImageButton>
+                            
+        </StackLayout>                
+        
+    </ContentPage.Content>
+</ContentPage>

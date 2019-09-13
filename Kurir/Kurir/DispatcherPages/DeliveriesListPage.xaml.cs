@@ -1,6 +1,5 @@
 ﻿using Kurir.Models;
 using Kurir.Persistance;
-using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -12,18 +11,17 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Kurir
+namespace Kurir.DispatcherPages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DeliveryHistory : ContentPage
+    public partial class DeliveriesListPage : ContentPage
     {
-        private HttpClient client = new HttpClient();
+
+        private HttpClient client = App.client;
         private List<DeliveryModel> listOfDeliveries;
-        private Frame ekoFrame;
         private SQLiteAsyncConnection _connection;
         private DeliveryService deliveryService;
-
-        public DeliveryHistory()
+        public DeliveriesListPage()
         {
             deliveryService = new DeliveryService();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
@@ -37,31 +35,27 @@ namespace Kurir
 
         private async Task<bool> GetDeliveriesFromServer()
         {
-            if (Application.Current.Properties.ContainsKey("UserID"))
-            {
-
-
-                var list = await deliveryService.GetDeliveriesForUser();
+            var list = await deliveryService.GetDeliveriesForDispatcher();
                 if (list != null)
                 {
                     listOfDeliveries = new List<DeliveryModel>(list);
                     //await _connection.DropTableAsync<DeliveryModel>();
                     await _connection.CreateTableAsync<DeliveryModel>();
-                     DateTime dt = new DateTime(1,1,1,0,0,0,0);
+
                     foreach (var item in listOfDeliveries)
                     {
                         //Delivery detail image 
-                        if (item.EndTime > dt)
+                        if (item.EndTime > item.StartTime)
                         {
-                            item.DeliveryStatusImageSource ="delivered.png";
+                            item.DeliveryStatusImageSource = "delivered.png";
                         }
-                        else if (item.StartTime > dt)
+                        else if (item.StartTime > item.CreateTime)
                         {
-                            item.DeliveryStatusImageSource ="zeleni50.png";
+                            item.DeliveryStatusImageSource = "zeleni50.png";
                         }
                         else
                         {
-                            item.DeliveryStatusImageSource ="zuti50.png";
+                            item.DeliveryStatusImageSource = "zuti50.png";
                         }
 
                         int x = await _connection.UpdateAsync(item);
@@ -69,12 +63,12 @@ namespace Kurir
                         {
                             await _connection.InsertAsync(item);
                         }
-                        
+
 
                     }
 
                     DeliveryList.ItemsSource = listOfDeliveries;
-                    
+
                     return true;
                 }
                 else
@@ -83,23 +77,16 @@ namespace Kurir
                     return false;
                 }
 
-            }
-            else return false;
+           
         }
         private async void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            var item =(DeliveryModel) e.SelectedItem;
-           
-           var selecterdDelivery = listOfDeliveries.Where(d => d.DeliveryID == item.DeliveryID).First();
-            if (selecterdDelivery.StartTime > new DateTime(1, 1, 1, 0, 0, 0, 0))
-            {
-                await Navigation.PushAsync(new DeliveryDetailPage(selecterdDelivery));
-            }
-            else
-            {
-                await Navigation.PushAsync(new NewDelivery(selecterdDelivery));
-               
-            }
+            var item = (DeliveryModel)e.SelectedItem;
+            var selectedDelivery = listOfDeliveries.Where(d => d.DeliveryID == item.DeliveryID).First();
+            await Navigation.PushAsync(new NewDeliveryDispatchPage(selectedDelivery));
+            //await Navigation.PushAsync(new NewDeliveryDispatchPage());
+
+
         }
 
         private async void DeliveryList_Refreshing(object sender, EventArgs e)
@@ -107,20 +94,6 @@ namespace Kurir
             await GetDeliveriesFromServer();
             DeliveryList.EndRefresh();
         }
-        //private string SwitchImageSource(string s)
-        //{
-        //    switch (Device.RuntimePlatform)
-        //    {
-        //        case Device.UWP:
-        //            s= "Kurir." + s;
-        //            break;
-        //        case Device.Android:
-        //            s = "Kurir." + s;
-        //            break;
-                
-        //    }
-        //    return s;
 
-        //}
     }
-    }
+}

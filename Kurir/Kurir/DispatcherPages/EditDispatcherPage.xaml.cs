@@ -1,12 +1,10 @@
 ﻿using Kurir.Models;
 using Kurir.Persistance;
-using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,25 +12,25 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Kurir
+namespace Kurir.DispatcherPages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class EditAccount : ContentPage
+    public partial class EditDispatcherPage : ContentPage
     {
-        private HttpClient _client = new HttpClient();
-        private SQLiteAsyncConnection _connection;
-        private UserService userService;
-        public EditAccount()
+        private readonly SQLiteAsyncConnection _connection;
+        private readonly UserService userService;
+
+        public EditDispatcherPage()
         {
+            _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             userService = new UserService();
             InitializeComponent();
-            _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
-           
+
         }
         protected override async void OnAppearing()
         {
             string mail = Application.Current.Properties["Mail"].ToString();
-            RegisterUserModel user =await  _connection.Table<RegisterUserModel>().Where(u=>u.Mail == mail).FirstAsync();
+            RegisterUserModel user = await _connection.Table<RegisterUserModel>().Where(u => u.Mail == mail).FirstAsync();
             if (user != null)
             {
                 this.BindingContext = user;
@@ -47,12 +45,10 @@ namespace Kurir
             base.OnAppearing();
         }
 
-        private async void  Edit_Clicked(object sender, EventArgs e)
+        private async void Edit_Clicked(object sender, EventArgs e)
         {
-            var colorRed = new Color();
-            var colorGreen = new Color();
-            colorRed = Color.FromRgb(255, 69, 0);
-            colorGreen = Color.FromRgb(50, 205, 50);
+            var colorRed = new Color(255, 69, 0);
+            var colorGreen = new Color(50, 205, 50);
             int numberOfError = 0;
             try
             {
@@ -157,11 +153,11 @@ namespace Kurir
                     if (userNew.Valid)
                     {
 
-                       userNew = await userService.EditUser(userNew);
+                        userNew = await userService.EditUser(userNew);
                         if (string.IsNullOrWhiteSpace(userNew.Message))
                         {
                             userNew.Message = "Edit is successful";
-                            
+
                         }
                         await DisplayAlert(" ", userNew.Message.ToString(), "ok");
 

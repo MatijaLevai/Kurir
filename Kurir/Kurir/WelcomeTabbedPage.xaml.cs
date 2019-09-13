@@ -20,7 +20,7 @@ namespace Kurir
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class WelcomeTabbedPage : TabbedPage
     {
-        private HttpClient _client = new HttpClient();
+        private HttpClient _client = App.client;
         private SQLiteAsyncConnection _connection;
         private string link;
         private UserService userService;
@@ -28,9 +28,10 @@ namespace Kurir
         public WelcomeTabbedPage()
         {
             NavigationPage.SetHasBackButton(this, false);
-            InitializeComponent();
+           
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             userService = new UserService();
+             InitializeComponent();
         }
 
 
@@ -142,13 +143,17 @@ namespace Kurir
                     if (userNew.Valid)
                     {
 
-                       var userNewer = await userService.Register(userNew);
-                        if (userNewer != null)
+                       var userNewID = await userService.Register(userNew);
+                        if (userNewID != null)
                         {
-                            Application.Current.Properties["Mail"] = userNewer.Mail;
-                            Application.Current.Properties["UserID"] = userNewer.UserID;
-                            Application.Current.Properties["Pass"] = userNewer.Pass;
-                            Application.Current.Properties["Name"] = userNewer.FirstName;
+                            Application.Current.Properties["Mail"] =   userNew.Mail;
+                            Application.Current.Properties["UserID"] = userNewID;
+                            Application.Current.Properties["Pass"] =   userNew.Pass;
+                            Application.Current.Properties["Name"] =   userNew.FirstName;
+                            await DisplayAlert("UserDetailsStored:", "App.Properties[Mail] = "+Application.Current.Properties["Mail"]+ "\r\n" + "Application.Current.Properties[UserID] =" + Application.Current.Properties["UserID"]+ "\r\n" + "Application.Current.Properties[Pass] = " +Application.Current.Properties["Pass"]+ "\r\n" + "Application.Current.Properties[Name] = " + Application.Current.Properties["Name"], "proceed");
+                                                                     
+
+
                             await Navigation.PushAsync(new UserHomePage());
                         }
                         else

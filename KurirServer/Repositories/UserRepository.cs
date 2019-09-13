@@ -1,5 +1,6 @@
 ﻿using KurirServer.Entities;
 using KurirServer.Intefaces;
+using KurirServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -33,9 +34,6 @@ namespace KurirServer.Repositories
             query = query.Where(u => u.Mail == Email);
             return await query.FirstOrDefaultAsync();
         }
-
-      
-        
 
         public async Task<bool> MakeUserActive(int id)
         {
@@ -89,6 +87,56 @@ namespace KurirServer.Repositories
                 Debug.WriteLine(ex.Message);
                 return false;
             }
+        }
+        public async Task<IEnumerable<ActiveCourierModel>> GetActiveCouriers()
+        {
+            try
+            {
+                List<ActiveCourierModel> activeCourierList = new List<ActiveCourierModel>();
+                var listOfActiveUsers = context.Users.Where(ur => ur.IsActive == true).ToList();
+                var listOfUserRoles = context.UserRoles.Where(ur => ur.RoleID == 4).ToList();
+                foreach (var item in listOfUserRoles)
+                {
+                    var usr = listOfActiveUsers.Where(u =>u.ActiveUserRoleID == item.UserRoleID).FirstOrDefault();
+                    if (usr != null)
+                    {
+                        ActiveCourierModel c = new ActiveCourierModel()
+                        {
+                            CourierFullName = usr.FirstName + " " + usr.LastName,
+                            CourierID = usr.UserID
+                        };
+                        activeCourierList.Add(c);
+                    }
+                }
+                if (activeCourierList.Count() > 0)
+                {
+                    List<Location> LocationList = context.Locations.ToList();
+                    if (LocationList != null)
+                        foreach (var item in activeCourierList)
+                        {
+                            Location l = LocationList.Where(loc => (loc.UserID == item.CourierID)&&(CompareDateTimeOffSEt(loc.DToffSet,DateTimeOffset.Now))).FirstOrDefault();
+                            if (l != null)
+                            {
+                                item.Lat = l.Latitude;
+                                item.Long = l.Longitude;
+                                item.Alt = l.Altitude;
+                                item.DToffSet = l.DToffSet;
+                            }
+
+                        }
+                    await context.SaveChangesAsync();
+                    return activeCourierList;
+                }
+               return null;
+            }
+            catch { return null; }
+        }
+        private bool CompareDateTimeOffSEt(DateTimeOffset dt1, DateTimeOffset dt2)
+        {
+            if ((dt1.Date == dt2.Date)&&(dt1.Hour==dt2.Hour)&&(dt2.Minute-5<dt1.Minute)&&( dt1.Minute<dt2.Minute))
+                return true;
+            else
+            return false;
         }
     }
 }

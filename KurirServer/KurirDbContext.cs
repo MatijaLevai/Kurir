@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace KurirServer
@@ -11,7 +12,6 @@ namespace KurirServer
     public class KurirDbContext:DbContext
     {
         private readonly IConfiguration configuration;
-
         public KurirDbContext(DbContextOptions options, IConfiguration configuration) : base(options)
         {
             this.configuration = configuration;
@@ -28,7 +28,9 @@ namespace KurirServer
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("Kurir"));
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        { 
+            //modelBuilder.Entity<User>().HasMany<UserRole>("ActiveUserRoleID");
+
             modelBuilder.Entity<PaymentType>().HasData(
                 new PaymentType()
                 { PaymentTypeID = 1,
@@ -91,6 +93,99 @@ namespace KurirServer
                     RoleID = 5,
                     RoleName = "Dispatcher"
                 });
+            modelBuilder.Entity<User>().HasData(
+                new User() {
+                    FirstName = "Marko",
+                    LastName = "Mirkovic",
+                    Phone = "023771642",
+                    Mail = "marko@gmail.com",
+                    Pass = "lol",
+                    RegistrationDate = DateTime.Now,
+                    UserID = 1
+
+                   
+
+            },
+                new User()
+                {
+                    FirstName = "Max",
+                    LastName = "Fast",
+                    Phone = "023771642",
+                    Mail = "max@gmail.com",
+                    Pass = "lol",
+                    RegistrationDate = DateTime.Now,
+                    UserID = 2
+
+
+
+                },
+                new User()
+                {
+                    FirstName = "Matija",
+                    LastName = "Levai",
+                    Phone = "023771642",
+                    Mail = "Matija@gmail.com",
+                    Pass = "lol",
+                    RegistrationDate = DateTime.Now,
+                    UserID = 3
+
+
+
+                });
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole { UserID = 3, RoleID = 1, UserRoleID = 1 },
+                new UserRole { UserID = 3, RoleID = 2, UserRoleID = 2 },
+                new UserRole { UserID = 3, RoleID = 3, UserRoleID = 3 },
+                new UserRole { UserID = 3, RoleID = 4, UserRoleID = 4 },
+                new UserRole { UserID = 3, RoleID = 5, UserRoleID = 5 },
+                new UserRole { UserID = 1, RoleID = 3, UserRoleID = 6 },
+                new UserRole { UserID = 2, RoleID = 3, UserRoleID = 7 },
+                new UserRole { UserID = 2, RoleID = 4, UserRoleID = 8 },
+                new UserRole { UserID = 2, RoleID = 5, UserRoleID = 9 }
+
+                );
+            modelBuilder.Entity<Delivery>().HasData(
+               new Delivery()
+               {
+                   UserID = 1,
+                   DispatcherID = 3,
+                   CourierID = 2,
+                   DeliveryTypeID = 1,
+                   DeliveryID = 1,
+                   NameStart = "Nikola",
+                   NameEnd = "marko",
+                   StartAddress = "Kosovska 1/2",
+                   EndAddress = "Temerinska 12/2",
+                   PhoneOfStart = "0612889085",
+                   PhoneOfEnd = "0623339992",
+                   ZoneEnd = 1,
+                   ZoneStart = 1,
+                   DeliveryPrice = 160,
+                   CreateTime = new DateTime(2019, 9, 10, 12, 14, 0),
+                   StartTime = new DateTime(2019, 9, 10, 12, 24, 0),
+                   EndTime = DateTime.Now
+               },
+               new Delivery()
+               {
+                   UserID = 1,
+                   DispatcherID = 3,
+                   CourierID = 2,
+                   DeliveryTypeID = 1,
+                   DeliveryID = 2,
+                   NameStart = "Nina",
+                   NameEnd = "marija",
+                   StartAddress = "Temerinska 1/2",
+                   EndAddress = "Kosovska 12/2",
+                   PhoneOfStart = "0612889085",
+                   PhoneOfEnd = "0623339992",
+                   ZoneEnd = 1,
+                   ZoneStart = 1,
+                   DeliveryPrice = 160,
+                   CreateTime = new DateTime(2019, 9, 10, 12, 14, 0),
+                   StartTime = new DateTime(2019, 9, 10, 12, 24, 0),
+                   EndTime = DateTime.Now
+               }
+        );
         }
         }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using KurirServer.Helpers;
+using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -21,9 +22,7 @@ namespace KurirServer
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -31,9 +30,13 @@ namespace KurirServer
             services.AddDbContext<KurirDbContext>();
             services.AddAutoMapper(typeof(Startup));
             services.AddScopedServices();
+            services.AddOData();
+            services.AddSignalR();
+            //services.AddRouting();
+          //  services.AddSwaggerGen({
+          //c=>c.SwaggerDoc("swg",new info)});
 
         }
-        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -46,9 +49,18 @@ namespace KurirServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseMvc(routeBuilder=> {
+                routeBuilder.EnableDependencyInjection();
+
+                routeBuilder.Expand().Select().OrderBy().Filter().Count();
+            });
+            app.UseSignalR(routes =>
+            {
+                //routes.MapHub<DeliveryHub>("/deliveryHub");
+            }
+            );
+
         }
     }
 }
