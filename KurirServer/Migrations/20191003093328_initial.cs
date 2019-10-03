@@ -60,7 +60,8 @@ namespace KurirServer.Migrations
                     Pass = table.Column<string>(nullable: false),
                     IsActive = table.Column<bool>(nullable: false),
                     RegistrationDate = table.Column<DateTime>(nullable: false),
-                    ActiveUserRoleID = table.Column<int>(nullable: false)
+                    ActiveUserRoleID = table.Column<int>(nullable: false),
+                    Procenat = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,6 +123,10 @@ namespace KurirServer.Migrations
                 {
                     DeliveryID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    DeliveryTypeID = table.Column<int>(nullable: false),
+                    PaymentTypeID = table.Column<int>(nullable: false),
+                    StartLocationID = table.Column<int>(nullable: true),
+                    EndLocationID = table.Column<int>(nullable: true),
                     UserID = table.Column<int>(nullable: false),
                     DispatcherID = table.Column<int>(nullable: false),
                     CourierID = table.Column<int>(nullable: false),
@@ -132,8 +137,6 @@ namespace KurirServer.Migrations
                     StartAddress = table.Column<string>(nullable: true),
                     EndAddress = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    StartLocationID = table.Column<int>(nullable: true),
-                    EndLocationID = table.Column<int>(nullable: true),
                     ZoneStart = table.Column<int>(nullable: false),
                     ZoneEnd = table.Column<int>(nullable: false),
                     WaitingInMinutes = table.Column<int>(nullable: false),
@@ -141,8 +144,6 @@ namespace KurirServer.Migrations
                     CreateTime = table.Column<DateTime>(nullable: false),
                     StartTime = table.Column<DateTime>(nullable: false),
                     EndTime = table.Column<DateTime>(nullable: false),
-                    DeliveryTypeID = table.Column<int>(nullable: false),
-                    PaymentTypeID = table.Column<int>(nullable: false),
                     DeliveryStatus = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -215,12 +216,12 @@ namespace KurirServer.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "UserID", "ActiveUserRoleID", "FirstName", "IsActive", "LastName", "Mail", "Pass", "Phone", "RegistrationDate" },
+                columns: new[] { "UserID", "ActiveUserRoleID", "FirstName", "IsActive", "LastName", "Mail", "Pass", "Phone", "Procenat", "RegistrationDate" },
                 values: new object[,]
                 {
-                    { 1, 0, "Marko", false, "Mirkovic", "marko@gmail.com", "lol", "023771642", new DateTime(2019, 9, 11, 19, 50, 32, 11, DateTimeKind.Local).AddTicks(882) },
-                    { 2, 0, "Max", false, "Fast", "max@gmail.com", "lol", "023771642", new DateTime(2019, 9, 11, 19, 50, 32, 14, DateTimeKind.Local).AddTicks(5265) },
-                    { 3, 0, "Matija", false, "Levai", "Matija@gmail.com", "lol", "023771642", new DateTime(2019, 9, 11, 19, 50, 32, 14, DateTimeKind.Local).AddTicks(5300) }
+                    { 1, 0, "Marko", false, "Mirkovic", "marko@gmail.com", "lol", "023771642", 0, new DateTime(2019, 10, 3, 11, 33, 27, 234, DateTimeKind.Local).AddTicks(956) },
+                    { 2, 0, "Max", false, "Fast", "max@gmail.com", "lol", "023771642", 60, new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9021) },
+                    { 3, 0, "Matija", false, "Levai", "Matija@gmail.com", "lol", "023771642", 70, new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9812) }
                 });
 
             migrationBuilder.InsertData(
@@ -228,8 +229,8 @@ namespace KurirServer.Migrations
                 columns: new[] { "DeliveryID", "CourierID", "CreateTime", "DeliveryPrice", "DeliveryStatus", "DeliveryTypeID", "Description", "DispatcherID", "EndAddress", "EndLocationID", "EndTime", "NameEnd", "NameStart", "PaymentTypeID", "PhoneOfEnd", "PhoneOfStart", "StartAddress", "StartLocationID", "StartTime", "UserID", "WaitingInMinutes", "ZoneEnd", "ZoneStart" },
                 values: new object[,]
                 {
-                    { 1, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, "Temerinska 12/2", null, new DateTime(2019, 9, 11, 19, 50, 32, 15, DateTimeKind.Local).AddTicks(5992), "marko", "Nikola", 1, "0623339992", "0612889085", "Kosovska 1/2", null, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0, 1, 1 },
-                    { 2, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, "Kosovska 12/2", null, new DateTime(2019, 9, 11, 19, 50, 32, 15, DateTimeKind.Local).AddTicks(6502), "marija", "Nina", 1, "0623339992", "0612889085", "Temerinska 1/2", null, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0, 1, 1 }
+                    { 1, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, "Temerinska 12/2", null, new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(7046), "marko", "Nikola", 1, "0623339992", "0612889085", "Kosovska 1/2", null, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0, 1, 1 },
+                    { 2, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, "Kosovska 12/2", null, new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(8406), "marija", "Nina", 2, "0623339992", "0612889085", "Temerinska 1/2", null, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0, 1, 1 }
                 });
 
             migrationBuilder.InsertData(

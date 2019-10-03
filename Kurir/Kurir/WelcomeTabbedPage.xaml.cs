@@ -212,9 +212,12 @@ namespace Kurir
                 //    link = Application.Current.Properties["ServerLink"].ToString();
                 //    break;
                 //case Device.UWP:
+                case Device.Android:
+                    BackgroundColor = Color.FromHex("#f5f5f5");
+                    BarTextColor = Color.FromHex("#f5f5f5");
+                    link = Application.Current.Properties["ServerLink"].ToString();
+                    break;
                 default:
-                    BarTextColor = Color.White;
-                    BackgroundColor = Color.FromHex("#666666");
                     link = Application.Current.Properties["ServerLink"].ToString();
                     break;
             }

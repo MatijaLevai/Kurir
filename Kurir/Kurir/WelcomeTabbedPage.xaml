@@ -41,10 +41,12 @@
         <ContentPage.Content>
             <StackLayout VerticalOptions="StartAndExpand" 
                 HorizontalOptions="StartAndExpand" Padding="0,25,10,0">
-                <Label FontSize="Medium"  Text="Welcome to EkoKurirApp." VerticalOptions="Center" HorizontalOptions="Center" />
-                <Label FontSize="Medium" Text="Login to continue." VerticalOptions="Center" HorizontalOptions="Center" />
-
-                <Label  x:Name="lblTxt"/>
+                <Label FontSize="Medium"  Text="Welcome to EkoKurirApp." VerticalOptions="Center" HorizontalOptions="Center" 
+                       />
+                <Label FontSize="Medium" Text="Login to continue." VerticalOptions="Center" HorizontalOptions="Center" 
+                       />
+                <Label  x:Name="lblTxt"
+                        />
                 <Grid HorizontalOptions="Center"  VerticalOptions="Center">
 
                     <Grid.ColumnDefinitions>
@@ -56,8 +58,9 @@
                     <Label  Grid.Row="1"  Grid.Column="0"  Text="Password:" HorizontalTextAlignment="End" FontSize="Medium"/>
                     <Entry BackgroundColor="#41A85F" Grid.Row="1"  Grid.Column="1"  x:Name="LoginPass" IsPassword="true" ></Entry>
                 </Grid>
-                <Button HorizontalOptions="CenterAndExpand" FontSize="Medium" x:Name="Login" Text=" Login " Clicked="Login_Clicked" BackgroundColor="#41A85F"></Button>
-               
+                <Button HorizontalOptions="CenterAndExpand" FontSize="Medium" x:Name="Login" Text=" Login " Clicked="Login_Clicked" BackgroundColor="#41A85F">
+                    
+                </Button>
             </StackLayout>
         </ContentPage.Content>
     </ContentPage>

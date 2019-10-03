@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.CourierPages.UncofirmedDeliveriesListPage">
+    <ContentPage.Content>
+        <ScrollView>
+                <StackLayout>
+                    <Label x:Name="Message" FontSize="Medium"/>
+                    <Grid RowSpacing="2" Padding="5" >
+                  
+
+                    <Grid.RowDefinitions>
+                            <RowDefinition Height="3*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            
+                            
+
+                    </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" Text="From"  HorizontalTextAlignment="Start"/>
+                        <Label Grid.Column="1" Text="To"  HorizontalTextAlignment="Start"/>
+                        <Label Grid.Column="2" Text="Price"  HorizontalTextAlignment="Start"/>
+                    <Label Grid.Column="3" Text="Ordered"  HorizontalTextAlignment="Start"/>
+
+
+                </Grid>
+                    <ListView x:Name="DeliveryList" ItemSelected="OnItemSelected" IsPullToRefreshEnabled="True" Refreshing="DeliveryList_Refreshing">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <ViewCell.View>
+                                        <Grid RowSpacing="2" Padding="5" >
+
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="3*"></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions ColumnSpacing="1" Padding="1">
+
+                                                <ColumnDefinition Width="2*"></ColumnDefinition>
+
+                                                <ColumnDefinition Width="2*"></ColumnDefinition>
+
+                                                <ColumnDefinition Width="*"></ColumnDefinition>
+
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+
+
+
+                                        </Grid.ColumnDefinitions>
+
+
+                                            <Label Grid.Column="0" Text="{Binding StartAddress}"  HorizontalTextAlignment="Start"/>
+
+                                            <Label Grid.Column="1" Text="{Binding EndAddress}"  HorizontalTextAlignment="Start"/>
+
+                                            <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
+
+                                            <Label Grid.Column="3" Text="{Binding CreateTime}"  HorizontalTextAlignment="Start"/>
+
+                                        
+
+                                    </Grid>
+                                    </ViewCell.View>
+                                <ViewCell.ContextActions>
+                                    <MenuItem IconImageSource="zeleni50.png" Text="Confirm"  Clicked="ConfirmAction" CommandParameter="{Binding DeliveryID}" ></MenuItem>
+                                    <MenuItem IconImageSource="zuti50.png"  Text="Decline" Clicked="DeclineAction" CommandParameter="{Binding DeliveryID}" IsDestructive="True"></MenuItem>
+                                </ViewCell.ContextActions>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
+            </ScrollView >
+        </ContentPage.Content>
+</ContentPage>

@@ -29,29 +29,43 @@ namespace Kurir.CourierPages
         {
             Location Newlocation = await locationService.GetCurrentLocation();
             if (Newlocation != LastKnownlocation)
-                LastKnownlocation = Newlocation;
-            if (await locationService.AddLocation(ParseLocation()) != null)
-                try { await locationService.AddLocation(ParseLocation()); }
-                catch (Exception ex) { throw ex; }
-        }
-        private LocationModel ParseLocation()
-        {
-            LocationModel l = new LocationModel()
             {
-                 UserID = Convert.ToInt32(Application.Current.Properties["UserID"].ToString()) ,
-                 DToffSet = LastKnownlocation.Timestamp,
-                 Longitude = LastKnownlocation.Longitude,
-                 Latitude = LastKnownlocation.Latitude,
-            };
-            double alt = 0;
-            try { alt = Convert.ToDouble(LastKnownlocation.Altitude); }
-            catch { alt = 0; }
-            if (alt >= 0)
-                l.Altitude = alt;// Convert.ToDouble(location.Altitude);
-                                 //l.Altitude =location.Altitude;
+                LastKnownlocation = Newlocation;
+                if (await locationService.AddLocation(ParseLastKnownLocation()) != null)
+                    try
+                    {
+                        await locationService.AddLocation(ParseLastKnownLocation());
+                        await DisplayAlert("Location update", "Location sent to server.", "ok");
+                    }
+                    catch (Exception ex) { throw ex; }
+            }
+            else
+            {
+                await DisplayAlert("Location", "Location stayed asame", "ok");
+            }
+        }
+        private LocationModel ParseLastKnownLocation()
+        {
+            try
+            {
+                LocationModel l = new LocationModel()
+                {
+                    UserID = Convert.ToInt32(Application.Current.Properties["UserID"].ToString()),
+                    DToffSet = LastKnownlocation.Timestamp,
+                    Longitude = LastKnownlocation.Longitude,
+                    Latitude = LastKnownlocation.Latitude,
+                };
+                double alt = 0;
+                try { alt = Convert.ToDouble(LastKnownlocation.Altitude); }
+                catch { alt = 0; }
+                if (alt >= 0)
+                    l.Altitude = alt;// Convert.ToDouble(location.Altitude);
+                                     //l.Altitude =location.Altitude;
 
-            l.DToffSet = LastKnownlocation.Timestamp;
-            return l;
+                l.DToffSet = LastKnownlocation.Timestamp;
+                return l;
+            }
+                catch(Exception ex){ Console.WriteLine(ex.InnerException + ex.Message); return new LocationModel(); };
         }
         protected async override void OnAppearing()
         {
@@ -75,7 +89,7 @@ namespace Kurir.CourierPages
                 try
                 {
 
-                    if (await locationService.AddLocation(ParseLocation()) != null)
+                    if (await locationService.AddLocation(ParseLastKnownLocation()) != null)
                         await DisplayAlert("Succses", "your location is sent to server.", "ok");
                     else
                     {

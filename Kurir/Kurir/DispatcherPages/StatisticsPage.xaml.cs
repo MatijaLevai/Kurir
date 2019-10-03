@@ -35,7 +35,13 @@ namespace Kurir.DispatcherPages
         protected async override void OnAppearing()
         {
             #region pickerRegion
-
+            //< StackLayout Orientation = "Horizontal"
+            //         Margin = "0, 0, 0, 30" >
+            //    < Label Text = "Include both days in total: "
+            //       VerticalOptions = "Center" />
+            //    < Switch x: Name = "includeSwitch"
+            //        Toggled = "OnSwitchToggled" />
+            //</ StackLayout >
             //Picker PaymentTypePicker = new Picker()
             //{
             //   ItemsSource = paymentTypes,
@@ -52,14 +58,13 @@ namespace Kurir.DispatcherPages
             //DeliveryTypePicker.ItemDisplayBinding = new Binding("DeliveryTypeName");
             #endregion
             try {
-                GetStatistics();
-                TitleLabel.Text = "Statistics of the entire business";
-                CalculateResult();
+                if (await GetStatistics())
+                { }
+                else throw new Exception("No data to show.");
+              
             }
             catch (Exception ex) { await DisplayAlert("Error",ex.Message,"ok"); }
-            ////
-            ///ODRADI PREPRAVKU LABELE ZA NEMA KURIRA I POPRAVI OBJECT REFERENCE NULL
-            ////
+           
 
 
             base.OnAppearing();
@@ -92,24 +97,68 @@ namespace Kurir.DispatcherPages
 
         }
 
-        private async void GetStatistics()
+        private async Task<bool> GetStatistics()
         {
-            var list = await deliveryService.GetAllDeliveries();
-            if (list!=null)
-           this.list = new List<DeliveryModel>(list);
-            
-
-        }
-        private void CalculateResult()
-        {
-            foreach (var item in list)
+            try
             {
-                Revenue += item.DeliveryPrice;
-                NumberOfDeliveries++;
+                List<StatisticUserCandDModel> listC = new List<StatisticUserCandDModel>();
+                List<StatisticUserCandDModel> ListD = new List<StatisticUserCandDModel>();
+                var lc = await deliveryService.GetStatisticsOfCouriers(startDatePicker.Date, endDatePicker.Date);
+                var ld = await deliveryService.GetStatisticsOfDispatchers(startDatePicker.Date, endDatePicker.Date);
+                if (lc != null)
+                { listC = new List<StatisticUserCandDModel>(lc); }
+                if (ld != null)
+                { ListD = new List<StatisticUserCandDModel>(ld); }
+                if (listC.Count() > 0)
+                {
+                    foreach (var item in listC)
+                    {
+                        if (ListD.Count() > 0)
+                        {
+                            var d = ListD.Where(i => i.UserID == item.UserID).FirstOrDefault();
+                            if (d != null)
+                            {
+                                item.Promet += d.Promet;
+                                item.PrihodOdPrometa += d.PrihodOdPrometa;
+                                item.BrojDostava += d.BrojDostava;
+                                ListD.Remove(d);
+                            }
+                        }
+
+
+                    }
+                }
+                if (ListD.Count > 0)
+                {
+                    foreach (var item in ListD)
+                    {
+                        listC.Add(item);
+                    }
+                }
+                var sveDostave = await deliveryService.GetAllDeliveries();
+
+                StatisticUserCandDModel fullStat = new StatisticUserCandDModel
+                {   ImePrezime= "Total",
+                    BrojDostava = sveDostave.Count(),
+                    Promet = Convert.ToDouble(sveDostave.Sum(x => x.DeliveryPrice)),
+                   
+                    PrometCash = Convert.ToDouble(sveDostave.Where(y=>y.DeliveryTypeID==1).Sum(x => x.DeliveryPrice)),
+                    PrometFaktura = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 2).Sum(x => x.DeliveryPrice)),
+                    PrometCupon = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 3).Sum(x => x.DeliveryPrice)),
+                };
+                fullStat.PrihodOdPrometa = fullStat.Promet;
+                foreach (var item in listC)
+                {
+                    fullStat.PrihodOdPrometa -= item.PrihodOdPrometa;
+                }
+                listC.Add(fullStat);
+                Statistics.ItemsSource = listC;
+                return true;
             }
-            RevenueLabel.Text = Revenue.ToString();
-            DeliveredLabel.Text = NumberOfDeliveries.ToString();
+           catch(Exception ex) {
+                return false; }
         }
+        
         
         void OnDateSelectedStart(object sender, DateChangedEventArgs args)
         {
@@ -117,7 +166,6 @@ namespace Kurir.DispatcherPages
             if (startDate.Date > endDatePicker.Date)
             { endDatePicker.Date = startDate.Date; }
             endDatePicker.MinimumDate = startDate.Date;
-            Recalculate();
         }
         void OnDateSelectedEnd(object sender, DateChangedEventArgs args)
         {
@@ -125,34 +173,13 @@ namespace Kurir.DispatcherPages
             if (endDate.Date < startDatePicker.Date)
             { startDatePicker.Date = endDate.Date; }
             startDatePicker.MaximumDate = endDate.Date;
-            Recalculate();
         }
 
-        void OnSwitchToggled(object sender, ToggledEventArgs args)
-        {
-            Recalculate();
-        }
+       
 
-        void Recalculate()
+        private async void ImageButton_Clicked(object sender, EventArgs e)
         {
-            TimeSpan timeSpan = endDatePicker.Date - startDatePicker.Date +
-                (includeSwitch.IsToggled ? TimeSpan.FromDays(1) : TimeSpan.Zero);
-
-            resultLabel.Text = String.Format("{0} day{1} between dates",
-                                             timeSpan.Days, timeSpan.Days == 1 ? "" : "s");
-        }
-
-        private void ImageButton_Clicked(object sender, EventArgs e)
-        {
-            //endDatePicker.Date
-            //startDatePicker.Date
-            IEnumerable<DeliveryModel> result;
-            if(includeSwitch.IsToggled)
-                result = list.Where(d=>(d.EndTime.Date>=startDatePicker.Date)&&(d.EndTime.Date<=endDatePicker.Date));
-            else       
-                result = list.Where(d => (d.EndTime.Date >= startDatePicker.Date) && (d.EndTime.Date < endDatePicker.Date));
-            list = new List<DeliveryModel>(result);
-            CalculateResult();
+            await GetStatistics();
         }
     }
 }

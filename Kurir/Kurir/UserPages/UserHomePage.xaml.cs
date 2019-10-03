@@ -19,6 +19,7 @@ namespace Kurir
             NavigationPage.SetHasBackButton(this, false);
             InitializeComponent();
             MasterPage.ListView.ItemSelected += ListView_ItemSelected;
+            
         }
 
         private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)

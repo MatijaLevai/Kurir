@@ -10,7 +10,8 @@ namespace KurirServer.Intefaces
      public interface IUserRepository
     {
         Task<User> GetUserAsync(int ID);
-       
+        IEnumerable<int> GetUsersIdsWithCourierRole();
+        IEnumerable<int> GetUsersIdsWithDispatcherRole();
         Task<User> GetUserByEmailAsync(string Email);
         Task<bool> MakeUserActive(int id);
         Task<bool> LogoutAsync(int id);

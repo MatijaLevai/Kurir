@@ -51,6 +51,27 @@ namespace Kurir.Persistance
             else return null;
 
         }
+
+        public async Task<IEnumerable<DeliveryModel>> GetCofirmedForCourier()
+        {
+            var uri = ServerLink + "/odataget?$filter=courierid eq " + Application.Current.Properties["UserID"] + " and deliverystatus eq 2";
+
+            var res = await _client.GetAsync(uri);
+
+            if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                if (res.Content != null)
+                {
+                    var resString = await res.Content.ReadAsStringAsync();
+
+                    return JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
+                }
+                else return null;
+
+            }
+            else return null;
+        }
+
         public async Task<IEnumerable<DeliveryModel>> GetDeliveriesForUser()
         {
             var uri = ServerLink + "/GetDeliveriesForUser/" + Application.Current.Properties["UserID"].ToString();
@@ -103,6 +124,54 @@ namespace Kurir.Persistance
             }
             else return null;
         }
-        
+        public async Task<IEnumerable<DeliveryModel>> GetUncofirmedForCourier()
+        {
+            var uri = ServerLink + "/odataget?$filter=courierid eq " + Application.Current.Properties["UserID"] + " and deliverystatus eq 1";
+                
+            var res = await _client.GetAsync(uri);
+           
+            if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                if (res.Content != null)
+                {
+                    var resString = await res.Content.ReadAsStringAsync();
+
+                    return JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
+                }
+                else return null;
+                
+            }
+            else return null;
+        }
+        public async Task<IEnumerable<StatisticUserCandDModel>> GetStatisticsOfCouriers(DateTime d1, DateTime d2)
+        {
+            string d11 = d1.Ticks.ToString();
+            string d22 = d2.Ticks.ToString();
+            var uri = ServerLink + "/StatisticsCouriers/" + d11+"/"+d22;
+            var res = await _client.GetAsync(uri);
+            if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<List<StatisticUserCandDModel>>(resString);
+
+            }
+            else return null;
+        }
+        public async Task<IEnumerable<StatisticUserCandDModel>> GetStatisticsOfDispatchers(DateTime d1, DateTime d2)
+        {
+            string d11 = d1.Ticks.ToString();
+            string d22 = d2.Ticks.ToString();
+            var uri = ServerLink + "/StatisticsDispatchers/" + d11 + "/" + d22;
+            var res = await _client.GetAsync(uri);
+            if (res.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+
+                return JsonConvert.DeserializeObject<List<StatisticUserCandDModel>>(resString);
+
+            }
+            else return null;
+        }
     }
 }

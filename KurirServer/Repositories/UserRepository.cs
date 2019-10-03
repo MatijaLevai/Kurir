@@ -26,6 +26,44 @@ namespace KurirServer.Repositories
             return await query.FirstOrDefaultAsync();
          
         }
+        public IEnumerable<int> GetUsersIdsWithCourierRole()
+        {
+            
+            IDictionary<int,string> keyValuePairs = new Dictionary<int, string>();
+            keyValuePairs.Add(4,"courier");
+            IQueryable<UserRole> userRoles = context.UserRoles.Where(r=>keyValuePairs.ContainsKey( r.RoleID));
+            List<int> usersIDs = new List<int>();
+            foreach (var item in userRoles)
+            {
+               var user =  context.Users.Where(u => u.UserID == item.UserID).First();
+                if (!usersIDs.Contains(user.UserID))
+                    usersIDs.Add(user.UserID);
+            }
+
+            //if(usersIDs.Count()>0) 
+            return usersIDs;
+
+
+        }
+        public IEnumerable<int> GetUsersIdsWithDispatcherRole()
+        {
+
+            IDictionary<int, string> keyValuePairs = new Dictionary<int, string>();
+            keyValuePairs.Add(5, "dispatcher");
+            IQueryable<UserRole> userRoles = context.UserRoles.Where(r => keyValuePairs.ContainsKey(r.RoleID));
+            List<int> usersIDs = new List<int>();
+            foreach (var item in userRoles)
+            {
+                var user = context.Users.Where(u => u.UserID == item.UserID).First();
+                if (!usersIDs.Contains(user.UserID))
+                    usersIDs.Add(user.UserID);
+            }
+
+            //if(usersIDs.Count()>0) 
+            return usersIDs;
+
+
+        }
 
         public async Task<User> GetUserByEmailAsync(string Email)
         {

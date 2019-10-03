@@ -3,67 +3,89 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.DispatcherPages.StatisticsPage">
     <ContentPage.Content>
+        <ScrollView>
         <StackLayout Margin="10">
-            <Label Text="Days Between Dates"
+            <Label Text="Statistics"
                Style="{DynamicResource TitleStyle}"
                Margin="0, 20"
-               HorizontalTextAlignment="Center" />
+               HorizontalTextAlignment="Center"/>
 
-            <Label Text="Start Date:" />
+                <Label Text="Start Date:"   VerticalOptions="Center" />
 
             <DatePicker x:Name="startDatePicker"
                     Format="D"
-                    Margin="30, 0, 0, 30"
                     DateSelected="OnDateSelectedStart"
-                        MinimumDate="{Binding New DateTime(2019,09.01)}"/>
+                        MinimumDate="2019.09.1"  VerticalOptions="Center"/>
 
-            <Label Text="End Date:" />
+                <Label Text="End Date:"   VerticalOptions="Center"  />
 
             <DatePicker x:Name="endDatePicker"
                     MinimumDate="{Binding Source={x:Reference startDatePicker},
                                           Path=Date}"
                     Format="D"
-                    Margin="30, 0, 0, 30"
                     DateSelected="OnDateSelectedEnd" 
-                    MaximumDate="{Binding new DateTime.Now}"/>
+                    MaximumDate="{Binding new DateTime.Now}"   VerticalOptions="Center"/>
+                
+                <ImageButton Source="zeleni50.png" Clicked="ImageButton_Clicked"></ImageButton>
 
-            <StackLayout Orientation="Horizontal"
-                     Margin="0, 0, 0, 30">
-                <Label Text="Include both days in total: "
-                   VerticalOptions="Center" />
-                <Switch x:Name="includeSwitch"
-                    Toggled="OnSwitchToggled" />
-            </StackLayout>
+                <Grid RowSpacing="2" Padding="5" >
 
-            <Label x:Name="resultLabel"
-               FontAttributes="Bold"
-               HorizontalTextAlignment="Center" />
-            <Label x:Name="TitleLabel"
-               FontAttributes="Bold"
-               HorizontalTextAlignment="Center" />
-            
-                                <Grid RowSpacing="2" Padding="5" >
-
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"></RowDefinition>
-                                        <RowDefinition Height="*"></RowDefinition>
-                                        
-                                    </Grid.RowDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"></ColumnDefinition>
                                         <ColumnDefinition Width="*"></ColumnDefinition>
                                         <ColumnDefinition Width="*"></ColumnDefinition>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Grid.Row="0" Grid.Column="0" Text="Delivered :"/>
-                                    <Label Grid.Row="0" Grid.Column="1" x:Name ="DeliveredLabel"  HorizontalTextAlignment="Start"/>
-                                    <Label Grid.Row="0" Grid.Column="2" Text="deliveries."/>
-                                    <Label Grid.Row="1" Grid.Column="0" Text="Revenue :"/>
-                                    <Label Grid.Row="1" Grid.Column="1" x:Name="RevenueLabel"  HorizontalTextAlignment="Start"/>
-                                    <Label Grid.Row="1" Grid.Column="2" Text="dinars."/>
-                                </Grid>
-            <ImageButton Source="zeleni50.png" Clicked="ImageButton_Clicked"></ImageButton>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Text="Full name"  HorizontalOptions="Center"/>
+                    <Label Grid.Row="0" Grid.Column="1" Text ="Delivered"  HorizontalOptions="Center"/>
+                    <Label Grid.Row="0" Grid.Column="2" Text="Bruto"  HorizontalOptions="Center"/>
+                    <Label Grid.Row="0" Grid.Column="3" Text="faktura"  HorizontalOptions="Center"/>
+                    <Label Grid.Row="0" Grid.Column="4" Text="cash"  HorizontalOptions="Center"/>
+                    <Label Grid.Row="0" Grid.Column="5" Text="cupon"  HorizontalOptions="Center"/>
+                    <Label Grid.Row="0" Grid.Column="6" Text="Neto"  HorizontalOptions="Center"/>
+                                    </Grid>
+            <ListView x:Name="Statistics">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                                <ViewCell.View>
+                                    <Grid RowSpacing="2" Padding="5">
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"></RowDefinition>
+
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding ImePrezime}" HorizontalOptions="Center"/>
+                                        <Label Grid.Row="0" Grid.Column="1" Text ="{Binding BrojDostava}" HorizontalOptions="Center"/>
+                                        <Label Grid.Row="0" Grid.Column="2" Text="{Binding Promet}" HorizontalOptions="Center"/>
+                                        <Label Grid.Row="0" Grid.Column="3" Text="{Binding PrometFaktura}" HorizontalOptions="Center"/>
+                                        <Label Grid.Row="0" Grid.Column="4" Text="{Binding PrometCash}" HorizontalOptions="Center"/>
+                                        <Label Grid.Row="0" Grid.Column="5" Text="{Binding PrometCupon}" HorizontalOptions="Center"/>
+                                        <Label Grid.Row="0" Grid.Column="6" Text="{Binding PrihodOdPrometa}" HorizontalOptions="Center"/>
+                                        </Grid>
+                                </ViewCell.View>
+                            </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+                   
                             
-        </StackLayout>                
-        
+        </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

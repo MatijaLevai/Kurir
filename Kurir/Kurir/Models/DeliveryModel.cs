@@ -48,5 +48,6 @@ namespace Kurir.Models
         public int DeliveryTypeID { get; set; }
         public int PaymentTypeID { get; set; }
         public string DeliveryStatusImageSource { get; set; }
+        public int DeliveryStatus { get; set; }
     }
 }

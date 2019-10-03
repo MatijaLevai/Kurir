@@ -18,7 +18,7 @@ namespace Kurir
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewDelivery : ContentPage
     {
-        #region Properties of Class New Delivery
+        #region Properties of partial Class New Delivery
         private SQLiteHelper liteHelper;
         private readonly HttpClient _client ;
         private readonly SQLiteAsyncConnection _connection;
@@ -27,7 +27,6 @@ namespace Kurir
         private DeliveryModel delivery;
         private DeliveryService deliveryService;
         #endregion
-
         Func<string, bool> selector = delegate (string c)
         {
             var s = c.ToCharArray();
@@ -71,7 +70,6 @@ namespace Kurir
             InitializeComponent();
         }
         #endregion
-
         protected override async void OnAppearing()
         {
             if (!await DelAndPayTypes())
@@ -102,7 +100,6 @@ namespace Kurir
 
 
         }
-
         private async void OrderDelivery_Clicked(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(StartPhone.Text) && !string.IsNullOrWhiteSpace(PhoneEnd.Text) &&  !string.IsNullOrWhiteSpace(StartName.Text) && !string.IsNullOrWhiteSpace(StartAddress.Text) && !string.IsNullOrWhiteSpace(NameEnd.Text) && !string.IsNullOrWhiteSpace(EndAddress.Text))
@@ -121,12 +118,13 @@ namespace Kurir
                     PaymentTypeID = PaymentTypePicker.SelectedIndex+1,
                     DeliveryTypeID = DeliverTypePicker.SelectedIndex+1,
                     Description = DeliveryDetails.Text,
-                    StartLocationID=1,
-                    EndLocationID=1,
+                    StartLocationID=2,
+                    EndLocationID=2,//zapamti da promenis u jedan pri sledecoj migraciji
                     ZoneEnd = 0,
                     ZoneStart = 0,
                     WaitingInMinutes=0,
                     DeliveryStatusImageSource="",
+                    DeliveryStatus = 0
                 };
                 if (delivery!=null)
                 { try
@@ -166,8 +164,6 @@ namespace Kurir
                     }
                 }
                 
-
-
             }
             else await DisplayAlert("Atention!", "Please fill Entrys correctly.", "ok?");
         }
@@ -202,7 +198,6 @@ namespace Kurir
             }
             
         }
-
         void Notify(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             var property = sender as Entry;
@@ -251,8 +246,7 @@ namespace Kurir
             }
             else
                 property.TextColor = Color.Red;
-        }
-        
+        }  
         void NotifyPicker(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             var property = sender as Picker;

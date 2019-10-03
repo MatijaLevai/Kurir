@@ -127,9 +127,13 @@ namespace Kurir.DispatcherPages
                     PaymentTypeID = PaymentTypePicker.SelectedIndex + 1,
                     DeliveryTypeID = DeliverTypePicker.SelectedIndex + 1,
                     CourierID = courier.CourierID,
-                    Description = DeliveryDetails.Text
+                    Description = DeliveryDetails.Text,
+                    DeliveryStatus = 1,
+                    StartLocationID = 2,
+                    EndLocationID = 2//seti se da zamenis sa 1 na sledecoj migraciji
 
-                };
+
+            };
                 if (DeliveryButton.Text.ToLower() == "order")
                 {
                     try
@@ -156,7 +160,7 @@ namespace Kurir.DispatcherPages
                     {
                         newDelivery.DeliveryID = delivery.DeliveryID;
                         newDelivery.UserID = delivery.UserID;
-
+                       
                         newDelivery.CreateTime = delivery.CreateTime;
 
                         try
@@ -166,6 +170,7 @@ namespace Kurir.DispatcherPages
                             {
                                 await DisplayAlert("All Done.", "Your order is placed.", "Confirm.");
                                 await Navigation.PopAsync();
+                                await Navigation.PushAsync(new DispatcherHomePage());
                             }
                             else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
                         }

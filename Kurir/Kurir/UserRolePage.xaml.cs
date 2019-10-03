@@ -59,7 +59,7 @@ namespace Kurir
                         await Navigation.PushAsync(new UserHomePage());
                         break;
                     case 4:
-                        await Navigation.PushAsync(new DefaultCourierPage());
+                        await Navigation.PushAsync(new DefaultCouriersPage());
                         break;
                     case 5:
                         await Navigation.PushAsync(new DispatcherHomePage());
@@ -116,19 +116,22 @@ namespace Kurir
                             break;
                     }
                 }
+                if (userroles.Count() == 1)
+                {
+                    var ur = userroles.First();
+                    if(ur.RoleID==3)
+                    await Navigation.PushAsync(new UserHomePage());
+                }
                 RoleList.ItemsSource = new ObservableCollection<UserRoleModel>(userroles);
              
             }
             catch (Exception ex)
-            {await DisplayAlert("Erro or not?",ex.Message,"ok?"); }
+            {await DisplayAlert("Error",ex.Message,"ok?"); }
             
         
             base.OnAppearing();
         }
 
-        private void ToolbarItem_Clicked(object sender, EventArgs e)
-        {
-
-        }
+        
     }
 }

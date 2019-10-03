@@ -1,15 +1,18 @@
 ﻿using KurirServer.Intefaces;
 using KurirServer.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
-
 namespace KurirServer.Helpers
 {
     public static class StartupHelpers
     {
+        
         public static void AddScopedServices(this IServiceCollection services)
         {
             services.AddScoped<IGeneralRepository, GeneralRepository>();

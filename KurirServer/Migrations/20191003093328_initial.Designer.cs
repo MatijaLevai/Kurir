@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KurirServer.Migrations
 {
     [DbContext(typeof(KurirDbContext))]
-    [Migration("20190911175032_initial")]
+    [Migration("20191003093328_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -96,10 +96,10 @@ namespace KurirServer.Migrations
                             DeliveryTypeID = 1,
                             DispatcherID = 3,
                             EndAddress = "Temerinska 12/2",
-                            EndTime = new DateTime(2019, 9, 11, 19, 50, 32, 15, DateTimeKind.Local).AddTicks(5992),
+                            EndTime = new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(7046),
                             NameEnd = "marko",
                             NameStart = "Nikola",
-                            PaymentTypeID = 0,
+                            PaymentTypeID = 1,
                             PhoneOfEnd = "0623339992",
                             PhoneOfStart = "0612889085",
                             StartAddress = "Kosovska 1/2",
@@ -119,10 +119,10 @@ namespace KurirServer.Migrations
                             DeliveryTypeID = 1,
                             DispatcherID = 3,
                             EndAddress = "Kosovska 12/2",
-                            EndTime = new DateTime(2019, 9, 11, 19, 50, 32, 15, DateTimeKind.Local).AddTicks(6502),
+                            EndTime = new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(8406),
                             NameEnd = "marija",
                             NameStart = "Nina",
-                            PaymentTypeID = 0,
+                            PaymentTypeID = 2,
                             PhoneOfEnd = "0623339992",
                             PhoneOfStart = "0612889085",
                             StartAddress = "Temerinska 1/2",
@@ -289,6 +289,8 @@ namespace KurirServer.Migrations
                     b.Property<string>("Phone")
                         .IsRequired();
 
+                    b.Property<int>("Procenat");
+
                     b.Property<DateTime>("RegistrationDate");
 
                     b.HasKey("UserID");
@@ -306,7 +308,8 @@ namespace KurirServer.Migrations
                             Mail = "marko@gmail.com",
                             Pass = "lol",
                             Phone = "023771642",
-                            RegistrationDate = new DateTime(2019, 9, 11, 19, 50, 32, 11, DateTimeKind.Local).AddTicks(882)
+                            Procenat = 0,
+                            RegistrationDate = new DateTime(2019, 10, 3, 11, 33, 27, 234, DateTimeKind.Local).AddTicks(956)
                         },
                         new
                         {
@@ -318,7 +321,8 @@ namespace KurirServer.Migrations
                             Mail = "max@gmail.com",
                             Pass = "lol",
                             Phone = "023771642",
-                            RegistrationDate = new DateTime(2019, 9, 11, 19, 50, 32, 14, DateTimeKind.Local).AddTicks(5265)
+                            Procenat = 60,
+                            RegistrationDate = new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9021)
                         },
                         new
                         {
@@ -330,7 +334,8 @@ namespace KurirServer.Migrations
                             Mail = "Matija@gmail.com",
                             Pass = "lol",
                             Phone = "023771642",
-                            RegistrationDate = new DateTime(2019, 9, 11, 19, 50, 32, 14, DateTimeKind.Local).AddTicks(5300)
+                            Procenat = 70,
+                            RegistrationDate = new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9812)
                         });
                 });
 

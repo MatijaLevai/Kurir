@@ -30,18 +30,26 @@ namespace Kurir.Persistance
         }
         public async Task<LocationModel> AddLocation(LocationModel l)
         {
-            
-            string uri = ServerLink + "AddLocation/";
-            string jsonLocation = JsonConvert.SerializeObject(l);
-            HttpContent httpContent = new StringContent(jsonLocation, Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync(uri,httpContent);
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return JsonConvert.DeserializeObject<LocationModel>(responseString);
+                if (l != null)
+                {
+                    string uri = ServerLink + "AddLocation/";
+                    string jsonLocation = JsonConvert.SerializeObject(l);
+                    HttpContent httpContent = new StringContent(jsonLocation, Encoding.UTF8, "application/json");
+                    var response = await _client.PostAsync(uri, httpContent);
+
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return JsonConvert.DeserializeObject<LocationModel>(responseString);
+                    }
+                    else return null;
+                }
+
+                else return null;
             }
-            else return null;
+            catch (Exception ex) { Console.WriteLine(ex.Message+ex.InnerException); return null; }
         }
         public async Task<Location> GetCurrentLocation()
         {

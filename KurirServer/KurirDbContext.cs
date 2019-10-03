@@ -28,7 +28,7 @@ namespace KurirServer
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("Kurir"));
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        { 
+        {
             //modelBuilder.Entity<User>().HasMany<UserRole>("ActiveUserRoleID");
 
             modelBuilder.Entity<PaymentType>().HasData(
@@ -95,17 +95,17 @@ namespace KurirServer
                 });
             modelBuilder.Entity<User>().HasData(
                 new User() {
-                    FirstName = "Marko",
-                    LastName = "Mirkovic",
+                    FirstName = "Default",
+                    LastName = "eko",
                     Phone = "023771642",
-                    Mail = "marko@gmail.com",
-                    Pass = "lol",
+                    Mail = "eko@eko.rs",
+                    Pass = "eko",
                     RegistrationDate = DateTime.Now,
                     UserID = 1
 
-                   
 
-            },
+
+                },
                 new User()
                 {
                     FirstName = "Max",
@@ -114,7 +114,8 @@ namespace KurirServer
                     Mail = "max@gmail.com",
                     Pass = "lol",
                     RegistrationDate = DateTime.Now,
-                    UserID = 2
+                    UserID = 2,
+                    Procenat = 60
 
 
 
@@ -127,7 +128,8 @@ namespace KurirServer
                     Mail = "Matija@gmail.com",
                     Pass = "lol",
                     RegistrationDate = DateTime.Now,
-                    UserID = 3
+                    UserID = 3,
+                    Procenat = 70
 
 
 
@@ -144,7 +146,14 @@ namespace KurirServer
                 new UserRole { UserID = 2, RoleID = 5, UserRoleID = 9 }
 
                 );
-            modelBuilder.Entity<Delivery>().HasData(
+            modelBuilder.Entity<Location>().HasData(
+                new Location { LocationID = 1,
+                    Latitude = 45.256872,
+                    Longitude = 19.849679,
+                    Altitude = 0,
+                    DToffSet = new DateTimeOffset(1,1,1,12,0,0,new TimeSpan(2,0,0))
+                } );
+           modelBuilder.Entity<Delivery>().HasData(
                new Delivery()
                {
                    UserID = 1,
@@ -163,7 +172,10 @@ namespace KurirServer
                    DeliveryPrice = 160,
                    CreateTime = new DateTime(2019, 9, 10, 12, 14, 0),
                    StartTime = new DateTime(2019, 9, 10, 12, 24, 0),
-                   EndTime = DateTime.Now
+                   EndTime = DateTime.Now,
+                   PaymentTypeID = 1,
+                   StartLocationID = 1,
+                   EndLocationID = 1
                },
                new Delivery()
                {
@@ -183,7 +195,10 @@ namespace KurirServer
                    DeliveryPrice = 160,
                    CreateTime = new DateTime(2019, 9, 10, 12, 14, 0),
                    StartTime = new DateTime(2019, 9, 10, 12, 24, 0),
-                   EndTime = DateTime.Now
+                   EndTime = DateTime.Now,
+                   PaymentTypeID = 2,
+                   StartLocationID = 1,
+                   EndLocationID = 1
                }
         );
         }
