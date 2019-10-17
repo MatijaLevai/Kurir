@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "634825454421",
+    "firebase_url": "https://ekoproject-abecb.firebaseio.com",
+    "project_id": "ekoproject-abecb",
+    "storage_bucket": "ekoproject-abecb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634825454421:android:84a7b3b32d3b0ed367b5dc",
+        "android_client_info": {
+          "package_name": "com.companyname.Kurir"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634825454421-m86h8m9rtmap6q4pb2lp0gta4aj4s3bc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOrMM9Kr_OB3q0cZ1PrM8XvTnex78tVN8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634825454421-m86h8m9rtmap6q4pb2lp0gta4aj4s3bc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

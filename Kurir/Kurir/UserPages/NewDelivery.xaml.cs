@@ -26,6 +26,7 @@ namespace Kurir
         private  List<DeliveryTypeModel> deliveryTypes;
         private DeliveryModel delivery;
         private DeliveryService deliveryService;
+        private AddressService addressService;
         #endregion
         Func<string, bool> selector = delegate (string c)
         {
@@ -50,23 +51,27 @@ namespace Kurir
         #region Constructors
         public NewDelivery()
         {
+
             _client = App.client;
             liteHelper = new SQLiteHelper();
             deliveryService = new DeliveryService();
+            addressService = new AddressService();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+            
             InitializeComponent();
         }
         public NewDelivery(DeliveryModel delivery)
         {
             _client = App.client;
+            liteHelper = new SQLiteHelper();
+            deliveryService = new DeliveryService();
+            addressService = new AddressService();
+            _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             if (delivery != null)
             {
                 this.delivery = delivery;
-                BindingContext = this.delivery;
+                this.BindingContext = this.delivery;
             }
-            liteHelper = new SQLiteHelper();
-            deliveryService = new DeliveryService();
-            _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             InitializeComponent();
         }
         #endregion
@@ -81,6 +86,27 @@ namespace Kurir
             }
             else
             {
+                try
+                {
+                           
+                    StartAddressGrid.BindingContext = this.delivery.StartAddress;
+                
+                    EndAddressGrid.BindingContext = this.delivery.EndAddress;
+                    /*if (delivery.StartAddressID >= 0)
+                     {
+                         this.startAddress = await addressService.GetAddressByIDAsync(delivery.StartAddressID);
+                         StartAddressGrid.BindingContext = this.StartAddress;
+                     }
+                     else if(delivery.EndAddressID >= 0)
+                     {
+                         this.endAddress = await addressService.GetAddressByIDAsync(delivery.EndAddressID);
+                         EndAddressGrid.BindingContext = this.endAddress;
+                     }*/
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("",ex.Message+ex.InnerException,"ok");
+                }
                 Titlelbl.Text = "Edit Delivery";
                 OrderDelivery.Text = "Edit";
             }
@@ -104,24 +130,33 @@ namespace Kurir
         {
             if (!string.IsNullOrWhiteSpace(StartPhone.Text) && !string.IsNullOrWhiteSpace(PhoneEnd.Text) &&  !string.IsNullOrWhiteSpace(StartName.Text) && !string.IsNullOrWhiteSpace(StartAddress.Text) && !string.IsNullOrWhiteSpace(NameEnd.Text) && !string.IsNullOrWhiteSpace(EndAddress.Text))
             {
+                FullAddressModel startAddress = new FullAddressModel
+                {
+                    UserID = Convert.ToInt32(App.Current.Properties["UserID"].ToString()),
+                    Phone = StartPhone.Text.Trim(),
+                    Name= StartName.Text.Trim(),
+                    Address = StartAddress.Text.Trim(),
+                    LocationID = 1,
+                    Zone= 1
 
+                };
+                FullAddressModel endAddress = new FullAddressModel
+                {
+                    UserID = Convert.ToInt32(App.Current.Properties["UserID"].ToString()),
+                    Phone = PhoneEnd.Text.Trim(),
+                    Name = NameEnd.Text.Trim(),
+                    Address = EndAddress.Text.Trim(),
+                    LocationID = 1,
+                    Zone = 1
+                };
                 DeliveryModel newDelivery = new DeliveryModel()
                 {
-                    PhoneOfStart = StartPhone.Text.Trim(),
-                    NameStart = StartName.Text.Trim(),
-                    StartAddress = StartAddress.Text.Trim(),
-                    NameEnd = NameEnd.Text.Trim(),
-                    PhoneOfEnd = PhoneEnd.Text.Trim(),
-                    EndAddress = EndAddress.Text.Trim(),
                     UserID = Convert.ToInt32(Application.Current.Properties["UserID"].ToString()),
                     CreateTime = DateTime.Now,
                     PaymentTypeID = PaymentTypePicker.SelectedIndex+1,
                     DeliveryTypeID = DeliverTypePicker.SelectedIndex+1,
                     Description = DeliveryDetails.Text,
-                    StartLocationID=2,
-                    EndLocationID=2,//zapamti da promenis u jedan pri sledecoj migraciji
-                    ZoneEnd = 0,
-                    ZoneStart = 0,
+                    
                     WaitingInMinutes=0,
                     DeliveryStatusImageSource="",
                     DeliveryStatus = 0
@@ -131,15 +166,33 @@ namespace Kurir
                     {
                         newDelivery.DeliveryPrice = delivery.DeliveryPrice;
                         newDelivery.CourierID = delivery.CourierID;
-                        newDelivery.ZoneStart = delivery.ZoneStart;
-                        newDelivery.ZoneEnd = delivery.ZoneEnd;
                         newDelivery.DispatcherID = delivery.DispatcherID;
                         newDelivery.DeliveryID = delivery.DeliveryID;
-
+                        if (CheckStartAddress(startAddress))
+                        {
+                            newDelivery.StartAddressID = this.delivery.StartAddress.FullAddressID;
+                        }
+                        else
+                        {
+                            object sAddress = await addressService.PostFullAddress(startAddress);
+                            
+                            newDelivery.StartAddressID = await TypeHelp(sAddress);
+                            
+                        }
+                        if (CheckEndAddress(endAddress))
+                        {
+                            newDelivery.EndAddressID = this.delivery.EndAddress.FullAddressID;
+                        }
+                        else
+                        {
+                            object eAddress = await addressService.PostFullAddress(endAddress);
+                            newDelivery.EndAddressID = await TypeHelp(eAddress);
+                        }
+                        
                         var deliveryUpdate = await deliveryService.EditDelivery(newDelivery);
                         if (deliveryUpdate != null)
                         {
-                            await DisplayAlert("All Done.", "Your order is placed.", "Confirm.");
+                            await DisplayAlert("All Done.", "Your order is edited.", "Confirm.");
                             await Navigation.PopAsync();
                         }
                         else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
@@ -149,11 +202,15 @@ namespace Kurir
                 else {
                     try
                     {
+                        object sAddress = await addressService.PostFullAddress(startAddress);
+                        object eAddress = await addressService.PostFullAddress(endAddress);
+                        newDelivery.StartAddressID =await TypeHelp(sAddress);
+                        newDelivery.EndAddressID = await TypeHelp(eAddress);
                         var delivery = await deliveryService.CreateDelivery(newDelivery);
                         if (delivery !=null)
                         {
                             await DisplayAlert("All Done.", "Your order is placed.", "Confirm.");
-                            await Navigation.PopAsync();
+                            await Navigation.PopToRootAsync();
                         }
                         else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
 
@@ -258,7 +315,53 @@ namespace Kurir
             else
                 property.BackgroundColor = Color.Red;
         }
+        private async Task<int> TypeHelp(object address)
+        {
+            switch (address)
+            {
+                case FullAddressModel model:
+                    return model.FullAddressID;
 
-
+                case string stringMsg:
+                    await DisplayAlert("Error", stringMsg, "ok");
+                    return 0;
+                default:
+                    await DisplayAlert("Error", "debug errror.", "ok");
+                    //await this.Navigation.PopAsync();
+                    return 0;
+            }
+        }
+        private bool CheckStartAddress(FullAddressModel startAddress)
+        {
+            if (startAddress.Name == this.delivery.StartAddress.Name)
+            {
+                if (startAddress.Address == this.delivery.StartAddress.Address)
+                {
+                    if (startAddress.Phone == this.delivery.StartAddress.Phone)
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                else return false;
+            }
+            else return false;
+        }
+        private bool CheckEndAddress(FullAddressModel endAddress)
+        {
+            if (endAddress.Name == this.delivery.EndAddress.Name)
+            {
+                if (endAddress.Address == this.delivery.EndAddress.Address)
+                {
+                    if (endAddress.Phone == this.delivery.EndAddress.Phone)
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                else return false;
+            }
+            else return false;
+        }
     }
 }

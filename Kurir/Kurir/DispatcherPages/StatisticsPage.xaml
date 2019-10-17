@@ -10,21 +10,28 @@
                Margin="0, 20"
                HorizontalTextAlignment="Center"/>
 
-                <Label Text="Start Date:"   VerticalOptions="Center" />
+                <Label Text="Start Date:"   VerticalOptions="Center" Style="{DynamicResource TitleStyle}"
+               Margin="0, 20"
+               HorizontalTextAlignment="Center"/>
 
             <DatePicker x:Name="startDatePicker"
                     Format="D"
                     DateSelected="OnDateSelectedStart"
-                        MinimumDate="2019.09.1"  VerticalOptions="Center"/>
+                        MinimumDate="2019.09.1"  VerticalOptions="Center" 
+               Margin="0, 20"
+               />
 
-                <Label Text="End Date:"   VerticalOptions="Center"  />
+                <Label Text="End Date:"   VerticalOptions="Center"  Style="{DynamicResource TitleStyle}"
+               Margin="0, 20"
+               HorizontalTextAlignment="Center"/>
 
             <DatePicker x:Name="endDatePicker"
                     MinimumDate="{Binding Source={x:Reference startDatePicker},
                                           Path=Date}"
                     Format="D"
                     DateSelected="OnDateSelectedEnd" 
-                    MaximumDate="{Binding new DateTime.Now}"   VerticalOptions="Center"/>
+                    MaximumDate="{Binding new DateTime.Now}"   VerticalOptions="Center" 
+               Margin="0, 20"/>
                 
                 <ImageButton Source="zeleni50.png" Clicked="ImageButton_Clicked"></ImageButton>
 

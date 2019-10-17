@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace KurirServer.Migrations
 {
-    public partial class initial : Migration
+    public partial class ADDRESSmig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -118,6 +118,36 @@ namespace KurirServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Addresses",
+                columns: table => new
+                {
+                    FullAddressID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserID = table.Column<int>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    LocationID = table.Column<int>(nullable: true),
+                    Zone = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Addresses", x => x.FullAddressID);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Locations_LocationID",
+                        column: x => x.LocationID,
+                        principalTable: "Locations",
+                        principalColumn: "LocationID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Deliveries",
                 columns: table => new
                 {
@@ -125,20 +155,12 @@ namespace KurirServer.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     DeliveryTypeID = table.Column<int>(nullable: false),
                     PaymentTypeID = table.Column<int>(nullable: false),
-                    StartLocationID = table.Column<int>(nullable: true),
-                    EndLocationID = table.Column<int>(nullable: true),
+                    StartAddressID = table.Column<int>(nullable: true),
+                    EndAddressID = table.Column<int>(nullable: true),
                     UserID = table.Column<int>(nullable: false),
                     DispatcherID = table.Column<int>(nullable: false),
                     CourierID = table.Column<int>(nullable: false),
-                    NameStart = table.Column<string>(nullable: true),
-                    NameEnd = table.Column<string>(nullable: true),
-                    PhoneOfStart = table.Column<string>(nullable: true),
-                    PhoneOfEnd = table.Column<string>(nullable: true),
-                    StartAddress = table.Column<string>(nullable: true),
-                    EndAddress = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    ZoneStart = table.Column<int>(nullable: false),
-                    ZoneEnd = table.Column<int>(nullable: false),
                     WaitingInMinutes = table.Column<int>(nullable: false),
                     DeliveryPrice = table.Column<decimal>(nullable: false),
                     CreateTime = table.Column<DateTime>(nullable: false),
@@ -156,10 +178,10 @@ namespace KurirServer.Migrations
                         principalColumn: "DeliveryTypeID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Deliveries_Locations_EndLocationID",
-                        column: x => x.EndLocationID,
-                        principalTable: "Locations",
-                        principalColumn: "LocationID",
+                        name: "FK_Deliveries_Addresses_EndAddressID",
+                        column: x => x.EndAddressID,
+                        principalTable: "Addresses",
+                        principalColumn: "FullAddressID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Deliveries_PaymentTypes_PaymentTypeID",
@@ -168,10 +190,10 @@ namespace KurirServer.Migrations
                         principalColumn: "PaymentTypeID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Deliveries_Locations_StartLocationID",
-                        column: x => x.StartLocationID,
-                        principalTable: "Locations",
-                        principalColumn: "LocationID",
+                        name: "FK_Deliveries_Addresses_StartAddressID",
+                        column: x => x.StartAddressID,
+                        principalTable: "Addresses",
+                        principalColumn: "FullAddressID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Deliveries_Users_UserID",
@@ -192,6 +214,7 @@ namespace KurirServer.Migrations
                     { 4, "Post service" }
                 });
 
+           
             migrationBuilder.InsertData(
                 table: "PaymentTypes",
                 columns: new[] { "PaymentTypeID", "PaymentTypeName" },
@@ -219,20 +242,10 @@ namespace KurirServer.Migrations
                 columns: new[] { "UserID", "ActiveUserRoleID", "FirstName", "IsActive", "LastName", "Mail", "Pass", "Phone", "Procenat", "RegistrationDate" },
                 values: new object[,]
                 {
-                    { 1, 0, "Marko", false, "Mirkovic", "marko@gmail.com", "lol", "023771642", 0, new DateTime(2019, 10, 3, 11, 33, 27, 234, DateTimeKind.Local).AddTicks(956) },
-                    { 2, 0, "Max", false, "Fast", "max@gmail.com", "lol", "023771642", 60, new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9021) },
-                    { 3, 0, "Matija", false, "Levai", "Matija@gmail.com", "lol", "023771642", 70, new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9812) }
+                    { 1, 0, "Default", false, "eko", "eko@eko.rs", "eko", "023771642", 0, new DateTime(2019, 10, 7, 21, 35, 3, 881, DateTimeKind.Local).AddTicks(319) },
+                    { 2, 0, "Max", false, "Fast", "max@gmail.com", "lol", "023771642", 60, new DateTime(2019, 10, 7, 21, 35, 3, 893, DateTimeKind.Local).AddTicks(430) },
+                    { 3, 0, "Matija", false, "Levai", "Matija@gmail.com", "lol", "023771642", 70, new DateTime(2019, 10, 7, 21, 35, 3, 893, DateTimeKind.Local).AddTicks(1243) }
                 });
-
-            migrationBuilder.InsertData(
-                table: "Deliveries",
-                columns: new[] { "DeliveryID", "CourierID", "CreateTime", "DeliveryPrice", "DeliveryStatus", "DeliveryTypeID", "Description", "DispatcherID", "EndAddress", "EndLocationID", "EndTime", "NameEnd", "NameStart", "PaymentTypeID", "PhoneOfEnd", "PhoneOfStart", "StartAddress", "StartLocationID", "StartTime", "UserID", "WaitingInMinutes", "ZoneEnd", "ZoneStart" },
-                values: new object[,]
-                {
-                    { 1, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, "Temerinska 12/2", null, new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(7046), "marko", "Nikola", 1, "0623339992", "0612889085", "Kosovska 1/2", null, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0, 1, 1 },
-                    { 2, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, "Kosovska 12/2", null, new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(8406), "marija", "Nina", 2, "0623339992", "0612889085", "Temerinska 1/2", null, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0, 1, 1 }
-                });
-
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "UserRoleID", "RoleID", "UserID" },
@@ -248,6 +261,41 @@ namespace KurirServer.Migrations
                     { 4, 4, 3 },
                     { 5, 5, 3 }
                 });
+            migrationBuilder.InsertData(
+               table: "Locations",
+               columns: new[] { "LocationID", "Altitude", "DToffSet", "Latitude", "Longitude", "UserID" },
+               values: new object[] { 1, 0.0, new DateTimeOffset(new DateTime(1, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)), 45.256872000000001, 19.849678999999998, 1 });
+
+            migrationBuilder.InsertData(
+                table: "Addresses",
+                columns: new[] { "FullAddressID", "Address", "LocationID", "Name", "Phone", "UserID", "Zone" },
+                values: new object[,]
+                {
+                    { 1, "Kosovska 1/2", 1, "Nikola", "0612889085", 1, 1 },
+                    { 2, "Temerinska 1/2", 1, "Marko", "0612889085", 1, 1 }
+                });
+
+            
+
+            migrationBuilder.InsertData(
+                table: "Deliveries",
+                columns: new[] { "DeliveryID", "CourierID", "CreateTime", "DeliveryPrice", "DeliveryStatus", "DeliveryTypeID", "Description", "DispatcherID", "EndAddressID", "EndTime", "PaymentTypeID", "StartAddressID", "StartTime", "UserID", "WaitingInMinutes" },
+                values: new object[] { 1, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, 2, new DateTime(2019, 10, 7, 21, 35, 3, 897, DateTimeKind.Local).AddTicks(287), 1, 1, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0 });
+
+            migrationBuilder.InsertData(
+                table: "Deliveries",
+                columns: new[] { "DeliveryID", "CourierID", "CreateTime", "DeliveryPrice", "DeliveryStatus", "DeliveryTypeID", "Description", "DispatcherID", "EndAddressID", "EndTime", "PaymentTypeID", "StartAddressID", "StartTime", "UserID", "WaitingInMinutes" },
+                values: new object[] { 2, 2, new DateTime(2019, 9, 10, 12, 14, 0, 0, DateTimeKind.Unspecified), 160m, 0, 1, null, 3, 2, new DateTime(2019, 10, 7, 21, 35, 3, 897, DateTimeKind.Local).AddTicks(3302), 2, 1, new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified), 1, 0 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_LocationID",
+                table: "Addresses",
+                column: "LocationID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_UserID",
+                table: "Addresses",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Deliveries_DeliveryTypeID",
@@ -255,9 +303,9 @@ namespace KurirServer.Migrations
                 column: "DeliveryTypeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Deliveries_EndLocationID",
+                name: "IX_Deliveries_EndAddressID",
                 table: "Deliveries",
-                column: "EndLocationID");
+                column: "EndAddressID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Deliveries_PaymentTypeID",
@@ -265,9 +313,9 @@ namespace KurirServer.Migrations
                 column: "PaymentTypeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Deliveries_StartLocationID",
+                name: "IX_Deliveries_StartAddressID",
                 table: "Deliveries",
-                column: "StartLocationID");
+                column: "StartAddressID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Deliveries_UserID",
@@ -302,13 +350,16 @@ namespace KurirServer.Migrations
                 name: "DeliveryTypes");
 
             migrationBuilder.DropTable(
-                name: "Locations");
+                name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "PaymentTypes");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Users");

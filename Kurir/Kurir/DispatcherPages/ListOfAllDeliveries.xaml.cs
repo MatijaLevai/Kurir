@@ -34,7 +34,7 @@ namespace Kurir.DispatcherPages
                 if (await GetAllDeliveriesFromServer())
                     Message.IsVisible = true;
             }
-            catch (Exception ex) { await DisplayAlert("|Connection Error!",ex.Message+ex.InnerException,"ok"); };
+            catch (Exception ex) { await DisplayAlert("Connection Error!",ex.Message+ex.InnerException,"ok"); };
             base.OnAppearing();
         }
 
@@ -45,7 +45,7 @@ namespace Kurir.DispatcherPages
             {
                 listOfDeliveries = new List<DeliveryModel>(list);
                 //await _connection.DropTableAsync<DeliveryModel>();
-                await _connection.CreateTableAsync<DeliveryModel>();
+               // await _connection.CreateTableAsync<DeliveryModel>();
 
                 foreach (var item in listOfDeliveries)
                 {
@@ -63,11 +63,11 @@ namespace Kurir.DispatcherPages
                         item.DeliveryStatusImageSource = "zuti50.png";
                     }
 
-                    int x = await _connection.UpdateAsync(item);
-                    if (x == 0)
-                    {
-                        await _connection.InsertAsync(item);
-                    }
+                    //int x = await _connection.UpdateAsync(item);
+                    //if (x == 0)
+                    //{
+                    //    await _connection.InsertAsync(item);
+                    //}
 
 
                 }

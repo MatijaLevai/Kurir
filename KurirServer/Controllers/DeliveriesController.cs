@@ -22,10 +22,12 @@ namespace KurirServer.Controllers
         IDeliveryRepository deliveryRepository;
         IGeneralRepository generalRepository;
         IUserRepository userRepository;
+        IAddressRepository addressRepository;
         IMapper mapper;
         public DeliveriesController
-        (IGeneralRepository generalRepository, IMapper mapper,IDeliveryRepository deliveryRepository, IUserRepository userRepository)
+        (IGeneralRepository generalRepository, IMapper mapper,IDeliveryRepository deliveryRepository, IUserRepository userRepository,IAddressRepository addressRepository)
         {
+            this.addressRepository = addressRepository;
             this.userRepository = userRepository;
             this.deliveryRepository = deliveryRepository;
             this.generalRepository = generalRepository;
@@ -91,12 +93,10 @@ namespace KurirServer.Controllers
 
         }
 
-
-
         [EnableQuery]
         [Route("GetDeliveries")]
         [HttpGet]
-        public IEnumerable<Delivery> GetDeliveries(int Userid)
+        public IEnumerable<Delivery> GetDeliveries()
         {
             var d = (IEnumerable<Delivery>) deliveryRepository.ODataGet();
             if (d != null)
@@ -110,7 +110,9 @@ namespace KurirServer.Controllers
         {
             try
             {
+                
                 var deliveries =  deliveryRepository.GetAllDeliveriesAsUser(Userid);
+                
                 if (deliveries!=null)
                     return Ok(deliveries);
                 else
@@ -150,21 +152,17 @@ namespace KurirServer.Controllers
                             case 1:
                                 sm.PrometCash +=delivery.DeliveryPrice;
                                 break;
-                            //kupon
+                            //faktura
                             case 2:
                                 sm.PrometFaktura += delivery.DeliveryPrice;
                                 break;
+                            //kupon
                             case 3:
                                 sm.PrometCupon += delivery.DeliveryPrice;
                                 break;
                             default:
                                 break;
                         }
-                       
-                        
-                        
-    
-
                     }
                     sm.BrojDostava = deliveries.Count();
                     sm.PrihodOdPrometa = sm.Promet * sm.Procenat/100;
@@ -207,10 +205,11 @@ namespace KurirServer.Controllers
                             case 1:
                                 sm.PrometCash += delivery.DeliveryPrice;
                                 break;
-                            //kupon
+                            //faktura odnosno preko racuna
                             case 2:
                                 sm.PrometFaktura += delivery.DeliveryPrice;
                                 break;
+                            //kupon
                             case 3:
                                 sm.PrometCupon += delivery.DeliveryPrice;
                                 break;
@@ -220,7 +219,7 @@ namespace KurirServer.Controllers
 
                     }
                     sm.BrojDostava = deliveries.Count();
-                    sm.PrihodOdPrometa = deliveries.Count()*25;
+                    sm.PrihodOdPrometa = sm.BrojDostava * 25;
                     list.Add(sm);
 
                 }

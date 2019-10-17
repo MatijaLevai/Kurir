@@ -24,12 +24,15 @@ namespace Kurir.DispatcherPages
         private List<ActiveCourierModel> activeCouriers;
         private DeliveryModel delivery;
         private DeliveryService deliveryService;
+        private AddressService addressService;
         private UserService userService;
         private List<string> streets;
+        private FullAddressModel startAddress;
+        private FullAddressModel endAddress;
         public NewDeliveryDispatchPage()
         {
             userService = new UserService();
-           
+            addressService = new AddressService();
             liteHelper = new SQLiteHelper();
             deliveryService = new DeliveryService();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
@@ -37,15 +40,17 @@ namespace Kurir.DispatcherPages
         }
         public NewDeliveryDispatchPage(DeliveryModel delivery)
         {
-            if (delivery != null)
-            {
-                this.delivery = delivery;
-            }
-
+            
+            addressService = new AddressService();
             userService = new UserService();
             liteHelper = new SQLiteHelper();
             deliveryService = new DeliveryService();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+            if (delivery != null)
+            {
+                this.delivery = delivery;
+               
+            }
             InitializeComponent();
         }
         Func<string, bool> selector = delegate (string c)
@@ -70,20 +75,22 @@ namespace Kurir.DispatcherPages
         };
 
         private async Task FillFormAsync()
-        { 
-           this.Titlelbl.Text = "Update Delivery ";
-           StartName.Text = delivery.NameStart;
-           StartAddress.Text = delivery.StartAddress;
-           StartPhone.Text = delivery.PhoneOfStart;
-            if(delivery.ZoneStart>0)
-                ZoneStartSteplbl.Text = "4. Zone Start : "+ delivery.ZoneStart.ToString();
+        {
+           // this.startAddress = await addressService.GetAddressByIDAsync(delivery.StartAddressID);
+           // this.endAddress = await addressService.GetAddressByIDAsync(delivery.EndAddressID);
+            this.Titlelbl.Text = "Update Delivery ";
+           StartName.Text = delivery.StartAddress.Name;
+           StartAddress.Text = delivery.StartAddress.Address;
+           StartPhone.Text = delivery.StartAddress.Phone;
+            if(startAddress.Zone>0)
+                ZoneStartSteplbl.Text = "4. Zone Start : "+ delivery.StartAddress.Zone.ToString();
             else
                 ZoneStartSteplbl.Text = "4. Zone Start : 1";
-            NameEnd.Text = delivery.NameEnd;
-           EndAddress.Text = delivery.EndAddress;
-           PhoneEnd.Text = delivery.PhoneOfEnd;
-            if(delivery.ZoneEnd>0)
-                ZoneEndSteplbl.Text =" 8.Zone End: "+delivery.ZoneEnd.ToString();
+            NameEnd.Text = delivery.EndAddress.Name;
+           EndAddress.Text = delivery.EndAddress.Address;
+           PhoneEnd.Text = delivery.EndAddress.Phone;
+            if(endAddress.Zone>0)
+                ZoneEndSteplbl.Text =" 8.Zone End: " + delivery.EndAddress.Zone.ToString();
             else
                 ZoneEndSteplbl.Text = "8.Zone End: 1";
             Price.Text =delivery.DeliveryPrice.ToString();
@@ -109,28 +116,40 @@ namespace Kurir.DispatcherPages
             if (!string.IsNullOrWhiteSpace(StartPhone.Text) && !string.IsNullOrWhiteSpace(PhoneEnd.Text) && !string.IsNullOrWhiteSpace(StartName.Text) && !string.IsNullOrWhiteSpace(StartAddress.Text) && !string.IsNullOrWhiteSpace(NameEnd.Text) && !string.IsNullOrWhiteSpace(EndAddress.Text) && !string.IsNullOrWhiteSpace(Price.Text))
             {
                 ActiveCourierModel courier = CourierPicker.SelectedItem as ActiveCourierModel;
+                FullAddressModel startAddress = new FullAddressModel
+                {
+                    UserID = Convert.ToInt32(App.Current.Properties["UserID"].ToString()),
+                    Phone = StartPhone.Text.Trim(),
+                    Name = StartName.Text.Trim(),
+                    Address = StartAddress.Text.Trim(),
+                    LocationID = 1,
+                    Zone = Convert.ToInt32(ZoneStart.Value)
 
+                };
+                FullAddressModel endAddress = new FullAddressModel
+                {
+                    UserID = Convert.ToInt32(App.Current.Properties["UserID"].ToString()),
+                    Phone = PhoneEnd.Text.Trim(),
+                    Name = NameEnd.Text.Trim(),
+                    Address = EndAddress.Text.Trim(),
+                    LocationID = 1,
+                    Zone = Convert.ToInt32(ZoneEnd.Value)
+                };
                 DeliveryModel newDelivery = new DeliveryModel()
                 {
-                    PhoneOfStart = StartPhone.Text.Trim(),
-                    NameStart = StartName.Text.Trim(),
-                    StartAddress = StartAddress.Text.Trim(),
-                    NameEnd = NameEnd.Text.Trim(),
-                    PhoneOfEnd = PhoneEnd.Text.Trim(),
-                    EndAddress = EndAddress.Text.Trim(),
+                    
                     UserID = Convert.ToInt32(Application.Current.Properties["UserID"].ToString()),
                     DispatcherID = Convert.ToInt32(Application.Current.Properties["UserID"].ToString()),
                     CreateTime = DateTime.Now,
                     DeliveryPrice = Convert.ToDecimal(Price.Text),
-                    ZoneStart = Convert.ToInt32(ZoneStart.Value),
-                    ZoneEnd = Convert.ToInt32(ZoneEnd.Value),
+                  
                     PaymentTypeID = PaymentTypePicker.SelectedIndex + 1,
                     DeliveryTypeID = DeliverTypePicker.SelectedIndex + 1,
                     CourierID = courier.CourierID,
                     Description = DeliveryDetails.Text,
                     DeliveryStatus = 1,
-                    StartLocationID = 2,
-                    EndLocationID = 2//seti se da zamenis sa 1 na sledecoj migraciji
+                    StartAddressID = 2,
+                    EndAddressID = 2
 
 
             };
@@ -158,11 +177,31 @@ namespace Kurir.DispatcherPages
                 {
                     if (delivery != null)
                     {
+                        
                         newDelivery.DeliveryID = delivery.DeliveryID;
                         newDelivery.UserID = delivery.UserID;
                        
                         newDelivery.CreateTime = delivery.CreateTime;
+                        if (checkStartAddress(startAddress))
+                        {
+                            newDelivery.StartAddressID = delivery.StartAddressID;
+                        }
+                        else
+                        {
+                            object sAddress = await addressService.PostFullAddress(startAddress);
 
+                            newDelivery.StartAddressID = await TypeHelp(sAddress);
+
+                        }
+                        if (checkEndAddress(endAddress))
+                        {
+                            newDelivery.EndAddressID = delivery.EndAddressID;
+                        }
+                        else
+                        {
+                            object eAddress = await addressService.PostFullAddress(endAddress);
+                            newDelivery.EndAddressID = await TypeHelp(eAddress);
+                        }
                         try
                         {
                             var delivery = await deliveryService.EditDelivery(newDelivery);
@@ -398,6 +437,53 @@ namespace Kurir.DispatcherPages
             EndAddress.Text = x.SelectedItem.ToString();
             EndAddress.Focus();
         }
-       
+        private bool checkStartAddress(FullAddressModel startAddress)
+        {
+            if (startAddress.Name == this.startAddress.Name)
+            {
+                if (startAddress.Address == this.startAddress.Address)
+                {
+                    if (startAddress.Phone == this.startAddress.Phone)
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                else return false;
+            }
+            else return false;
+        }
+        private bool checkEndAddress(FullAddressModel endAddress)
+        {
+            if (endAddress.Name == this.endAddress.Name)
+            {
+                if (endAddress.Address == this.endAddress.Address)
+                {
+                    if (endAddress.Phone == this.endAddress.Phone)
+                    {
+                        return true;
+                    }
+                    else return false;
+                }
+                else return false;
+            }
+            else return false;
+        }
+        private async Task<int> TypeHelp(object address)
+        {
+            switch (address)
+            {
+                case FullAddressModel model:
+                    return model.FullAddressID;
+
+                case string stringMsg:
+                    await DisplayAlert("Error", stringMsg, "ok");
+                    return 0;
+                default:
+                    await DisplayAlert("Error", "debug errror.", "ok");
+                    //await this.Navigation.PopAsync();
+                    return 0;
+            }
+        }
     }
 }

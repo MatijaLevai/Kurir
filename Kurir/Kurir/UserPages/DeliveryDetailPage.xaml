@@ -11,22 +11,22 @@
                     <Label  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"   FontSize="Medium"  Text="Delivery Details : " ></Label>
 
                     <Label Grid.Row="1" Grid.Column="0" FontSize="Medium"   Text="1. Name of sender: "></Label>
-                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding NameStart}" FontSize="Medium"></Label>
+                        <Label BindingContext="{Binding StartAddress}" Grid.Row="1" Grid.Column="1" Text="{Binding Name}" FontSize="Medium"></Label>
 
                     <Label Grid.Row="2" Grid.Column="0" FontSize="Medium"  Text="2.Senders Phone Number :" ></Label>
-                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding PhoneOfStart}" FontSize="Medium"  ></Label>
+                        <Label  BindingContext="{Binding StartAddress}" Grid.Row="2" Grid.Column="1" Text="{Binding Phone}" FontSize="Medium"  ></Label>
 
                     <Label Grid.Row="3" Grid.Column="0" FontSize="Medium"  Text="3.Senders Address :"/>
-                    <Label Grid.Row="3" Grid.Column="1" Text="{Binding StartAddress}" FontSize="Medium"></Label>
+                        <Label BindingContext="{Binding StartAddress}" Grid.Row="3" Grid.Column="1" Text="{Binding Address}" FontSize="Medium"></Label>
                      
                     <Label  Grid.Row="4" Grid.Column="0" FontSize="Medium" Text="4. Name of recipient."/>
-                    <Label Grid.Row="4" Grid.Column="1"  Text="{Binding NameEnd}" FontSize="Medium"></Label>
+                        <Label BindingContext="{Binding EndAddress}" Grid.Row="4" Grid.Column="1"  Text="{Binding Name}" FontSize="Medium"></Label>
 
                     <Label Grid.Row="5" Grid.Column="0" FontSize="Medium" Text="5.Recipients Phone Number : "/>
-                    <Label Grid.Row="5" Grid.Column="1" Text="{Binding PhoneOfEnd}" FontSize="Medium" ></Label>
+                        <Label BindingContext="{Binding EndAddress}" Grid.Row="5" Grid.Column="1" Text="{Binding Phone}" FontSize="Medium" ></Label>
 
                     <Label Grid.Row="6" Grid.Column="0" FontSize="Medium" Text="6.Recipients Address : " />
-                    <Label Grid.Row="6" Grid.Column="1" Text="{Binding EndAddress}" FontSize="Medium" ></Label>
+                        <Label BindingContext="{Binding EndAddress}" Grid.Row="6" Grid.Column="1" Text="{Binding Address}" FontSize="Medium" ></Label>
                         
                     <Label Grid.Row="7" Grid.Column="0" FontSize="Medium" Text="7. Payment type:"/>
                     <Label Grid.Row="7" Grid.Column="1" FontSize="Medium" x:Name="PaymentType"  ></Label>

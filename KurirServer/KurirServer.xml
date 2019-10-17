@@ -4,6 +4,9 @@
         <name>KurirServer</name>
     </assembly>
     <members>
+        <member name="M:KurirServer.Controllers.AddressesController.GetAddressesByUserID(System.Int32)">
+            GetByUserID/" + UserID
+        </member>
         <member name="M:KurirServer.Controllers.UsersController.GetUserByEmail(System.String)">
             <summary>
             accepts email of user and check if ther is one in db, return true if there is not one, and false if it finds one

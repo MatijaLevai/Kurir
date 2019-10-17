@@ -41,14 +41,21 @@ namespace KurirServer.Repositories
         {
             if (DispatchID <= 0)
             {
-                return context.Deliveries.ToList();
+                return null;
             }
             else
             {
-                return context.Deliveries.ToList().Where(d => d.DispatcherID == DispatchID);
+                IEnumerable<Delivery> returnD = context.Deliveries.ToList().Where(d => d.DispatcherID == DispatchID);
+                foreach (var item in returnD)
+                {
+                    item.StartAddress = context.Addresses.Where(a => a.FullAddressID == item.StartAddressID).First();
+                    item.EndAddress = context.Addresses.Where(a => a.FullAddressID == item.EndAddressID).First();
+                }
+                return returnD;
+
             }
-                           
-            }
+
+        }
 
         public IEnumerable<Delivery> GetAllDeliveriesAsUser(int UserID = 0)
         {
@@ -58,7 +65,14 @@ namespace KurirServer.Repositories
             }
             else
             {
-                return  context.Deliveries.ToList().Where(d => d.UserID == UserID); ;
+                IEnumerable<Delivery> returnD = context.Deliveries.ToList().Where(d => d.UserID == UserID);
+                foreach (var item in returnD)
+                {
+                    item.StartAddress = context.Addresses.Where(a => a.FullAddressID == item.StartAddressID).First();
+                    item.EndAddress = context.Addresses.Where(a => a.FullAddressID == item.EndAddressID).First();
+                }
+                return returnD;
+
             }
 
         }
@@ -89,7 +103,14 @@ namespace KurirServer.Repositories
             if (deliveryTypeID > 0)
             {
                 IQueryable<Delivery> q = context.Deliveries;
-                return q.Where(d => (d.DeliveryTypeID == deliveryTypeID));
+                IEnumerable<Delivery> returnD =  q.Where(d => (d.DeliveryTypeID == deliveryTypeID));
+                // context.Deliveries.ToList().Where(d => d.DispatcherID == DispatchID);
+                foreach (var item in returnD)
+                {
+                    item.StartAddress = context.Addresses.Where(a => a.FullAddressID == item.StartAddressID).First();
+                    item.EndAddress = context.Addresses.Where(a => a.FullAddressID == item.EndAddressID).First();
+                }
+                return returnD;
             }
             else
             {
@@ -123,15 +144,22 @@ namespace KurirServer.Repositories
 
         public IEnumerable<Delivery> GetUncofirmedForDispatcher()
         {
-                   
-           return context.Deliveries.ToList().Where(d => (d.DispatcherID == 0)&&(d.StartTime<d.CreateTime));
+            IEnumerable<Delivery> returnD = context.Deliveries.ToList().Where(d => (d.DispatcherID == 0) && (d.StartTime < d.CreateTime));
+            foreach (var item in returnD)
+            {
+                item.StartAddress = context.Addresses.Where(a => a.FullAddressID == item.StartAddressID).First();
+                item.EndAddress = context.Addresses.Where(a => a.FullAddressID == item.EndAddressID).First();
+            }
+            return returnD;
                     
 
 
         }
+
+        
         public IEnumerable<Delivery> GetUncofirmedForCourier(int CourierID = 0)
         {
-            if (CourierID<=0)
+            if(CourierID <= 0)
             {
                 return context.Deliveries.ToList();
             }
@@ -141,6 +169,9 @@ namespace KurirServer.Repositories
                 return context.Deliveries.ToList().Where(d => d.CourierID == CourierID); ;
             }
         }
+
+        
+        
 
 
         /*    public async Task<Delivery> EditDelivery(Delivery newD)

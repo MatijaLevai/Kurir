@@ -20,6 +20,7 @@ namespace KurirServer
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<FullAddress> Addresses { get; set; }
         public DbSet<DeliveryType> DeliveryTypes { get; set; }
         public DbSet<Delivery> Deliveries { get; set; }
         public DbSet<PaymentType> PaymentTypes { get; set; }
@@ -151,8 +152,30 @@ namespace KurirServer
                     Latitude = 45.256872,
                     Longitude = 19.849679,
                     Altitude = 0,
-                    DToffSet = new DateTimeOffset(1,1,1,12,0,0,new TimeSpan(2,0,0))
+                    DToffSet = new DateTimeOffset(1,1,1,12,0,0,new TimeSpan(2,0,0)),
+                    UserID = 1
                 } );
+            modelBuilder.Entity<FullAddress>().HasData(
+                new FullAddress
+                {
+                    FullAddressID = 1,
+                    UserID = 1,
+                    Name = "Nikola",
+                    Address = "Kosovska 1/2",
+                    Phone = "0612889085",
+                    Zone = 1,
+                    LocationID = 1
+                },
+                new FullAddress
+                {
+                    FullAddressID = 2,
+                    UserID = 1,
+                    Name = "Marko",
+                    Address = "Temerinska 1/2",
+                    Phone = "0612889085",
+                    Zone = 1,
+                    LocationID = 1
+                });
            modelBuilder.Entity<Delivery>().HasData(
                new Delivery()
                {
@@ -161,21 +184,14 @@ namespace KurirServer
                    CourierID = 2,
                    DeliveryTypeID = 1,
                    DeliveryID = 1,
-                   NameStart = "Nikola",
-                   NameEnd = "marko",
-                   StartAddress = "Kosovska 1/2",
-                   EndAddress = "Temerinska 12/2",
-                   PhoneOfStart = "0612889085",
-                   PhoneOfEnd = "0623339992",
-                   ZoneEnd = 1,
-                   ZoneStart = 1,
                    DeliveryPrice = 160,
                    CreateTime = new DateTime(2019, 9, 10, 12, 14, 0),
                    StartTime = new DateTime(2019, 9, 10, 12, 24, 0),
                    EndTime = DateTime.Now,
                    PaymentTypeID = 1,
-                   StartLocationID = 1,
-                   EndLocationID = 1
+                   StartAddressID = 1,
+                   EndAddressID = 2
+                  
                },
                new Delivery()
                {
@@ -184,21 +200,13 @@ namespace KurirServer
                    CourierID = 2,
                    DeliveryTypeID = 1,
                    DeliveryID = 2,
-                   NameStart = "Nina",
-                   NameEnd = "marija",
-                   StartAddress = "Temerinska 1/2",
-                   EndAddress = "Kosovska 12/2",
-                   PhoneOfStart = "0612889085",
-                   PhoneOfEnd = "0623339992",
-                   ZoneEnd = 1,
-                   ZoneStart = 1,
                    DeliveryPrice = 160,
                    CreateTime = new DateTime(2019, 9, 10, 12, 14, 0),
                    StartTime = new DateTime(2019, 9, 10, 12, 24, 0),
                    EndTime = DateTime.Now,
                    PaymentTypeID = 2,
-                   StartLocationID = 1,
-                   EndLocationID = 1
+                   StartAddressID = 1,
+                   EndAddressID = 2
                }
         );
         }

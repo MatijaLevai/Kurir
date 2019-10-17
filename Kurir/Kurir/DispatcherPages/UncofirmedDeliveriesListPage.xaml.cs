@@ -57,11 +57,11 @@ namespace Kurir.DispatcherPages
                         item.DeliveryStatusImageSource = "zuti50.png";
                     }
 
-                    int x = await _connection.UpdateAsync(item);
-                    if (x == 0)
-                    {
-                        await _connection.InsertAsync(item);
-                    }
+                    //int x = await _connection.UpdateAsync(item);
+                    //if (x == 0)
+                    //{
+                    //    await _connection.InsertAsync(item);
+                    //}
 
 
                 }

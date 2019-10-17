@@ -54,9 +54,9 @@
                                         </Grid.ColumnDefinitions>
 
 
-                                        <Label Grid.Column="0" Text="{Binding StartAddress}"  HorizontalTextAlignment="Start"/>
+                                        <Label BindingContext="{Binding StartAddress}" Grid.Column="0" Text="{Binding Address}"  HorizontalTextAlignment="Start"/>
 
-                                        <Label Grid.Column="1" Text="{Binding EndAddress}"  HorizontalTextAlignment="Start"/>
+                                        <Label BindingContext="{Binding EndAddress}" Grid.Column="1" Text="{Binding Address}"  HorizontalTextAlignment="Start"/>
 
                                         <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
 

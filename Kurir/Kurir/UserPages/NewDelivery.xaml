@@ -6,21 +6,43 @@
 
         <ScrollView>
             <StackLayout x:Name="NewDeliveryStack"  Padding="10" HorizontalOptions="Fill" VerticalOptions="Fill">
-
                 <Label x:Name="Titlelbl"  FontSize="Medium"   VerticalOptions="Center"  HorizontalOptions="Center" />
-                <Label FontSize="Medium"   Text="1. Name of sender."/>
-                <Entry  x:Name="StartName" Text="{Binding NameStart}" FontSize="Medium" BackgroundColor="#41a845" PropertyChanged="Notify"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"></Entry>
-                <Label FontSize="Medium"  Text="2. Phone Number of sender. " />
-                <Entry  x:Name="StartPhone" Text="{Binding PhoneOfStart}" Keyboard="Numeric" PropertyChanged="NotifyPhone" FontSize="Medium" BackgroundColor="#41a845"   VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"></Entry>
-                <Label FontSize="Medium"  Text="3. Address : Street building number / apartment number / floor / interphone"/>
-                <Entry x:Name="StartAddress" Text="{Binding StartAddress}" FontSize="Medium" BackgroundColor="#41a845"  PropertyChanged="NotifyAddress"  Placeholder="Bulevar Oslobodjenja 20/15/3/Rakic" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"></Entry>
-                       
-                <Label FontSize="Medium" Text="4. Name of recipient."/>
-                <Entry PropertyChanged="Notify" Text="{Binding NameEnd}" FontSize="Medium" BackgroundColor="#41a845" x:Name="NameEnd"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"></Entry>
-                <Label FontSize="Medium" Text="5. Phone Number of recipient."/>
-                <Entry PropertyChanged="NotifyPhone"  Text="{Binding PhoneOfEnd}" Keyboard="Numeric" FontSize="Medium" BackgroundColor="#41a845" x:Name="PhoneEnd" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"></Entry>
-                <Label FontSize="Medium" Text="6. Address : StreetName Building number / apartment number / floor / interphone" />
-                <Entry PropertyChanged="NotifyAddress" Text="{Binding EndAddress}" FontSize="Medium" BackgroundColor="#41a845" x:Name="EndAddress" Placeholder="Bulevar Oslobodjenja 155/10/3/10" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"></Entry>
+
+                <Grid  x:Name="StartAddressGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label FontSize="Medium"   Text="1. Name of sender." Grid.Row="0" Grid.Column="0"/>
+                    <Entry  x:Name="StartName" Text="{Binding Name}" FontSize="Medium" BackgroundColor="#41a845" PropertyChanged="Notify"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"  Grid.Row="0" Grid.Column="1"></Entry>
+                    <Label FontSize="Medium"  Text="2. Phone Number of sender. "  Grid.Row="1" Grid.Column="0"/>
+                    <Entry  x:Name="StartPhone" Text="{Binding Phone}" Keyboard="Numeric" PropertyChanged="NotifyPhone" FontSize="Medium" BackgroundColor="#41a845"   VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"  Grid.Row="1" Grid.Column="1"></Entry>
+                    <Label FontSize="Medium"  Text="3. Address : Street building number / apartment number / floor / interphone"  Grid.Row="2" Grid.Column="0"/>
+                    <Entry x:Name="StartAddress" Text="{Binding Address}" FontSize="Medium" BackgroundColor="#41a845"  PropertyChanged="NotifyAddress"  Placeholder="Bulevar Oslobodjenja 20/15/3/Rakic" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  Grid.Row="2" Grid.Column="1"></Entry>
+                </Grid>
+                <Grid  x:Name="EndAddressGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label FontSize="Medium" Text="4. Name of recipient." Grid.Row="0" Grid.Column="0"/>
+                    <Entry PropertyChanged="Notify" Text="{Binding Name}" FontSize="Medium" BackgroundColor="#41a845" x:Name="NameEnd"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Grid.Row="0" Grid.Column="1"></Entry>
+                    <Label FontSize="Medium" Text="5. Phone Number of recipient." Grid.Row="1" Grid.Column="0"/>
+                    <Entry PropertyChanged="NotifyPhone"  Text="{Binding Phone}" Keyboard="Numeric" FontSize="Medium" BackgroundColor="#41a845" x:Name="PhoneEnd" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.Column="1"></Entry>
+                    <Label FontSize="Medium" Text="6. Address : StreetName Building number / apartment number / floor / interphone" Grid.Row="2" Grid.Column="0"/>
+                    <Entry PropertyChanged="NotifyAddress" Text="{Binding Address}" FontSize="Medium" BackgroundColor="#41a845" x:Name="EndAddress" Placeholder="Bulevar Oslobodjenja 155/10/3/10" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Grid.Row="2" Grid.Column="1"></Entry>
+                </Grid>
+
                 <Label FontSize="Medium" Text="7. Chose payment type:"/>
                 <Picker FontSize="Medium" x:Name="PaymentTypePicker" PropertyChanged="NotifyPicker" TextColor="Black"  ItemDisplayBinding="{Binding PaymentTypeName}"></Picker>
                 <Label FontSize="Medium" Text="8. Chose delivery type:"/>

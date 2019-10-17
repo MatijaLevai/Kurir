@@ -75,6 +75,8 @@ namespace Kurir.Persistance
         public async Task<IEnumerable<DeliveryModel>> GetDeliveriesForUser()
         {
             var uri = ServerLink + "/GetDeliveriesForUser/" + Application.Current.Properties["UserID"].ToString();
+            //var uri = ServerLink + "/odataget?$filter=userid eq " + Application.Current.Properties["UserID"];
+
             var res = await _client.GetAsync(uri);
             if (res.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -100,7 +102,7 @@ namespace Kurir.Persistance
         }
         public async Task<IEnumerable<DeliveryModel>> GetAllDeliveries()
         {
-            var uri = ServerLink + "/ODataGet/";
+            var uri = ServerLink + "/odataget?$expand=StartAddress,EndAddress";
             var res = await _client.GetAsync(uri);
             if (res.StatusCode == System.Net.HttpStatusCode.OK && res.Content!=null)
             {
@@ -108,6 +110,19 @@ namespace Kurir.Persistance
                 
                 return JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
 
+            }
+            else return null;
+        }
+        public async Task<IEnumerable<DeliveryModel>> GetAllFinishedDeliveries()
+        {
+            var uri = ServerLink + "/odataget?$expand=StartAddress,EndAddress";
+            var res = await _client.GetAsync(uri);
+            if (res.StatusCode == System.Net.HttpStatusCode.OK && res.Content != null)
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+
+                var list =  JsonConvert.DeserializeObject<List<DeliveryModel>>(resString);
+               return list.FindAll(x => x.EndTime > x.StartTime);//workaround
             }
             else return null;
         }

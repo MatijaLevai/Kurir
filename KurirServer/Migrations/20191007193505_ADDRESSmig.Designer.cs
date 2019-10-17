@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KurirServer.Migrations
 {
     [DbContext(typeof(KurirDbContext))]
-    [Migration("20191003093328_initial")]
-    partial class initial
+    [Migration("20191007193505_ADDRESSmig")]
+    partial class ADDRESSmig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,25 +41,13 @@ namespace KurirServer.Migrations
 
                     b.Property<int>("DispatcherID");
 
-                    b.Property<string>("EndAddress");
-
-                    b.Property<int?>("EndLocationID");
+                    b.Property<int?>("EndAddressID");
 
                     b.Property<DateTime>("EndTime");
 
-                    b.Property<string>("NameEnd");
-
-                    b.Property<string>("NameStart");
-
                     b.Property<int>("PaymentTypeID");
 
-                    b.Property<string>("PhoneOfEnd");
-
-                    b.Property<string>("PhoneOfStart");
-
-                    b.Property<string>("StartAddress");
-
-                    b.Property<int?>("StartLocationID");
+                    b.Property<int?>("StartAddressID");
 
                     b.Property<DateTime>("StartTime");
 
@@ -67,19 +55,15 @@ namespace KurirServer.Migrations
 
                     b.Property<int>("WaitingInMinutes");
 
-                    b.Property<int>("ZoneEnd");
-
-                    b.Property<int>("ZoneStart");
-
                     b.HasKey("DeliveryID");
 
                     b.HasIndex("DeliveryTypeID");
 
-                    b.HasIndex("EndLocationID");
+                    b.HasIndex("EndAddressID");
 
                     b.HasIndex("PaymentTypeID");
 
-                    b.HasIndex("StartLocationID");
+                    b.HasIndex("StartAddressID");
 
                     b.HasIndex("UserID");
 
@@ -95,19 +79,13 @@ namespace KurirServer.Migrations
                             DeliveryStatus = 0,
                             DeliveryTypeID = 1,
                             DispatcherID = 3,
-                            EndAddress = "Temerinska 12/2",
-                            EndTime = new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(7046),
-                            NameEnd = "marko",
-                            NameStart = "Nikola",
+                            EndAddressID = 2,
+                            EndTime = new DateTime(2019, 10, 7, 21, 35, 3, 897, DateTimeKind.Local).AddTicks(287),
                             PaymentTypeID = 1,
-                            PhoneOfEnd = "0623339992",
-                            PhoneOfStart = "0612889085",
-                            StartAddress = "Kosovska 1/2",
+                            StartAddressID = 1,
                             StartTime = new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified),
                             UserID = 1,
-                            WaitingInMinutes = 0,
-                            ZoneEnd = 1,
-                            ZoneStart = 1
+                            WaitingInMinutes = 0
                         },
                         new
                         {
@@ -118,19 +96,13 @@ namespace KurirServer.Migrations
                             DeliveryStatus = 0,
                             DeliveryTypeID = 1,
                             DispatcherID = 3,
-                            EndAddress = "Kosovska 12/2",
-                            EndTime = new DateTime(2019, 10, 3, 11, 33, 27, 242, DateTimeKind.Local).AddTicks(8406),
-                            NameEnd = "marija",
-                            NameStart = "Nina",
+                            EndAddressID = 2,
+                            EndTime = new DateTime(2019, 10, 7, 21, 35, 3, 897, DateTimeKind.Local).AddTicks(3302),
                             PaymentTypeID = 2,
-                            PhoneOfEnd = "0623339992",
-                            PhoneOfStart = "0612889085",
-                            StartAddress = "Temerinska 1/2",
+                            StartAddressID = 1,
                             StartTime = new DateTime(2019, 9, 10, 12, 24, 0, 0, DateTimeKind.Unspecified),
                             UserID = 1,
-                            WaitingInMinutes = 0,
-                            ZoneEnd = 1,
-                            ZoneStart = 1
+                            WaitingInMinutes = 0
                         });
                 });
 
@@ -170,6 +142,55 @@ namespace KurirServer.Migrations
                         });
                 });
 
+            modelBuilder.Entity("KurirServer.Entities.FullAddress", b =>
+                {
+                    b.Property<int>("FullAddressID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address");
+
+                    b.Property<int?>("LocationID");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<int?>("UserID");
+
+                    b.Property<int>("Zone");
+
+                    b.HasKey("FullAddressID");
+
+                    b.HasIndex("LocationID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Addresses");
+
+                    b.HasData(
+                        new
+                        {
+                            FullAddressID = 1,
+                            Address = "Kosovska 1/2",
+                            LocationID = 1,
+                            Name = "Nikola",
+                            Phone = "0612889085",
+                            UserID = 1,
+                            Zone = 1
+                        },
+                        new
+                        {
+                            FullAddressID = 2,
+                            Address = "Temerinska 1/2",
+                            LocationID = 1,
+                            Name = "Marko",
+                            Phone = "0612889085",
+                            UserID = 1,
+                            Zone = 1
+                        });
+                });
+
             modelBuilder.Entity("KurirServer.Entities.Location", b =>
                 {
                     b.Property<int>("LocationID")
@@ -191,6 +212,17 @@ namespace KurirServer.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("Locations");
+
+                    b.HasData(
+                        new
+                        {
+                            LocationID = 1,
+                            Altitude = 0.0,
+                            DToffSet = new DateTimeOffset(new DateTime(1, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
+                            Latitude = 45.256872000000001,
+                            Longitude = 19.849678999999998,
+                            UserID = 0
+                        });
                 });
 
             modelBuilder.Entity("KurirServer.Entities.PaymentType", b =>
@@ -302,14 +334,14 @@ namespace KurirServer.Migrations
                         {
                             UserID = 1,
                             ActiveUserRoleID = 0,
-                            FirstName = "Marko",
+                            FirstName = "Default",
                             IsActive = false,
-                            LastName = "Mirkovic",
-                            Mail = "marko@gmail.com",
-                            Pass = "lol",
+                            LastName = "eko",
+                            Mail = "eko@eko.rs",
+                            Pass = "eko",
                             Phone = "023771642",
                             Procenat = 0,
-                            RegistrationDate = new DateTime(2019, 10, 3, 11, 33, 27, 234, DateTimeKind.Local).AddTicks(956)
+                            RegistrationDate = new DateTime(2019, 10, 7, 21, 35, 3, 881, DateTimeKind.Local).AddTicks(319)
                         },
                         new
                         {
@@ -322,7 +354,7 @@ namespace KurirServer.Migrations
                             Pass = "lol",
                             Phone = "023771642",
                             Procenat = 60,
-                            RegistrationDate = new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9021)
+                            RegistrationDate = new DateTime(2019, 10, 7, 21, 35, 3, 893, DateTimeKind.Local).AddTicks(430)
                         },
                         new
                         {
@@ -335,7 +367,7 @@ namespace KurirServer.Migrations
                             Pass = "lol",
                             Phone = "023771642",
                             Procenat = 70,
-                            RegistrationDate = new DateTime(2019, 10, 3, 11, 33, 27, 240, DateTimeKind.Local).AddTicks(9812)
+                            RegistrationDate = new DateTime(2019, 10, 7, 21, 35, 3, 893, DateTimeKind.Local).AddTicks(1243)
                         });
                 });
 
@@ -421,23 +453,34 @@ namespace KurirServer.Migrations
                         .HasForeignKey("DeliveryTypeID")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("KurirServer.Entities.Location", "Endlocation")
+                    b.HasOne("KurirServer.Entities.FullAddress", "EndAddress")
                         .WithMany()
-                        .HasForeignKey("EndLocationID");
+                        .HasForeignKey("EndAddressID");
 
                     b.HasOne("KurirServer.Entities.PaymentType", "PaymentType")
                         .WithMany()
                         .HasForeignKey("PaymentTypeID")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("KurirServer.Entities.Location", "Startlocation")
+                    b.HasOne("KurirServer.Entities.FullAddress", "StartAddress")
                         .WithMany()
-                        .HasForeignKey("StartLocationID");
+                        .HasForeignKey("StartAddressID");
 
                     b.HasOne("KurirServer.Entities.User")
                         .WithMany("UsersDeliveries")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("KurirServer.Entities.FullAddress", b =>
+                {
+                    b.HasOne("KurirServer.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationID");
+
+                    b.HasOne("KurirServer.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("KurirServer.Entities.Location", b =>

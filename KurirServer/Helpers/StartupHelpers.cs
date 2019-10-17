@@ -22,7 +22,7 @@ namespace KurirServer.Helpers
             services.AddScoped<IDeliveryTypeRepository, DeliveryTypeRepository>();
             services.AddScoped<IDeliveryRepository,DeliveryRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
-            //.AddScoped<>();
+            services.AddScoped<IAddressRepository,AddressRepository>();
 
         }
     }

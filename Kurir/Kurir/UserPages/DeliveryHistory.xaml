@@ -52,8 +52,8 @@
 
 
                                         </Grid.ColumnDefinitions>
-              <Label Grid.Column="0" Text="{Binding StartAddress}"  HorizontalTextAlignment="Start"/>
-              <Label Grid.Column="1" Text="{Binding EndAddress}"  HorizontalTextAlignment="Start"/>
+               <Label Grid.Column="0" Text="{Binding StartAddress.Address}"  HorizontalTextAlignment="Start"/>
+               <Label  Grid.Column="1" Text="{Binding EndAddress.Address}"  HorizontalTextAlignment="Start"/>
               <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
               <Label Grid.Column="3" Text="{Binding CreateTime}"  HorizontalTextAlignment="Start"/>
               <Image Grid.Column="4" Source="{Binding DeliveryStatusImageSource}" Aspect="AspectFit"></Image>

@@ -20,11 +20,12 @@ namespace Kurir.CourierPages
     public partial class ConfirmedDeliveriesListPage : ContentPage
     {
         LocationService locationService;
-
+        AddressService addressService;
         public ConfirmedDeliveriesListPage()
         {
             try
             {
+                addressService = new AddressService();
                 locationService = new LocationService();
                 deliveryService = new DeliveryService();
                 InitializeComponent();
@@ -125,7 +126,10 @@ namespace Kurir.CourierPages
 
                             LocationModel lmReturned = await locationService.AddLocation(lm);
                             if (lmReturned.LocationID > 1)
-                                selectedDelivery.StartLocationID = lmReturned.LocationID;
+                            {
+                                FullAddressModel startAddress = await addressService.GetAddressByIDAsync(selectedDelivery.StartAddressID);
+                                startAddress.LocationID = lmReturned.LocationID;
+                            }
                             var response = await deliveryService.EditDelivery(selectedDelivery);
                             if (response != null)
                             {

@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
@@ -8,6 +7,10 @@ using Android.Widget;
 using Android.OS;
 using Android.Support.V4.Content;
 using Android;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Push;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace Kurir.Droid
 {
@@ -17,6 +20,7 @@ namespace Kurir.Droid
         internal static MainActivity Instance { get; private set; }
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            AppCenter.Start("fe70b303-891e-4685-84a1-f3da83f76bb1", typeof(Push));
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 

@@ -19,12 +19,12 @@ namespace Kurir.DispatcherPages
 
         private HttpClient client = App.client;
         private List<DeliveryModel> listOfDeliveries;
-        private SQLiteAsyncConnection _connection;
+       // private SQLiteAsyncConnection _connection;
         private DeliveryService deliveryService;
         public DeliveriesListPage()
         {
             deliveryService = new DeliveryService();
-            _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+           // _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             InitializeComponent();
         }
         protected async override void OnAppearing()
@@ -40,7 +40,7 @@ namespace Kurir.DispatcherPages
                 {
                     listOfDeliveries = new List<DeliveryModel>(list);
                     //await _connection.DropTableAsync<DeliveryModel>();
-                    await _connection.CreateTableAsync<DeliveryModel>();
+                   // await _connection.CreateTableAsync<DeliveryModel>();
 
                     foreach (var item in listOfDeliveries)
                     {
@@ -58,11 +58,11 @@ namespace Kurir.DispatcherPages
                             item.DeliveryStatusImageSource = "zuti50.png";
                         }
 
-                        int x = await _connection.UpdateAsync(item);
-                        if (x == 0)
-                        {
-                            await _connection.InsertAsync(item);
-                        }
+                        //int x = await _connection.UpdateAsync(item);
+                        //if (x == 0)
+                        //{
+                        //    await _connection.InsertAsync(item);
+                        //}
 
 
                     }

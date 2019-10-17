@@ -111,21 +111,23 @@ namespace Kurir.DispatcherPages
                 { ListD = new List<StatisticUserCandDModel>(ld); }
                 if (listC.Count() > 0)
                 {
-                    foreach (var item in listC)
+                    if (ListD.Count() > 0)
                     {
-                        if (ListD.Count() > 0)
+                        foreach (var item in listC)
                         {
+                        
                             var d = ListD.Where(i => i.UserID == item.UserID).FirstOrDefault();
                             if (d != null)
                             {
+                                item.PrometCash += d.PrometCash;
+                                item.PrometCupon += d.PrometCupon;
+                                item.PrometFaktura += d.PrometFaktura;
                                 item.Promet += d.Promet;
                                 item.PrihodOdPrometa += d.PrihodOdPrometa;
                                 item.BrojDostava += d.BrojDostava;
                                 ListD.Remove(d);
                             }
                         }
-
-
                     }
                 }
                 if (ListD.Count > 0)
@@ -135,17 +137,26 @@ namespace Kurir.DispatcherPages
                         listC.Add(item);
                     }
                 }
-                var sveDostave = await deliveryService.GetAllDeliveries();
+                var sveDostave = await deliveryService.GetAllFinishedDeliveries();
 
                 StatisticUserCandDModel fullStat = new StatisticUserCandDModel
                 {   ImePrezime= "Total",
                     BrojDostava = sveDostave.Count(),
                     Promet = Convert.ToDouble(sveDostave.Sum(x => x.DeliveryPrice)),
-                   
-                    PrometCash = Convert.ToDouble(sveDostave.Where(y=>y.DeliveryTypeID==1).Sum(x => x.DeliveryPrice)),
-                    PrometFaktura = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 2).Sum(x => x.DeliveryPrice)),
-                    PrometCupon = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 3).Sum(x => x.DeliveryPrice)),
                 };
+                foreach (var item in sveDostave)
+                {
+
+
+                    switch (item.DeliveryTypeID)
+                    {
+                        default:
+                            break;
+                    }
+                    fullStat.PrometCash = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 1).Sum(x => x.DeliveryPrice));
+                    fullStat.PrometFaktura = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 2).Sum(x => x.DeliveryPrice));
+                    fullStat.PrometCupon = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 3).Sum(x => x.DeliveryPrice));
+                }
                 fullStat.PrihodOdPrometa = fullStat.Promet;
                 foreach (var item in listC)
                 {
