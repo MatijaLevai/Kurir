@@ -1,7 +1,6 @@
 ﻿using Kurir.Models;
 using Newtonsoft.Json;
 using SQLite;
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -33,7 +32,7 @@ namespace Kurir.Persistance
             }
             else return null;
         }
-        public async Task<IEnumerable<FullAddressModel>> GetAddressByUserIDAsync(int UserID)
+        public async Task<IEnumerable<FullAddressModel>> GetAddressesByUserIDAsync(int UserID)
         {
             var uri = ServerLink + "/GetByUserID/" + UserID;
             var res = await _client.GetAsync(uri);
@@ -113,7 +112,7 @@ namespace Kurir.Persistance
         {
             var uri = ServerLink + "/" + ID;
             var res = await _client.DeleteAsync(uri);
-
+            
             return  await res.Content.ReadAsStringAsync();
 
         }

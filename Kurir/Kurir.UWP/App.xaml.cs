@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -28,6 +29,8 @@ namespace Kurir.UWP
         /// </summary>
         public App()
         {
+           
+            
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
@@ -40,7 +43,7 @@ namespace Kurir.UWP
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
 
-
+            
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -51,6 +54,7 @@ namespace Kurir.UWP
                 rootFrame = new Frame();
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
+                //var assembliesToInclude = new[] { typeof(Xamarin.Forms.Maps.UWP.MapRenderer).GetTypeInfo().Assembly };
 
                 Xamarin.Forms.Forms.Init(e);
 

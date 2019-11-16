@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.UserPages.EndAddressPage"
+             >
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+        
+            <Label Text="Enter address of reciver."
+                VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand" Style="{DynamicResource SubtitleStyle}"/>
+                    <Grid  x:Name="EndAddressGrid" Padding="5,5,5,5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                        <Label Text="1. Name of reciver." Grid.Row="0"/>
+                        <Entry  x:Name="EndName" Text="{Binding Name}" BackgroundColor="#41a845" PropertyChanged="NotifyName"  Grid.Row="1"></Entry>
+                        <Label Text="2. Phone Number of reciver. "  Grid.Row="2"/>
+                        <Entry  x:Name="EndPhone" Text="{Binding Phone}" Keyboard="Numeric" PropertyChanged="NotifyPhone" BackgroundColor="#41a845" Grid.Row="3"></Entry>
+                        <Label Text="3. Address : Street building number / apartment number / floor / interphone"  Grid.Row="4"/>
+                        <Entry x:Name="EndAddress" Text="{Binding Address}" BackgroundColor="#41a845"  PropertyChanged="NotifyAddress"  Placeholder="Bulevar Oslobodjenja 20/15/3/Rakic"  Grid.Row="5"></Entry>
+                        <Button x:Name="EndAddressLocationIDButton" Clicked="EndAddressLocationIDButton_Clicked"  BackgroundColor="#41a845"   Grid.Row="6"></Button>
+
+                    </Grid>
+                    <Button x:Name="NextBtn" BackgroundColor="LightSkyBlue" Text="Next" Clicked="NextButton_Clicked"></Button>
+
+               
+                    <Label Text="Or select existing address from list template." VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand" Style="{DynamicResource SubtitleStyle}"></Label>
+                    <SearchBar PropertyChanged="SearchBar_PropertyChanged" Placeholder="Search by name, address or phone"></SearchBar>
+                <ListView x:Name="AddressListView" ItemSelected="AddressListView_ItemSelected" IsPullToRefreshEnabled="True" Refreshing="AddressListView_Refreshing" Margin="0,0,0,5">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <ViewCell.View>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Text="{Binding Name}"  HorizontalTextAlignment="Start"/>
+                                        <Label Grid.Column="1" Text="{Binding Address}"  HorizontalTextAlignment="Start"/>
+                                        <Label  Grid.Column="2" Text="{Binding Phone}"  HorizontalTextAlignment="Start"/>
+                                    </Grid>
+                                </ViewCell.View>
+                                <ViewCell.ContextActions>
+                                    <MenuItem IconImageSource="crveni50.png"  Text="Delete" Clicked="DeleteCommand"  CommandParameter="{Binding FullAddressID}" IsDestructive="True"></MenuItem>
+                                </ViewCell.ContextActions>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </ScrollView>
+        </ContentPage.Content>
+</ContentPage>

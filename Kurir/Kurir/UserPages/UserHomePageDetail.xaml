@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Kurir.UserHomePageDetail">
+             x:Class="Kurir.UserPages.UserHomePageDetail">
     <StackLayout BackgroundColor="#41a845" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
                 <Label  FontSize="Medium"  Text="Welcome to Eko Kurir App" HorizontalOptions="Center"></Label>

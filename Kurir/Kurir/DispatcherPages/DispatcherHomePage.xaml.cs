@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kurir.Persistance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,14 @@ namespace Kurir.DispatcherPages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DispatcherHomePage : TabbedPage
     {
+
+
         public DispatcherHomePage()
         {
+
             InitializeComponent();
         }
+
+        
     }
 }

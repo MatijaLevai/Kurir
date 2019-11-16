@@ -3,6 +3,7 @@ using Kurir.CourierPages;
 using Kurir.DispatcherPages;
 using Kurir.Models;
 using Kurir.SuperAdminPages;
+using Kurir.UserPages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -50,19 +51,19 @@ namespace Kurir
                 switch (selected.RoleID)
                 {
                     case 1:
-                        await Navigation.PushAsync(new DefaultSuperAdminPage());
+                        Application.Current.MainPage = new NavigationPage(new DefaultSuperAdminPage());
                         break;
                     case 2:
-                        await Navigation.PushAsync(new DefultAdminPage());
+                        Application.Current.MainPage = new NavigationPage(new AdminsPage());
                         break;
                     case 3:
-                        await Navigation.PushAsync(new UserHomePage());
+                        Application.Current.MainPage = new NavigationPage(new UserHomePage());
                         break;
                     case 4:
-                        await Navigation.PushAsync(new DefaultCouriersPage());
+                        Application.Current.MainPage = new NavigationPage(new DefaultCouriersPage());
                         break;
                     case 5:
-                        await Navigation.PushAsync(new DispatcherHomePage());
+                        Application.Current.MainPage = new NavigationPage(new DispatcherHomeMDPage());
                         break;
                 }
             }

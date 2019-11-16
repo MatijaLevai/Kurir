@@ -42,7 +42,7 @@ namespace Kurir
 
 
         }
-        public async Task<bool> UpdateSQLiteDb()
+        public async Task<bool> UpdateSQLiteDbWithPayAndDelTypes()
         {
             string uriPaymentTypes = Application.Current.Properties["ServerLink"].ToString() + "api/PaymentTypes/GetPaymentTypes";
             string uriDeliveryTypes = Application.Current.Properties["ServerLink"].ToString() + "api/DeliveryTypes/GetDeliveryTypes";

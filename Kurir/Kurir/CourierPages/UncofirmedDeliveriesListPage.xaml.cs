@@ -18,7 +18,7 @@ namespace Kurir.CourierPages
     {
        private HttpClient client = App.client;
        
-        private SQLiteAsyncConnection _connection;
+        //private SQLiteAsyncConnection _connection;
         private DeliveryService deliveryService;
        
         public List<DeliveryModel> listOfDeliveries;
@@ -32,7 +32,7 @@ namespace Kurir.CourierPages
                 deliveryService = new DeliveryService();
                 InitializeComponent();
 
-                _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+                //_connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             }
             catch (Exception ex)
             {
@@ -68,20 +68,20 @@ namespace Kurir.CourierPages
             if (list != null)
             {
                 listOfDeliveries = new List<DeliveryModel>(list);
-                await _connection.CreateTableAsync<DeliveryModel>();
+                //await _connection.CreateTableAsync<DeliveryModel>();
 
-                foreach (var item in listOfDeliveries)
-                {
-
-
-                    int x = await _connection.UpdateAsync(item);
-                    if (x == 0)
-                    {
-                        await _connection.InsertAsync(item);
-                    }
+                //foreach (var item in listOfDeliveries)
+                //{
 
 
-                }
+                //    int x = await _connection.UpdateAsync(item);
+                //    if (x == 0)
+                //    {
+                //        await _connection.InsertAsync(item);
+                //    }
+
+
+                //}
 
                 DeliveryList.ItemsSource = listOfDeliveries;
 
@@ -124,6 +124,7 @@ namespace Kurir.CourierPages
                         if (response != null)
                         {
                             await DisplayAlert("Succses", "Delivery confirmed.", "ok");
+                            await GetDeliveriesFromServer();
                         }
                         else
                         {
@@ -159,26 +160,17 @@ namespace Kurir.CourierPages
                     DeliveryModel selectedDelivery = listOfDeliveries.Where(x => x.DeliveryID == IDint).First();
                     if (selectedDelivery != null)
                     {
-                        selectedDelivery.DeliveryStatus = 1;
-                        selectedDelivery.CourierID = 0;
-                        var response = await deliveryService.EditDelivery(selectedDelivery);
-                        if (response != null)
-                        {
-                            await DisplayAlert("Succses", "Delivery confirmed.", "ok");
-                        }
-                        else
-                        {
-                            await DisplayAlert("Delivery confimation failed.", " Try again. Check internet connection.", "ok");
-                        }
+                        await Navigation.PushModalAsync(new DeclineDeliveryReasonModalPage(selectedDelivery));
+                       
                     }
                     else
                     {
-                        await DisplayAlert("Delivery confimation failed.", " Try again. Check internet connection.", "ok");
+                        await DisplayAlert("Greška", " Odbijanje neuspešno", "ok");
                     }
                 }
                 else
                 {
-                    await DisplayAlert("Delivery confimation failed.", " Try again. Check internet connection.", "ok");
+                    await DisplayAlert("Greška", " Odbijanje neuspešno", "ok");
                 }
             }
             catch (Exception ex)

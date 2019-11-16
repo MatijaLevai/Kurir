@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Kurir
+namespace Kurir.UserPages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewDelivery : ContentPage
@@ -27,6 +28,8 @@ namespace Kurir
         private DeliveryModel delivery;
         private DeliveryService deliveryService;
         private AddressService addressService;
+        private bool EditEnabled;
+       
         #endregion
         Func<string, bool> selector = delegate (string c)
         {
@@ -48,20 +51,10 @@ namespace Kurir
             }
             else return false;
         };
-        #region Constructors
-        public NewDelivery()
+        #region Constructor
+        public NewDelivery(DeliveryModel delivery,bool editEnabled)
         {
-
-            _client = App.client;
-            liteHelper = new SQLiteHelper();
-            deliveryService = new DeliveryService();
-            addressService = new AddressService();
-            _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
-            
-            InitializeComponent();
-        }
-        public NewDelivery(DeliveryModel delivery)
-        {
+            EditEnabled = editEnabled;
             _client = App.client;
             liteHelper = new SQLiteHelper();
             deliveryService = new DeliveryService();
@@ -75,168 +68,26 @@ namespace Kurir
             InitializeComponent();
         }
         #endregion
-        protected override async void OnAppearing()
+        
+        private async Task<bool> DelAndPayTypes()
         {
-            if (!await DelAndPayTypes())
-                await DisplayAlert("Internet", "Check Your connection settings", "Ok");
-            if (delivery == null)
+            try
             {
-                Titlelbl.Text = "Create delivery";
-                OrderDelivery.Text = "Order";
-            }
-            else
-            {
-                try
-                {
-                           
-                    StartAddressGrid.BindingContext = this.delivery.StartAddress;
-                
-                    EndAddressGrid.BindingContext = this.delivery.EndAddress;
-                    /*if (delivery.StartAddressID >= 0)
-                     {
-                         this.startAddress = await addressService.GetAddressByIDAsync(delivery.StartAddressID);
-                         StartAddressGrid.BindingContext = this.StartAddress;
-                     }
-                     else if(delivery.EndAddressID >= 0)
-                     {
-                         this.endAddress = await addressService.GetAddressByIDAsync(delivery.EndAddressID);
-                         EndAddressGrid.BindingContext = this.endAddress;
-                     }*/
-                }
-                catch (Exception ex)
-                {
-                    await DisplayAlert("",ex.Message+ex.InnerException,"ok");
-                }
-                Titlelbl.Text = "Edit Delivery";
-                OrderDelivery.Text = "Edit";
-            }
-            switch (Device.RuntimePlatform)
-            {
-                case Device.UWP:
-                    NewDeliveryStack.BackgroundColor = Color.Default;
-                    break;
-                case Device.Android:
-                    NewDeliveryStack.BackgroundColor = Color.White;
-                    break;
-                default:
-                    break;
-            }
-            
-            base.OnAppearing();
 
-
-        }
-        private async void OrderDelivery_Clicked(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(StartPhone.Text) && !string.IsNullOrWhiteSpace(PhoneEnd.Text) &&  !string.IsNullOrWhiteSpace(StartName.Text) && !string.IsNullOrWhiteSpace(StartAddress.Text) && !string.IsNullOrWhiteSpace(NameEnd.Text) && !string.IsNullOrWhiteSpace(EndAddress.Text))
-            {
-                FullAddressModel startAddress = new FullAddressModel
-                {
-                    UserID = Convert.ToInt32(App.Current.Properties["UserID"].ToString()),
-                    Phone = StartPhone.Text.Trim(),
-                    Name= StartName.Text.Trim(),
-                    Address = StartAddress.Text.Trim(),
-                    LocationID = 1,
-                    Zone= 1
-
-                };
-                FullAddressModel endAddress = new FullAddressModel
-                {
-                    UserID = Convert.ToInt32(App.Current.Properties["UserID"].ToString()),
-                    Phone = PhoneEnd.Text.Trim(),
-                    Name = NameEnd.Text.Trim(),
-                    Address = EndAddress.Text.Trim(),
-                    LocationID = 1,
-                    Zone = 1
-                };
-                DeliveryModel newDelivery = new DeliveryModel()
-                {
-                    UserID = Convert.ToInt32(Application.Current.Properties["UserID"].ToString()),
-                    CreateTime = DateTime.Now,
-                    PaymentTypeID = PaymentTypePicker.SelectedIndex+1,
-                    DeliveryTypeID = DeliverTypePicker.SelectedIndex+1,
-                    Description = DeliveryDetails.Text,
-                    
-                    WaitingInMinutes=0,
-                    DeliveryStatusImageSource="",
-                    DeliveryStatus = 0
-                };
-                if (delivery!=null)
-                { try
-                    {
-                        newDelivery.DeliveryPrice = delivery.DeliveryPrice;
-                        newDelivery.CourierID = delivery.CourierID;
-                        newDelivery.DispatcherID = delivery.DispatcherID;
-                        newDelivery.DeliveryID = delivery.DeliveryID;
-                        if (CheckStartAddress(startAddress))
-                        {
-                            newDelivery.StartAddressID = this.delivery.StartAddress.FullAddressID;
-                        }
-                        else
-                        {
-                            object sAddress = await addressService.PostFullAddress(startAddress);
-                            
-                            newDelivery.StartAddressID = await TypeHelp(sAddress);
-                            
-                        }
-                        if (CheckEndAddress(endAddress))
-                        {
-                            newDelivery.EndAddressID = this.delivery.EndAddress.FullAddressID;
-                        }
-                        else
-                        {
-                            object eAddress = await addressService.PostFullAddress(endAddress);
-                            newDelivery.EndAddressID = await TypeHelp(eAddress);
-                        }
-                        
-                        var deliveryUpdate = await deliveryService.EditDelivery(newDelivery);
-                        if (deliveryUpdate != null)
-                        {
-                            await DisplayAlert("All Done.", "Your order is edited.", "Confirm.");
-                            await Navigation.PopAsync();
-                        }
-                        else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
-                    }
-                    catch (Exception ex) { await DisplayAlert("error", "msg: " + ex.Message + "IE : " + ex.InnerException, "ok"); }
-                }
-                else {
-                    try
-                    {
-                        object sAddress = await addressService.PostFullAddress(startAddress);
-                        object eAddress = await addressService.PostFullAddress(endAddress);
-                        newDelivery.StartAddressID =await TypeHelp(sAddress);
-                        newDelivery.EndAddressID = await TypeHelp(eAddress);
-                        var delivery = await deliveryService.CreateDelivery(newDelivery);
-                        if (delivery !=null)
-                        {
-                            await DisplayAlert("All Done.", "Your order is placed.", "Confirm.");
-                            await Navigation.PopToRootAsync();
-                        }
-                        else await DisplayAlert("Something went wrong.", "Please try again.", "ok");
-
-                    }
-                    catch (Exception ex)
-                    {
-                        await DisplayAlert("Something went wrong.", "Please try again."+ ex.Message, "ok");
-                    }
-                }
-                
-            }
-            else await DisplayAlert("Atention!", "Please fill Entrys correctly.", "ok?");
-        }
-        private async Task<bool> DelAndPayTypes() 
-        {
-            try {
-
-                var response = await liteHelper.UpdateSQLiteDb();
+                var response = await liteHelper.UpdateSQLiteDbWithPayAndDelTypes();
                 if (response)
                 {
-                    
-                    paymentTypes =  await _connection.Table<PaymentTypeModel>().ToListAsync();
+                    #region PaymentType
+                    //< Label HorizontalTextAlignment = "Center" FontSize = "Medium" Text = "7. Chose payment type:" />
+                    //< Picker HorizontalOptions = "Center" FontSize = "Medium" x: Name = "PaymentTypePicker" PropertyChanged = "NotifyPicker" TextColor = "Black"  ItemDisplayBinding = "{Binding PaymentTypeName}" ></ Picker >
+                    //paymentTypes = await _connection.Table<PaymentTypeModel>().ToListAsync();
+                    // PaymentTypePicker.ItemsSource = paymentTypes;
+                    // PaymentTypePicker.SelectedIndex = 0;
+                    #endregion
                     deliveryTypes = await _connection.Table<DeliveryTypeModel>().ToListAsync();
-                    PaymentTypePicker.ItemsSource = paymentTypes;
+                  
                     DeliverTypePicker.ItemsSource = deliveryTypes;
-                    PaymentTypePicker.SelectedIndex = 0;
+                  
                     DeliverTypePicker.SelectedIndex = 0;
                     return true;
                 }
@@ -244,76 +95,133 @@ namespace Kurir
                 {
 
                     OrderDelivery.IsEnabled = false;
-                    
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                await DisplayAlert("Server or Internet problem.", ex.Message, "ok");
+                await DisplayAlert("Problem occurred", ex.Message, "ok");
                 return false;
             }
-            
-        }
-        void Notify(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            var property = sender as Entry;
-            if (string.IsNullOrWhiteSpace(property.Text))
-            {
-                property.TextColor = Color.Red;
-            }
-            else
-                property.TextColor = Color.Black;
-        }
-        void NotifyAddress(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            var property = sender as Entry;
-            if (!string.IsNullOrWhiteSpace(property.Text))
-            {
-                if (property.Text.ToCharArray().Any(char.IsDigit))
-                property.TextColor = Color.Black;
-            }
-            else
-                property.TextColor = Color.Red;
 
         }
-        async void NotifyPhone(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        protected override async void OnAppearing()
         {
-            var property = sender as Entry;
-            if (!string.IsNullOrWhiteSpace(property.Text))
+            if (delivery == null)
             {
-                try
+                await DisplayAlert("error", "Create new delivery", "ok").ConfigureAwait(false);
+                Navigation.RemovePage(this);
+                await Navigation.PushAsync(new StartAddressPage());
+            }
+            if (await DelAndPayTypes())
+            {
+                if (EditEnabled)
                 {
-                    if (selector(property.Text))
+                    Titlelbl.Text = "Edit Delivery";
+                    OrderDelivery.Text = "Edit";
+                }
+                else
+                {
+                    Titlelbl.Text = "Create delivery";
+                    OrderDelivery.Text = "Order";
+                }
+                switch (Device.RuntimePlatform)
+                {
+                    case Device.UWP:
+                        NewDeliveryStack.BackgroundColor = Color.Default;
+                        break;
+                    case Device.Android:
+                        NewDeliveryStack.BackgroundColor = Color.White;
+                        break;
+                    default:
+                        break;
+                }
+
+                base.OnAppearing();
+            }
+            else { await DisplayAlert("Internet", "Check Your connection settings", "Ok"); }
+        }
+
+        private async void OrderDelivery_Clicked(object sender, EventArgs e)
+        {
+            bool done = false;
+            try
+            {
+                #region Check start address
+                
+                #endregion
+                #region Check end address
+                
+                #endregion
+                #region Check Delivery
+                if (delivery.DeliveryID > 0&&EditEnabled)
+                {
+                    DeliveryModel deliveryFromDB = await deliveryService.GetDeliveryByID(delivery.DeliveryID);
+                    if (deliveryFromDB != null)
                     {
-                      property.TextColor = Color.Black;
+                        if (delivery.CompareTo(deliveryFromDB).ContainsValue(false))
+                        {
+                            await deliveryService.EditDelivery(delivery);
+                            await DisplayAlert("Success", "Updated existing delivery", "Ok");
+                            done = true;
+                            #region UpdateOrCreateDelivery
+                            //string str = await DisplayActionSheet("Update or Create new delivery?", "cancel", null, "Update", "Create");
+                            //if (str == "Update")
+                            //{
+                            //    
+
+                            //}
+                            //else if (str == "Create")
+                            //{
+                            //    delivery.CreateTime = DateTime.Now;
+                            //    delivery.StartTime = Convert.ToDateTime("0001 - 01 - 01 00:00:00.0000000");
+                            //    delivery.EndTime = Convert.ToDateTime("0001 - 01 - 01 00:00:00.0000000");
+                            //    delivery.WaitingInMinutes = 0;
+                            //    delivery.DeliveryStatusImageSource = "zuti50.png";
+                            //    delivery.CourierID = 0;
+                            //    delivery.DispatcherID = 0;
+                            //    delivery.UserID = Convert.ToInt32(Application.Current.Properties["UserID"]);
+                            //    delivery.DeliveryStatus = 0;
+                            //    delivery = await deliveryService.CreateDelivery(delivery);
+                            //    await DisplayAlert("Success", "New delivery created .", "Ok");
+
+                            //}
+                            #endregion
+                        }
+                        else
+                        {
+                            done = true;
+                            await DisplayAlert("Done", "No changes are made to delivery.", "Ok");
+                        }
                     }
                     else
                     {
-                        property.TextColor = Color.Red;
+                        delivery = await deliveryService.CreateDelivery(delivery);
+                        done = true;
+                        await DisplayAlert("Success", "New delivery created .", "Ok");
                     }
-                        
                 }
-                catch (Exception ex)
+                else
                 {
-                    await DisplayAlert("error ", ex.Message + "||" + ex.InnerException, "ok");
-                 }
-                
-            
+                    //workoround for inserting object of delivery with objects of addresses as propeties
+                    var del = delivery;
+                    del.StartAddress = null;
+                    del.EndAddress = null;
+                    await deliveryService.CreateDelivery(del);
+                    await DisplayAlert("Success", "Created new delivery.", "Ok");
+                    done = true;
+                   
+                }
+                if (done)
+                {
+                    await Navigation.PopToRootAsync();
+                }
             }
-            else
-                property.TextColor = Color.Red;
-        }  
-        void NotifyPicker(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            var property = sender as Picker;
-            if (property.SelectedIndex>=0)
+            #endregion
+            catch (Exception ex)
             {
-                property.BackgroundColor = Color.FromHex("#02ce0a");
-               
+                await DisplayAlert("error", "msg: " + ex.Message + "IE : " + ex.InnerException, "ok");
             }
-            else
-                property.BackgroundColor = Color.Red;
         }
         private async Task<int> TypeHelp(object address)
         {
@@ -331,37 +239,104 @@ namespace Kurir
                     return 0;
             }
         }
-        private bool CheckStartAddress(FullAddressModel startAddress)
+           
+        void Notify(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (startAddress.Name == this.delivery.StartAddress.Name)
+            var property = sender as Entry;
+            if (string.IsNullOrWhiteSpace(property.Text)&&property.Text.ToArray().Count()<3)
             {
-                if (startAddress.Address == this.delivery.StartAddress.Address)
-                {
-                    if (startAddress.Phone == this.delivery.StartAddress.Phone)
-                    {
-                        return true;
-                    }
-                    else return false;
-                }
-                else return false;
+                property.TextColor = Color.Red;
             }
-            else return false;
+            else
+                property.TextColor = Color.Black;
         }
-        private bool CheckEndAddress(FullAddressModel endAddress)
+       
+        void NotifyPicker(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (endAddress.Name == this.delivery.EndAddress.Name)
+            var property = sender as Picker;
+            if (property.SelectedIndex>=0)
             {
-                if (endAddress.Address == this.delivery.EndAddress.Address)
-                {
-                    if (endAddress.Phone == this.delivery.EndAddress.Phone)
-                    {
-                        return true;
-                    }
-                    else return false;
-                }
-                else return false;
+                property.BackgroundColor = Color.FromHex("#02ce0a");
+               
             }
-            else return false;
+            else
+                property.BackgroundColor = Color.Red;
         }
+        
+        
     }
 }
+
+#region Notify Error Entering Address Details
+//void NotifyAddress(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+//{
+//    var property = sender as Entry;
+//    if (!string.IsNullOrWhiteSpace(property.Text))
+//    {
+//        if (property.Text.ToCharArray().Any(char.IsDigit))
+//        property.TextColor = Color.Black;
+//    }
+//    else
+//        property.TextColor = Color.Red;
+
+//}
+//async void NotifyPhone(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+//{
+//    var property = sender as Entry;
+//    if (!string.IsNullOrWhiteSpace(property.Text))
+//    {
+//        try
+//        {
+//            if (selector(property.Text))
+//            {
+//              property.TextColor = Color.Black;
+//            }
+//            else
+//            {
+//                property.TextColor = Color.Red;
+//            }
+
+//        }
+//        catch (Exception ex)
+//        {
+//            await DisplayAlert("error ", ex.Message + "||" + ex.InnerException, "ok");
+//         }
+
+
+//    }
+//    else
+//        property.TextColor = Color.Red;
+//}  
+//private bool CheckStartAddress(FullAddressModel startAddress)
+//{
+//    if (startAddress.Name == this.delivery.StartAddress.Name)
+//    {
+//        if (startAddress.Address == this.delivery.StartAddress.Address)
+//        {
+//            if (startAddress.Phone == this.delivery.StartAddress.Phone)
+//            {
+//                return true;
+//            }
+//            else return false;
+//        }
+//        else return false;
+//    }
+//    else return false;
+//}
+//private bool CheckEndAddress(FullAddressModel endAddress)
+//{
+//    if (endAddress.Name == this.delivery.EndAddress.Name)
+//    {
+//        if (endAddress.Address == this.delivery.EndAddress.Address)
+//        {
+//            if (endAddress.Phone == this.delivery.EndAddress.Phone)
+//            {
+//                return true;
+//            }
+//            else return false;
+//        }
+//        else return false;
+//    }
+//    else return false;
+//}
+#endregion

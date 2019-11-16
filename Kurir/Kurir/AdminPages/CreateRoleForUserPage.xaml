@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.AdminPages.CreateRoleForUserPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Crate new role for user"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" />
+            <Button Text="Add Role" Clicked="AddRole_Clicked"></Button>
+            <ListView x:Name="UserRoleList" VerticalOptions="Center" HorizontalOptions="Center" BackgroundColor="#41A85F">
+                
+                <ListView.ItemTemplate>
+
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <Label Style="{DynamicResource SubtitleStyle}" HorizontalTextAlignment="Center" Text="{Binding Name}" TextColor="Black" ></Label>
+                            </ViewCell.View>
+                            <ViewCell.ContextActions>
+                                <MenuItem  Text="Delete Role"  Clicked="DeleteRole" CommandParameter="{Binding UserRoleID}"></MenuItem>
+                            </ViewCell.ContextActions>
+                        </ViewCell>
+                         
+                    </DataTemplate>
+
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -27,6 +27,7 @@ namespace KurirServer.Repositories
         public void Add<T>(T entity) where T : class
         {
             context.Add(entity);
+
         }
         /// <summary>
         /// Deletes defined entity from db

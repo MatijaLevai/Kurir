@@ -119,6 +119,26 @@ namespace KurirServer.Controllers
             var usr = await userRepository.GetUserAsync(id);
             return usr.ToString();
         }
+        [Route("GetUsers")]
+        [HttpGet]
+        public async Task<List<User>> GetUsers()
+        {
+            return await userRepository.GetAllUserAsync();
+        }
+        [Route("GetUsersByRole/{RoleID}")]
+        [HttpGet]
+        public async Task<IEnumerable<User>> GetUsersByRole(int roleID)
+        {
+            var x = await userRepository.GetAllUsersByRoleAsync(roleID);
+            return x;
+        }
+        [Route("GetCountByRole/{RoleID}")]
+        [HttpGet]
+        public async Task<int> GetCountOfUsersByRole(int roleID)
+        {
+            var x = await userRepository.GetCountOfUsersByRoleAsync(roleID);
+            return x;
+        }
         [Route("ChangeCurrentUserRole/{Userid}/{UserRoleID}")]
         [HttpGet]
         public async Task<ActionResult<bool>> ChangeCurrentUserRole(int Userid,int UserRoleID)
@@ -129,6 +149,33 @@ namespace KurirServer.Controllers
                     return Ok(true);
                 else
                     return BadRequest(false);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+        [Route("GetCurrentUserRole/{Userid}")]
+        [HttpGet]
+        public ActionResult<UserRole> GetCurrentUserRole(int Userid)
+        {
+            try
+            {
+                int usrRole = userRepository.GetCurrentUserRole(Userid);
+
+                if (usrRole != 0)
+                {
+                    UserRole userRole = userRoleRepository.GetUserRoleByID(usrRole);
+                    if (userRole != null)
+                    {
+                        userRole.User = null;
+                        return Ok(userRole);
+                    }
+                    else return BadRequest();
+                }
+                else
+                    return BadRequest();
             }
             catch (Exception ex)
             {
@@ -175,10 +222,10 @@ namespace KurirServer.Controllers
         {
             try
             {
-                var user = await userRepository.GetUserAsync(ID);
+                var user = new User();
 
-                if (user.IsActive == true)
-                {
+               // if (user.IsActive == true)
+               // {
                     mapper.Map(editUser, user);
                     
                     if (await generalRepository.Update(user))
@@ -189,11 +236,11 @@ namespace KurirServer.Controllers
                     {
                         return BadRequest("Could not edit");
                     }
-                }
-                else
-                {
-                    return BadRequest("User you want to edit is not active.");
-                }
+               // }
+               // else
+               // {
+               //     return BadRequest("User you want to edit is not active.");
+               // }
 
             }
             catch (Exception ex)
@@ -201,8 +248,25 @@ namespace KurirServer.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+        //GetAllCouriers
+        [Route("GetCouriers")]
+        [HttpGet]
+        public async Task<ActionResult<string>> GetCouriers()
+        {
+            try
+            {
+                var x = await userRepository.GetAllCouriers();
 
+                if (x != null)
+                {
+                    string jsonX = JsonConvert.SerializeObject(x);
 
+                    return Ok(jsonX);
+                }
+                else return NotFound();
+            }
+            catch (Exception ex) { return StatusCode(StatusCodes.Status500InternalServerError, ex.Message); }
+        }
         [Route("GetActiveCouriers")]
         [HttpGet]
         public async Task<ActionResult<string>> GetActiveCouriers()

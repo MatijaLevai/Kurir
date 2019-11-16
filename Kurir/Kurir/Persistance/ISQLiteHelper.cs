@@ -7,6 +7,6 @@ namespace Kurir.Persistance
 {
     public interface ISQLiteHelper
     {
-        Task<bool> UpdateSQLiteDb();
+        Task<bool> UpdateSQLiteDbWithPayAndDelTypes();
     }
 }

@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.AdminPages.UsersListPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <Label x:Name="Message" FontSize="Medium" HorizontalTextAlignment="Center"/>
+                <Grid RowSpacing="2" Padding="5" >
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+
+
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Text="Ime"  HorizontalTextAlignment="Center"/>
+                    <Label Grid.Column="1" Text="Prezime"  HorizontalTextAlignment="Center"/>
+                    <Label Grid.Column="2" Text="Datum registracije"  HorizontalTextAlignment="Center"/>
+                    <Label Grid.Column="3" Text="Status"  HorizontalTextAlignment="Center"/>
+
+
+                </Grid>
+                <ListView x:Name="UsersList" ItemSelected="OnItemSelected" IsPullToRefreshEnabled="True" Refreshing="List_Refreshing" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <ViewCell.View>
+                                    <Grid RowSpacing="2" Padding="5" >
+
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+
+
+                                        </Grid.ColumnDefinitions>
+
+
+                                        <Label Grid.Column="0" Text="{Binding FirstName}"  HorizontalTextAlignment="Center" VerticalOptions="Center"/>
+                                        <Label Grid.Column="1" Text="{Binding LastName}" HorizontalTextAlignment="Center" VerticalOptions="Center"></Label>
+                                        <Label Grid.Column="2" Text="{Binding RegistrationDate}"  HorizontalTextAlignment="Center" VerticalOptions="Center"/>
+                                        <Image Grid.Column="3" Source="zeleni50.png" IsVisible="{Binding IsActive}" Aspect="AspectFit" ></Image>
+
+
+                                    </Grid>
+                                </ViewCell.View>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </ScrollView >
+    </ContentPage.Content>
+</ContentPage>

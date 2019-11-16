@@ -67,20 +67,20 @@ namespace Kurir.CourierPages
             if (list != null)
             {
                 listOfDeliveries = new List<DeliveryModel>(list);
-                await _connection.CreateTableAsync<DeliveryModel>();
+                //await _connection.CreateTableAsync<DeliveryModel>();
 
-                foreach (var item in listOfDeliveries)
-                {
-
-
-                    int x = await _connection.UpdateAsync(item);
-                    if (x == 0)
-                    {
-                        await _connection.InsertAsync(item);
-                    }
+                //foreach (var item in listOfDeliveries)
+                //{
 
 
-                }
+                //    int x = await _connection.UpdateAsync(item);
+                //    if (x == 0)
+                //    {
+                //        await _connection.InsertAsync(item);
+                //    }
+
+
+                //}
 
                 DeliveryList.ItemsSource = listOfDeliveries;
 
@@ -106,7 +106,23 @@ namespace Kurir.CourierPages
             await GetDeliveriesFromServer();
             DeliveryList.EndRefresh();
         }
-
+        public async void DirectionAction(object sender, EventArgs e)
+        {
+            var mi = ((MenuItem)sender);
+            if (int.TryParse(mi.CommandParameter.ToString(), out int IDint))
+                {
+                    DeliveryModel selectedDelivery = listOfDeliveries.Where(x => x.DeliveryID == IDint).First();
+                    if (selectedDelivery != null)
+                    {
+                        if (selectedDelivery.StartAddress.LocationID > 1)
+                        {
+                            LocationModel l = await locationService.GetByID(Convert.ToInt32(selectedDelivery.StartAddress.LocationID));
+                            await Map.OpenAsync(l.Latitude, l.Longitude, new MapLaunchOptions() { NavigationMode = NavigationMode.Walking });
+                        }
+                    }
+                }
+            
+            }
         public async void StartAction(object sender, EventArgs e)
         {
             var mi = ((MenuItem)sender);
@@ -130,10 +146,12 @@ namespace Kurir.CourierPages
                                 FullAddressModel startAddress = await addressService.GetAddressByIDAsync(selectedDelivery.StartAddressID);
                                 startAddress.LocationID = lmReturned.LocationID;
                             }
+                            selectedDelivery.StartTime = DateTime.Now;
                             var response = await deliveryService.EditDelivery(selectedDelivery);
                             if (response != null)
                             {
-                                await DisplayAlert("Succses", "Delivery confirmed.", "ok");
+                                await DisplayAlert("Succses", "Delivery started.", "ok");
+                                await GetDeliveriesFromServer();
                             }
                             else
                             {
@@ -164,6 +182,6 @@ namespace Kurir.CourierPages
         }
 
 
-
+        
     }
 }

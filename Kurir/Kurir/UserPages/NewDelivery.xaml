@@ -1,52 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Kurir.NewDelivery">
-    <ContentPage.Content  >
+             x:Class="Kurir.UserPages.NewDelivery">
+    <ContentPage.Content  VerticalOptions="StartAndExpand" 
+                HorizontalOptions="StartAndExpand" Padding="0,25,10,0">
 
         <ScrollView>
-            <StackLayout x:Name="NewDeliveryStack"  Padding="10" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <StackLayout>
                 <Label x:Name="Titlelbl"  FontSize="Medium"   VerticalOptions="Center"  HorizontalOptions="Center" />
+                <StackLayout x:Name="stackDetail" Padding="10" HorizontalOptions="Center" VerticalOptions="Center">
 
-                <Grid  x:Name="StartAddressGrid">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Label FontSize="Medium"   Text="1. Name of sender." Grid.Row="0" Grid.Column="0"/>
-                    <Entry  x:Name="StartName" Text="{Binding Name}" FontSize="Medium" BackgroundColor="#41a845" PropertyChanged="Notify"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"  Grid.Row="0" Grid.Column="1"></Entry>
-                    <Label FontSize="Medium"  Text="2. Phone Number of sender. "  Grid.Row="1" Grid.Column="0"/>
-                    <Entry  x:Name="StartPhone" Text="{Binding Phone}" Keyboard="Numeric" PropertyChanged="NotifyPhone" FontSize="Medium" BackgroundColor="#41a845"   VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand"  Grid.Row="1" Grid.Column="1"></Entry>
-                    <Label FontSize="Medium"  Text="3. Address : Street building number / apartment number / floor / interphone"  Grid.Row="2" Grid.Column="0"/>
-                    <Entry x:Name="StartAddress" Text="{Binding Address}" FontSize="Medium" BackgroundColor="#41a845"  PropertyChanged="NotifyAddress"  Placeholder="Bulevar Oslobodjenja 20/15/3/Rakic" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"  Grid.Row="2" Grid.Column="1"></Entry>
-                </Grid>
-                <Grid  x:Name="EndAddressGrid">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Label FontSize="Medium" Text="4. Name of recipient." Grid.Row="0" Grid.Column="0"/>
-                    <Entry PropertyChanged="Notify" Text="{Binding Name}" FontSize="Medium" BackgroundColor="#41a845" x:Name="NameEnd"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Grid.Row="0" Grid.Column="1"></Entry>
-                    <Label FontSize="Medium" Text="5. Phone Number of recipient." Grid.Row="1" Grid.Column="0"/>
-                    <Entry PropertyChanged="NotifyPhone"  Text="{Binding Phone}" Keyboard="Numeric" FontSize="Medium" BackgroundColor="#41a845" x:Name="PhoneEnd" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Grid.Row="1" Grid.Column="1"></Entry>
-                    <Label FontSize="Medium" Text="6. Address : StreetName Building number / apartment number / floor / interphone" Grid.Row="2" Grid.Column="0"/>
-                    <Entry PropertyChanged="NotifyAddress" Text="{Binding Address}" FontSize="Medium" BackgroundColor="#41a845" x:Name="EndAddress" Placeholder="Bulevar Oslobodjenja 155/10/3/10" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Grid.Row="2" Grid.Column="1"></Entry>
-                </Grid>
+                <Frame BorderColor="LawnGreen">
+                    <Grid >
+                        <Label  Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"   FontSize="Medium"  Text="Delivery Details : " ></Label>
 
-                <Label FontSize="Medium" Text="7. Chose payment type:"/>
-                <Picker FontSize="Medium" x:Name="PaymentTypePicker" PropertyChanged="NotifyPicker" TextColor="Black"  ItemDisplayBinding="{Binding PaymentTypeName}"></Picker>
-                <Label FontSize="Medium" Text="8. Chose delivery type:"/>
-                <Picker FontSize="Medium" x:Name="DeliverTypePicker" PropertyChanged="NotifyPicker"  TextColor="Black"  ItemDisplayBinding="{Binding DeliveryTypeName}"></Picker>
+                        <Label Grid.Row="1" Grid.Column="0" FontSize="Medium"   Text="1. Name of sender: "></Label>
+                        <Label BindingContext="{Binding StartAddress}" Grid.Row="1" Grid.Column="1" Text="{Binding Name}" FontSize="Medium"></Label>
+
+                        <Label Grid.Row="2" Grid.Column="0" FontSize="Medium"  Text="2.Senders Phone Number :" ></Label>
+                        <Label  BindingContext="{Binding StartAddress}" Grid.Row="2" Grid.Column="1" Text="{Binding Phone}" FontSize="Medium"  ></Label>
+
+                        <Label Grid.Row="3" Grid.Column="0" FontSize="Medium"  Text="3.Senders Address :"/>
+                        <Label BindingContext="{Binding StartAddress}" Grid.Row="3" Grid.Column="1" Text="{Binding Address}" FontSize="Medium"></Label>
+
+                        <Label  Grid.Row="4" Grid.Column="0" FontSize="Medium" Text="4. Name of recipient."/>
+                        <Label BindingContext="{Binding EndAddress}" Grid.Row="4" Grid.Column="1"  Text="{Binding Name}" FontSize="Medium"></Label>
+
+                        <Label Grid.Row="5" Grid.Column="0" FontSize="Medium" Text="5.Recipients Phone Number : "/>
+                        <Label BindingContext="{Binding EndAddress}" Grid.Row="5" Grid.Column="1" Text="{Binding Phone}" FontSize="Medium" ></Label>
+
+                        <Label Grid.Row="6" Grid.Column="0" FontSize="Medium" Text="6.Recipients Address : " />
+                        <Label BindingContext="{Binding EndAddress}" Grid.Row="6" Grid.Column="1" Text="{Binding Address}" FontSize="Medium" ></Label>
+
+                    </Grid>
+                </Frame>
+            </StackLayout>
+            <StackLayout x:Name="NewDeliveryStack"  Padding="10" HorizontalOptions="Fill" VerticalOptions="Center">
+                    
+                <Label HorizontalTextAlignment="Center" FontSize="Medium" Text="8. Chose delivery type:"/>
+                <Picker FontSize="Medium" x:Name="DeliverTypePicker" PropertyChanged="NotifyPicker"  TextColor="Black"  ItemDisplayBinding="{Binding DeliveryTypeName}" HorizontalOptions="CenterAndExpand" ></Picker>
 
                 <Label FontSize="Medium" Text="9. Enter detail of delivery if needed:" MaxLines="10"/>
                 <Editor HeightRequest="100" Text="{Binding Description}" FontSize="Medium" x:Name="DeliveryDetails" VerticalOptions="FillAndExpand" TextColor="Black" BackgroundColor="#41a845" HorizontalOptions="Fill"></Editor>
@@ -54,6 +46,7 @@
                 <Button FontSize="Medium" x:Name="OrderDelivery"  BackgroundColor="ForestGreen" Clicked="OrderDelivery_Clicked"  VerticalOptions="Center" HorizontalOptions="Center" Margin="10"></Button>
                 
             
+            </StackLayout>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

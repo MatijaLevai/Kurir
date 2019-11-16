@@ -26,6 +26,12 @@ namespace KurirServer.Repositories
             return await query.FirstOrDefaultAsync();
          
         }
+        public async Task<List<User>> GetAllUserAsync()
+        {
+
+            return await context.Users.ToListAsync();
+
+        }
         public IEnumerable<int> GetUsersIdsWithCourierRole()
         {
             
@@ -126,12 +132,29 @@ namespace KurirServer.Repositories
                 return false;
             }
         }
+        public int GetCurrentUserRole(int Userid)
+        {
+            try
+            {
+                IQueryable<User> query = context.Users;
+                query = query.Where(u => u.UserID == Userid);
+                var usr = query.First();
+                return usr.ActiveUserRoleID;
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return 0;
+            }
+        }
+
         public async Task<IEnumerable<ActiveCourierModel>> GetActiveCouriers()
         {
             try
             {
                 List<ActiveCourierModel> activeCourierList = new List<ActiveCourierModel>();
-                var listOfActiveUsers = context.Users.Where(ur => ur.IsActive == true).ToList();
+                var listOfActiveUsers =await context.Users.Where(ur => ur.IsActive == true).ToListAsync();
                 var listOfUserRoles = context.UserRoles.Where(ur => ur.RoleID == 4).ToList();
                 foreach (var item in listOfUserRoles)
                 {
@@ -162,7 +185,7 @@ namespace KurirServer.Repositories
                             }
 
                         }
-                    await context.SaveChangesAsync();
+                   // await context.SaveChangesAsync();
                     return activeCourierList;
                 }
                return null;
@@ -176,5 +199,73 @@ namespace KurirServer.Repositories
             else
             return false;
         }
+       
+        public async Task<IEnumerable<User>> GetAllUsersByRoleAsync(int roleID)
+        {
+
+            try
+            {
+                List<User> UserList = new List<User>();
+                var listOfUsers = await context.Users.ToListAsync();
+                var listOfUserRoles = context.UserRoles.Where(ur => ur.RoleID == roleID).ToList();
+                foreach (var item in listOfUserRoles)
+                {
+                    var usr = listOfUsers.Where(u => u.UserID == item.UserID).FirstOrDefault();
+                    if (usr != null)
+                    {
+                        UserList.Add(usr);
+                    }
+                }
+
+                return UserList;
+
+            }
+            catch { return null; }
+        }
+        public async Task<int> GetCountOfUsersByRoleAsync(int roleID)
+        {
+                int count = 0;
+                var listOfUsers = await context.Users.ToListAsync();
+                var listOfUserRoles = context.UserRoles.Where(ur => ur.RoleID == roleID).ToList();
+                foreach (var item in listOfUserRoles)
+                {
+                    var usr = listOfUsers.Where(u => u.UserID == item.UserID).FirstOrDefault();
+                    if (usr != null)
+                    {
+                        count++;
+                    }
+                }
+
+                return count;
+        }
+        public async Task<IEnumerable<CourierModel>> GetAllCouriers()
+        {
+
+            try
+            {
+                List<CourierModel> CourierList = new List<CourierModel>();
+                var listOfUsers = await context.Users.ToListAsync();
+                var listOfUserRoles = context.UserRoles.Where(ur => ur.RoleID == 4).ToList();
+                foreach (var item in listOfUserRoles)
+                {
+                    var usr = listOfUsers.Where(u => u.UserID == item.UserID).FirstOrDefault();
+                    if (usr != null)
+                    {
+                        CourierModel c = new CourierModel()
+                        {
+                            CourierFullName = usr.FirstName + " " + usr.LastName,
+                            CourierID = usr.UserID
+                        };
+                        CourierList.Add(c);
+                    }
+                }
+               
+                    return CourierList;
+               
+            }
+            catch { return null; }
+        }
+
+        
     }
 }

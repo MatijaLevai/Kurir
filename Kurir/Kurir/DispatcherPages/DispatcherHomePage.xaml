@@ -3,15 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.DispatcherPages.DispatcherHomePage"
              xmlns:local="clr-namespace:Kurir.DispatcherPages"
-            BarBackgroundColor="#41a845" BarTextColor="White">
-  <!--Pages can be added as references or inline-->
+            BarBackgroundColor="#41a845" BarTextColor="White"
+            >
+    
+    <!--Pages can be added as references or inline-->
     <TabbedPage.Children>
-        <local:ActiveCourierListPage Title="Active Couriers"/>
-        <local:NewDeliveryDispatchPage Title="Create Delivery"/>
-        <local:UncofirmedDeliveriesListPage Title="New Deliveries"/>
-        <local:DeliveriesListPage Title="Your Deliveries"/>
-        <local:ListOfAllDeliveries Title="All Deliveries"/>
-        <local:EditDispatcherPage Title="Edit Account"/>
-        <local:StatisticsPage Title="Statistics"/>
+
+            <local:ActiveCourierListMapPage Title="Aktivni kuriri"/>
+            <local:NewDeliveryDispatchPage Title="Nova dostava"/>
+            <local:UncofirmedDeliveriesListPage Title="Nepotvrđene dostave"/>
+            <local:DeliveriesListPage Title="Tvoje dostave"/>
+            <local:ListOfAllDeliveries Title="Sve dostave"/>
+            <local:EditDispatcherPage Title="izmeni profil"/>
+            <local:StatisticsPage Title="Statistika"/>
+        
     </TabbedPage.Children>
 </TabbedPage>

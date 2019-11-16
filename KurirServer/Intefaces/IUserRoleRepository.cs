@@ -12,6 +12,7 @@ namespace KurirServer.Intefaces
 
         IEnumerable<UserRole> GetUserRoles(int UserID);
         int AddUserRole(int UserID, int RoleID = 3);
-
+        IEnumerable<Role> GetAllRoles();
+        UserRole GetUserRoleByID(int id);
     }
 }

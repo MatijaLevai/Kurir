@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.CourierPages.DeliveryCreateEditPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                <Grid ColumnSpacing="5" x:Name="DeliveryGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="80"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="80"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="40"></RowDefinition>
+                        <RowDefinition Height="80"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="Titlelbl" Text="Kreiranje nove dostave"  FontSize="15"   VerticalOptions="Center"  HorizontalOptions="Center" />
+                    <Label Grid.Row="1" Grid.Column="0" FontSize="15"   Text="1. Ime pošiljaoca"/>
+                    <Entry Grid.Row="1" Grid.Column="1"   FontSize="15" BackgroundColor="#02ce0a" PropertyChanged="NotifyNameStart"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Text ="{Binding StartAddress.Name}"></Entry>
+
+                    <Label Grid.Row="2" Grid.Column="0" FontSize="15"  Text="2. Broj telefona pošiljaoca" />
+                    <Entry Grid.Row="2" Grid.Column="1" Keyboard="Numeric" PropertyChanged="NotifyPhoneStart" FontSize="15" BackgroundColor="#02ce0a"   VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Text ="{Binding StartAddress.Phone}"></Entry>
+
+                    <Label Grid.Row="3" Grid.Column="0" FontSize="15"  Text="3. Adresa pošiljaoca"/>
+                    <Entry Grid.Row="3" Grid.Column="1" FontSize="15" BackgroundColor="#02ce0a"  PropertyChanged="NotifyAddressStart"  Placeholder="Ime ulice broj zgrade / broj stana / sprat / intefon" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsTextPredictionEnabled="True" Text ="{Binding StartAddress.Address}"></Entry>
+                    <ListView Grid.Row="4" Grid.Column="1" x:Name="listStartAddres"  ItemsSource="{Binding Addresses}" HorizontalOptions="Start" ItemSelected="ListStartAddres_SelectedIndexChanged">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Text="{Binding Name}"></Label>
+                                        <Label Grid.Column="1" Text="{Binding Address}"></Label>
+                                        <Label Grid.Column="2" Text="{Binding Phone}"></Label>
+
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Label Grid.Row="5" Grid.Column="0" FontSize="15" Text="4. Zona adrese pošiljaoca : 1" x:Name="ZoneStartSteplbl"/>
+                    <Stepper Grid.Row="5" Grid.Column="1" x:Name="ZoneStart" PropertyChanged="ZoneStart_PropertyChanged" Minimum="1" Maximum="4"></Stepper>
+
+
+                    <Label Grid.Row="6" Grid.Column="0" FontSize="15" Text="5. Ime primaoca"/>
+                    <Entry Grid.Row="6" Grid.Column="1" PropertyChanged="NotifyNameEnd" FontSize="15" BackgroundColor="#02ce0a" x:Name="NameEnd"  VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Text ="{Binding EndAddress.Name}"></Entry>
+
+                    <Label Grid.Row="7" Grid.Column="0" FontSize="15" Text="6. Broj telefona primaoca"/>
+                    <Entry Grid.Row="7" Grid.Column="1" PropertyChanged="NotifyPhoneEnd" Keyboard="Numeric" FontSize="15" BackgroundColor="#02ce0a" x:Name="PhoneEnd" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Text ="{Binding EndAddress.Phone}"></Entry>
+
+                    <Label Grid.Row="8" Grid.Column="0" FontSize="15" Text="7. Adresa primaoca " />
+                    <Entry Grid.Row="8" Grid.Column="1" PropertyChanged="NotifyAddressEnd" FontSize="15" BackgroundColor="#02ce0a" x:Name="EndAddress" Placeholder="Ime ulice broj zgrade / broj stana / sprat / intefon" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" IsTextPredictionEnabled="True" Text ="{Binding EndAddress.Address}"></Entry>
+                    <ListView  Grid.Row="9" Grid.Column="1" x:Name="listEndAddres"  ItemsSource="{Binding Addresses}" ItemSelected="ListEndAddres_SelectedIndexChanged" HorizontalOptions="Start" >
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Text="{Binding Name}"></Label>
+                                        <Label Grid.Column="1" Text="{Binding Address}"></Label>
+                                        <Label Grid.Column="2" Text="{Binding Phone}"></Label>
+
+                                    </Grid>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Label Grid.Row="10" Grid.Column="0" FontSize="15" Text="8. Zona adrese primaoca : 1"  x:Name="ZoneEndSteplbl" />
+                    <Stepper Grid.Row="10" Grid.Column="1" x:Name="ZoneEnd" PropertyChanged="ZoneEnd_PropertyChanged"  Maximum="4" Minimum="1" Increment="1" ></Stepper>
+
+
+                    <Label Grid.Row="11" Grid.Column="0" FontSize="15" Text="9. Cena " />
+                    <Entry Grid.Row="11" Grid.Column="1" x:Name="Price" Keyboard="Numeric" PropertyChanged="Price_PropertyChanged"  BackgroundColor="#02ce0a" Text ="{Binding DeliveryPrice}"/>
+                    <Label Grid.Row="12" Grid.Column="0" FontSize="15" Text="10. Tip plaćanja " />
+                    <Picker Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" FontSize="15" x:Name="PaymentTypePicker" PropertyChanged="NotifyPicker" TextColor="Black"  ItemDisplayBinding="{Binding PaymentTypeName}"></Picker>
+                    <Label Grid.Row="14" Grid.Column="0" FontSize="15" Text="11. Tip dostave" />
+                    <Picker Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2"   FontSize="15" x:Name="DeliverTypePicker" PropertyChanged="NotifyPicker"  TextColor="Black"  ItemDisplayBinding="{Binding DeliveryTypeName}"></Picker>
+                    <Label  Grid.Row="16" Grid.Column="0" FontSize="15" Text="Čekanje :" />
+                    <Label  Grid.Row="16" Grid.Column="1" FontSize="15" Text="{Binding Source={x:Reference slider},  Path=Value}"/>
+                    <Slider x:Name="slider" Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2" Maximum="600" Minimum="0" Value="{Binding WaitingInMinutes}" ValueChanged="Slider_ValueChanged" HorizontalOptions="FillAndExpand" ></Slider>
+                    <Label  Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" FontSize="15" Text="13. Detalji dostave" />
+                    <Editor Grid.Row="19" Grid.Column="0" Grid.ColumnSpan="2"  MaxLength="512" FontSize="15" x:Name="DeliveryDetails" VerticalOptions="FillAndExpand" TextColor="Black" BackgroundColor="#02ce0a" HorizontalOptions="Fill" Text="{Binding Description}"></Editor>
+                           
+                </Grid>
+                <Button x:Name="DeliveryButton" Clicked="DeliveryButton_Clicked" Text="Završi"/>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

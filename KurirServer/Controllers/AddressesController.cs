@@ -28,7 +28,7 @@ namespace KurirServer.Controllers
             return await _context.Addresses.ToListAsync();
         }
         ///GetByUserID/" + UserID
-        [Route("/GetByUserID/{UserID}")]
+        [Route("GetByUserID/{UserID}")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FullAddress>>> GetAddressesByUserID(int UserID)
         {
@@ -86,14 +86,14 @@ namespace KurirServer.Controllers
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                exception = ex;
+                //exception = ex;
                 if (!FullAddressExists(id))
                 {
                     return NotFound();
                 }
                 else
                 {
-                    throw; }
+                    throw ex; }
             }
             if(x>0)
                 return Ok();
@@ -109,6 +109,7 @@ namespace KurirServer.Controllers
         {
             try
             {
+                
                 _context.Addresses.Add(fullAddress);
                 await _context.SaveChangesAsync();
 

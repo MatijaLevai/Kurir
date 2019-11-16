@@ -1,12 +1,13 @@
-﻿using Kurir.Models;
+﻿using Kurir.AdminPages;
+using Kurir.CourierPages;
+using Kurir.DispatcherPages;
+using Kurir.Models;
+using Kurir.Persistance;
+using Kurir.SuperAdminPages;
+using Kurir.UserPages;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Kurir
@@ -16,12 +17,62 @@ namespace Kurir
     [DesignTimeVisible(true)]
     public partial class MainPage : ContentPage
     {
-        private HttpClient _client = new HttpClient();
+        //private HttpClient _client = new HttpClient();
+        public static HttpClient client = App.client;
+        private UserRoleService userRoleService;
+        
         public MainPage()
         {
+            userRoleService = new UserRoleService();
             InitializeComponent();
 
         }
+        protected override async void OnAppearing()
+        {
+
+               // try
+               // {
+        
+
+        RegisterUserModel user = JsonConvert.DeserializeObject<RegisterUserModel>(Application.Current.Properties["User"].ToString());
+        UserRoleModel ur = await userRoleService.Get(user.ActiveUserRoleID);
+            if (ur != null)
+            {
+                switch (ur.RoleID)
+                {
+                    case 1:
+                        Application.Current.MainPage = new NavigationPage(new DefaultSuperAdminPage());
+                        break;
+                    case 2:
+                        Application.Current.MainPage = new NavigationPage(new AdminsPage());
+                        break;
+                    case 3:
+                        Application.Current.MainPage = new NavigationPage(new UserHomePage());
+                        break;
+                    case 4:
+                        DefaultCouriersPage main = new DefaultCouriersPage();
+                        //main.Master = new DefaultCouriersPageMaster();
+                        //main.Detail = new DefaultCouriersPageDetail();
+                        Application.Current.MainPage = new NavigationPage(main);
+                        break;
+                    case 5:
+                        Application.Current.MainPage = new NavigationPage(new DispatcherHomeMDPage());
+                        break;
+                }
+            }
+            else
+            {
+                Application.Current.Properties.Remove("User");
+                Application.Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
+            }
+
+                //catch (Exception)
+                //{
+                //    //await DisplayAlert("Greska", ex.Message + ex.InnerException, "ok"); 
+                //}
+            base.OnAppearing();
+        }
+
 
 
     }

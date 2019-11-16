@@ -20,8 +20,12 @@ namespace Kurir.DispatcherPages
         private List<ActiveCourierModel> listOfCouriers;
         private SQLiteAsyncConnection _connection;
         private UserService userService;
+        private DeliveryService deliveryService;
+       
         public ActiveCourierListPage()
         {
+            deliveryService = new DeliveryService();
+             
             userService = new UserService();
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
             InitializeComponent();
@@ -31,8 +35,8 @@ namespace Kurir.DispatcherPages
             await GetActiveCouriersFromServer();
             base.OnAppearing();
         }
-
-        private async Task<bool> GetActiveCouriersFromServer()
+       
+            private async Task<bool> GetActiveCouriersFromServer()
         {
             var list = await userService.GetActiveCouriers();
             if (list != null)
@@ -81,7 +85,7 @@ namespace Kurir.DispatcherPages
                 Location l = new Location(item.Lat, item.Long, item.DToffSet);
                 l.Altitude = item.Alt;
                 try {
-                    await Navigation.PushAsync(new MapPage(l,item.CourierFullName));
+                    await Navigation.PushAsync(new MapPageActiveCourier(l,item.CourierFullName));
                     }
                 catch (Exception ex) { await DisplayAlert("", ex.Message + ex.InnerException, "ok"); }
                 //await Map.OpenAsync(l);

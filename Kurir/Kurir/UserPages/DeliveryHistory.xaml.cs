@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Kurir
+namespace Kurir.UserPages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DeliveryHistory : ContentPage
@@ -39,7 +39,7 @@ namespace Kurir
             {
 
 
-                var list = await deliveryService.GetDeliveriesForUser();
+                var list = await deliveryService.GetDeliveriesForUser(Convert.ToInt32(Application.Current.Properties["UserID"].ToString()));
                 if (list != null)
                 {
                     listOfDeliveries = new List<DeliveryModel>(list);
@@ -49,17 +49,23 @@ namespace Kurir
                     foreach (var item in listOfDeliveries)
                     {
                         //Delivery detail image 
-                        if (item.EndTime > item.StartTime)
+                        switch (item.DeliveryStatus)
                         {
-                            item.DeliveryStatusImageSource ="delivered.png";
-                        }
-                        else if (item.StartTime > item.CreateTime)
-                        {
-                            item.DeliveryStatusImageSource ="zeleni50.png";
-                        }
-                        else
-                        {
-                            item.DeliveryStatusImageSource ="zuti50.png";
+                            case 4:
+                                item.DeliveryStatusImageSource = "delivered.png";
+                                break;
+                            case 3:
+                                item.DeliveryStatusImageSource = "zeleni50.png";
+                                break;
+                            case 2:
+                                item.DeliveryStatusImageSource = "zutieleni50.png";
+                                break;
+                            case 1:
+                                item.DeliveryStatusImageSource = "crveni50.png";
+                                break;
+                            default:
+                                item.DeliveryStatusImageSource = "crveni50.png";
+                                break;
                         }
 
                         //int x = await _connection.UpdateAsync(item);
@@ -89,13 +95,13 @@ namespace Kurir
             var item =(DeliveryModel) e.SelectedItem;
            var selectedDelivery = listOfDeliveries.Where(d => d.DeliveryID == item.DeliveryID).First();
             //provera da li je kurir vec preuzeo dostavu ili je proslo 5 minuta od slanja dostave, tada korisniku nije dozvoljeno menjanje dostave
-            if (selectedDelivery.StartTime > selectedDelivery.CreateTime || selectedDelivery.CreateTime.AddMinutes(5) < DateTime.Now)
+            if (selectedDelivery.DeliveryStatus>1)
             {
                 await Navigation.PushAsync(new DeliveryDetailPage(selectedDelivery));
             }
             else
             {
-                await Navigation.PushAsync(new NewDelivery(selectedDelivery));
+                await Navigation.PushAsync(new StartAddressPage(selectedDelivery));
                
             }
         }
@@ -104,6 +110,42 @@ namespace Kurir
             await GetDeliveriesFromServer();
             DeliveryList.EndRefresh();
         }
-        
+        public async void DeleteCommand(object sender, EventArgs e)
+        {
+            var mi = ((MenuItem)sender);
+
+            try
+            {
+                if (int.TryParse(mi.CommandParameter.ToString(), out int IDint))
+                {
+                    DeliveryModel selectedDelivery = listOfDeliveries.Where(x => x.DeliveryID == IDint).First();
+                    if (selectedDelivery != null)
+                    {
+
+                        if (selectedDelivery.DeliveryStatus==0)
+                        {
+                            selectedDelivery.UserID = 0;
+                            var x = await deliveryService.EditDelivery(selectedDelivery);
+                           if(x.UserID == 0)
+                            { listOfDeliveries.Remove(selectedDelivery);
+                                DeliveryList.ItemsSource = null;
+                                DeliveryList.ItemsSource = listOfDeliveries;
+                                await DisplayAlert("Succses", "Delivery removed.", "ok");
+                            }
+                        }
+                        else
+                        {
+                            await DisplayAlert("Delivery remuval failed.", " Delivery is allready confirmed by dispatcher.", "ok");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Delivery confimation failed.", " Try again. Check internet connection. Error : " + ex.Message + ex.InnerException, "ok");
+            }
+
+        }
+
     }
     }

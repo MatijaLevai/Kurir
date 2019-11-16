@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps"
+             x:Class="Kurir.UserPages.AddLocationToAddressPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Klikom na mapi obeležite lokaciju adrese."
+                VerticalOptions="Center" 
+                HorizontalOptions="Center" />
+            <Button x:Name="PopToAddressWithUsersLocation" Text="Izaberi moju lokaciju" BackgroundColor="GreenYellow" TextColor="White" Clicked="PopToAddressWithUsersLocation_Clicked" ></Button>
+            <Button x:Name="PopToAddress" Text="Gotovo" BackgroundColor="GreenYellow" TextColor="White" Clicked="PopToAddress_Clicked"></Button>
+            <StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <maps:Map WidthRequest="320" HeightRequest="200" x:Name="MyMap" MapType="Street" MapClicked="MyMap_MapClicked"></maps:Map>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

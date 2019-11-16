@@ -10,26 +10,31 @@ using Kurir.Models;
 using SQLite;
 using System.Net.Http;
 using Kurir.Persistance;
+using System.Diagnostics;
 
 namespace Kurir.DispatcherPages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class StatisticsPage : ContentPage
     {
-        private readonly HttpClient _client = App.client;
-        private readonly SQLiteAsyncConnection _connection;
-        private SQLiteHelper liteHelper;
-        private List<PaymentTypeModel> paymentTypes;
-        private List<DeliveryTypeModel> deliveryTypes;
-        private List<DeliveryModel> list;
-        private DeliveryService deliveryService;
-        private decimal Revenue;
-        private int NumberOfDeliveries;
+        #region excess
+        //private readonly HttpClient _client = App.client;
+        //private readonly SQLiteAsyncConnection _connection;
+        ////private SQLiteHelper liteHelper;
+        //private List<PaymentTypeModel> paymentTypes;
+        //private List<DeliveryTypeModel> deliveryTypes;
+        //private List<DeliveryModel> list;
+        //private decimal Revenue;
+        //private int NumberOfDeliveries;
+        /////////////////////////////
+        //_connection = DependencyService.Get<ISQLiteDb>().GetConnection();
+        //liteHelper = new SQLiteHelper();
+        #endregion
+        private List<DeliveryModel> sveDostave;
+        private readonly DeliveryService deliveryService;
         public StatisticsPage()
         {
             deliveryService = new DeliveryService();
-            _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
-            liteHelper = new SQLiteHelper();
             InitializeComponent();
         }
         protected async override void OnAppearing()
@@ -57,46 +62,48 @@ namespace Kurir.DispatcherPages
             //PaymentTypePicker.SetBinding(Picker.ItemsSourceProperty, "paymentTypes",);
             //DeliveryTypePicker.ItemDisplayBinding = new Binding("DeliveryTypeName");
             #endregion
-            try {
+            
+
+            startDatePicker.Date = new DateTime(2019, 8, 1);
+            endDatePicker.Date = DateTime.Now;
+            base.OnAppearing();
+            try
+            {
                 if (await GetStatistics())
                 { }
                 else throw new Exception("No data to show.");
-              
+
             }
-            catch (Exception ex) { await DisplayAlert("Error",ex.Message,"ok"); }
-           
-
-
-            base.OnAppearing();
-        }
-        private async Task<bool> DelAndPayTypes()
-        {
-            try
-            {
-
-                var response = await liteHelper.UpdateSQLiteDb();
-                if (response)
-                {
-
-                    paymentTypes = await _connection.Table<PaymentTypeModel>().ToListAsync();
-                    deliveryTypes = await _connection.Table<DeliveryTypeModel>().ToListAsync();
-                    
-                    return true;
-                }
-                else
-                {
-
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Problem occurred", ex.Message, "ok");
-                return false;
-            }
+            catch (Exception ex) { await DisplayAlert("Error", ex.Message, "ok"); }
 
         }
+        //private async Task<bool> DelAndPayTypes()//private async Task<bool> DelAndPayTypes()
+        //{
+        //    try
+        //    {
 
+        //        var response = await liteHelper.UpdateSQLiteDb();
+        //        if (response)
+        //        {
+
+        //            paymentTypes = await _connection.Table<PaymentTypeModel>().ToListAsync();
+        //            deliveryTypes = await _connection.Table<DeliveryTypeModel>().ToListAsync();
+
+        //            return true;
+        //        }
+        //        else
+        //        {
+
+        //            return false;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await DisplayAlert("Problem occurred", ex.Message, "ok");
+        //        return false;
+        //    }
+
+        //}
         private async Task<bool> GetStatistics()
         {
             try
@@ -137,60 +144,107 @@ namespace Kurir.DispatcherPages
                         listC.Add(item);
                     }
                 }
-                var sveDostave = await deliveryService.GetAllFinishedDeliveries();
-
+                await GetDeliveries();
                 StatisticUserCandDModel fullStat = new StatisticUserCandDModel
-                {   ImePrezime= "Total",
+                { ImePrezime = "Total",
                     BrojDostava = sveDostave.Count(),
                     Promet = Convert.ToDouble(sveDostave.Sum(x => x.DeliveryPrice)),
+                    PrometCash = 0,
+                    PrometFaktura = 0,
+                    PrometCupon = 0
                 };
                 foreach (var item in sveDostave)
                 {
-
-
-                    switch (item.DeliveryTypeID)
+                    switch (item.PaymentTypeID)
                     {
-                        default:
+                        case 1:
+                            fullStat.PrometCash += Convert.ToDouble(item.DeliveryPrice);
+                            break;
+                        case 2:
+                            fullStat.PrometFaktura += Convert.ToDouble(item.DeliveryPrice);
+                            break;
+                        case 3:
+                            fullStat.PrometCupon += Convert.ToDouble(item.DeliveryPrice);
                             break;
                     }
-                    fullStat.PrometCash = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 1).Sum(x => x.DeliveryPrice));
-                    fullStat.PrometFaktura = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 2).Sum(x => x.DeliveryPrice));
-                    fullStat.PrometCupon = Convert.ToDouble(sveDostave.Where(y => y.DeliveryTypeID == 3).Sum(x => x.DeliveryPrice));
                 }
-                fullStat.PrihodOdPrometa = fullStat.Promet;
-                foreach (var item in listC)
+                if (listC.Count > 0)
                 {
-                    fullStat.PrihodOdPrometa -= item.PrihodOdPrometa;
+                    fullStat.PrihodOdPrometa = fullStat.Promet-listC.Sum(x=>x.PrihodOdPrometa);
+                    
+                    listC.Add(fullStat);
+                    Statistics.ItemsSource = listC;
+                    return true;
                 }
-                listC.Add(fullStat);
-                Statistics.ItemsSource = listC;
-                return true;
+                else return false;
             }
-           catch(Exception ex) {
-                return false; }
+           catch(Exception ex)
+            {
+                Debug.WriteLine(ex.InnerException + "_\r\n" + ex.Message);
+                return false;
+            }
         }
-        
-        
-        void OnDateSelectedStart(object sender, DateChangedEventArgs args)
+
+        private async Task GetDeliveries()
+        {
+            sveDostave = new List<DeliveryModel>(await deliveryService.GetAllFinishedDeliveries(startDatePicker.Date, endDatePicker.Date));
+            foreach (var item in sveDostave)
+            {
+                switch (item.DeliveryStatus)
+                {
+                    case 4:
+                        item.DeliveryStatusImageSource = "delivered.png";
+                        break;
+                    case 3:
+                        item.DeliveryStatusImageSource = "zeleni50.png";
+                        break;
+                    case 2:
+                        item.DeliveryStatusImageSource = "zuti50.png";
+                        break;
+                    case 1:
+                        item.DeliveryStatusImageSource = "crveni50.png";
+                        break;
+                    default:
+                        item.DeliveryStatusImageSource = "crveni50.png";
+                        break;
+                }
+            }
+        }
+        async void OnDateSelectedStart(object sender, DateChangedEventArgs args)
         {
             var startDate =  (DatePicker) sender;
             if (startDate.Date > endDatePicker.Date)
-            { endDatePicker.Date = startDate.Date; }
+            { endDatePicker.Date = startDate.Date;}
             endDatePicker.MinimumDate = startDate.Date;
+            await GetStatistics();
         }
-        void OnDateSelectedEnd(object sender, DateChangedEventArgs args)
+        async void OnDateSelectedEnd(object sender, DateChangedEventArgs args)
         {
             var endDate = (DatePicker)sender;
             if (endDate.Date < startDatePicker.Date)
             { startDatePicker.Date = endDate.Date; }
             startDatePicker.MaximumDate = endDate.Date;
+            await GetStatistics();
         }
-
-       
-
         private async void ImageButton_Clicked(object sender, EventArgs e)
         {
             await GetStatistics();
+        }
+
+        private void Statistics_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            var obj = sender as ListView;
+            var objCD = obj.SelectedItem as StatisticUserCandDModel;
+           var list =  sveDostave.Where(x => ((x.CourierID == objCD.UserID) || (x.DispatcherID == objCD.UserID)));
+        if(list!=null)
+        DeliveryList.ItemsSource = list;
+        }
+
+        private async void DeliveryList_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            var obj = sender as ListView;
+            var objMD = obj.SelectedItem as DeliveryModel;
+            await Navigation.PushModalAsync(new DeliveryDetailPage(objMD));
         }
     }
 }

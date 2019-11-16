@@ -62,7 +62,7 @@ namespace KurirServer.Controllers
             }
 
         }
-        [Route("/GetLocationByID/ID")]
+        [Route("GetLocationByID/{ID}")]
         [HttpGet]
         public async Task<ActionResult<string>> GetLocationByID(int ID)
         {
@@ -79,7 +79,7 @@ namespace KurirServer.Controllers
             }
            
         }
-        [Route("/GetLocationByUserID/ID")]
+        [Route("GetLocationByUserID/{ID}")]
         [HttpGet]
         public async Task<ActionResult<string>> GetLocationByUserID(int ID)
         {

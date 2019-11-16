@@ -44,19 +44,24 @@ namespace Kurir.DispatcherPages
                 foreach (var item in listOfDeliveries)
                 {
                     //Delivery detail image 
-                    if (item.EndTime > item.StartTime)
+                    switch (item.DeliveryStatus)
                     {
-                        item.DeliveryStatusImageSource = "delivered.png";
+                        case 4:
+                            item.DeliveryStatusImageSource = "delivered.png";
+                            break;
+                        case 3:
+                            item.DeliveryStatusImageSource = "zeleni50.png";
+                            break;
+                        case 2:
+                            item.DeliveryStatusImageSource = "zuti50.png";
+                            break;
+                        case 1:
+                            item.DeliveryStatusImageSource = "crveni50.png";
+                            break;
+                        default:
+                            item.DeliveryStatusImageSource = "crveni50.png";
+                            break;
                     }
-                    else if (item.StartTime > item.CreateTime)
-                    {
-                        item.DeliveryStatusImageSource = "zeleni50.png";
-                    }
-                    else
-                    {
-                        item.DeliveryStatusImageSource = "zuti50.png";
-                    }
-
                     //int x = await _connection.UpdateAsync(item);
                     //if (x == 0)
                     //{
@@ -73,6 +78,8 @@ namespace Kurir.DispatcherPages
             else
             {
                 Message.Text = "No deliveries to show.";
+                Message.IsVisible = true ;
+                Message.IsEnabled = true;
                 return false;
             }
 
@@ -82,7 +89,7 @@ namespace Kurir.DispatcherPages
         {
             var item = (DeliveryModel)e.SelectedItem;
             var selectedDelivery = listOfDeliveries.Where(d => d.DeliveryID == item.DeliveryID).First();
-            await Navigation.PushAsync(new NewDeliveryDispatchPage(selectedDelivery));
+            await Navigation.PushAsync(new EditDeliveryDispatcherPage(selectedDelivery.ConvertToExtended()));
             //await Navigation.PushAsync(new NewDeliveryDispatchPage());
 
 

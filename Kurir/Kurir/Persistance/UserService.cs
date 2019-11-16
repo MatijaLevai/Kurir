@@ -53,7 +53,7 @@ namespace Kurir.Persistance
             }
         public async Task<RegisterUserModel> EditUser(RegisterUserModel userNew)
         {
-            string uri = ServerLink + "EditUser/" + Application.Current.Properties["UserID"].ToString();
+            string uri = ServerLink + "EditUser/" + userNew.UserID;
             string jsonUser = JsonConvert.SerializeObject(userNew);
             HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
             HttpResponseMessage msg;
@@ -154,6 +154,21 @@ namespace Kurir.Persistance
             else return "Unknown User";
 
         }
+        public async Task<List<RegisterUserModel>> GetAllUsers()
+        {
+            string uri = ServerLink + "GetUsers";
+
+            var response = await _client.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<List<RegisterUserModel>>(responseString);
+            }
+            else return null;
+
+        }
+        
         public async Task<ActiveCourierModel> GetCourierModelByID(int id)
         {
             string uri = ServerLink + "GetCourierModel/" + id;
@@ -181,9 +196,66 @@ namespace Kurir.Persistance
             }
             else return null;
         }
-        public static string PopUp()
+        public async Task<int> GetCountOfCouriers()
         {
-            return "Prosao poziv metode :)";
+            string uri = ServerLink + "GetCountByRole/4";
+            var x = await _client.GetAsync(uri);
+            try
+            {
+                if (x.IsSuccessStatusCode)
+                {
+                    string y = await x.Content.ReadAsStringAsync();
+                    return Convert.ToInt32(y);
+                }
+                else return 0;
+                
+            }
+            catch //(Exception ex)
+            { return 0; }
+        }
+            public async Task<IEnumerable<CourierModel>> GetCouriers()
+        {
+            await _connection.CreateTableAsync<CourierModel>();
+            //await _connection.DropTableAsync<CourierModel>();
+            int x = await this.GetCountOfCouriers();
+            if (await _connection.Table<CourierModel>().CountAsync() == x)
+                return await _connection.Table<CourierModel>().ToListAsync();
+            else
+            {
+
+                string uri = ServerLink + "GetCouriers";
+                var response = await _client.GetAsync(uri);
+                var responseString = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var list = JsonConvert.DeserializeObject<IEnumerable<CourierModel>>(responseString);
+
+                    foreach (var item in list)
+                    {
+
+                        await _connection.InsertOrReplaceAsync(item);
+                        //await _connection.InsertAsync(item);
+                    }
+                    return list;
+                }
+                else return null;
+            }
+        }
+        public async Task<bool> CheckIfCurrentUserRoleIsCourier(int userID)
+        {
+            string link = ServerLink + "GetCurrentUserRole/" + userID;
+            var ur = await _client.GetAsync(link);
+           
+            if (ur.IsSuccessStatusCode)
+            {
+                var responseString = await ur.Content.ReadAsStringAsync();
+                UserRoleModel userRole =  JsonConvert.DeserializeObject<UserRoleModel>(responseString);
+                if (userRole.RoleID == 4)
+                    return true;
+                else return false;
+            }
+
+            else { return false; }
         }
     }
 }

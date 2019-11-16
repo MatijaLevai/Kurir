@@ -33,7 +33,7 @@ namespace Kurir
         }
         protected async override void OnAppearing()
         {
-            if (await helper.UpdateSQLiteDb())
+            if (await helper.UpdateSQLiteDbWithPayAndDelTypes())
             {
                 try
                 {

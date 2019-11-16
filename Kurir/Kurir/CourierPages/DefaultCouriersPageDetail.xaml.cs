@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kurir.Persistance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,12 @@ namespace Kurir.CourierPages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DefaultCouriersPageDetail : ContentPage
     {
+        private UserService userService;
         public DefaultCouriersPageDetail()
         {
+            userService = new UserService();
             InitializeComponent();
         }
+        
     }
 }

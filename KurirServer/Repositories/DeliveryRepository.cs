@@ -11,19 +11,19 @@ namespace KurirServer.Repositories
     public class DeliveryRepository : IDeliveryRepository
     {
         private KurirDbContext context;
+       
         public DeliveryRepository(KurirDbContext context)
         {
             this.context = context;
+           
         }
 
         public IQueryable<Delivery> ODataGet()
         {
             return context.Deliveries;
         }
-        public IEnumerable<Delivery> GetAllDeliveries()
-        {
-           return context.Deliveries.ToList();
-        }
+       
+        
 
         public IEnumerable<Delivery> GetAllDeliveriesAsCourir(int CourierID = 0)
         {
@@ -34,6 +34,20 @@ namespace KurirServer.Repositories
             else
             {
                 return context.Deliveries.ToList().Where(d => d.CourierID == CourierID); ;
+            }
+        }
+        public IEnumerable<Delivery> GetTodaysDeliveriesAsCourier(int CourierID = 0)
+        {
+            if (CourierID <= 0)
+            {
+                return null;
+            }
+            else
+            {
+                DateTime dtNow = DateTime.Now;
+                DateTime dt = new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, 0, 0, 1);
+                List<Delivery> list =new List<Delivery>(  context.Deliveries.ToList().Where(d => d.CourierID == CourierID&&d.CreateTime>dt));
+                return list;
             }
         }
 
@@ -144,7 +158,7 @@ namespace KurirServer.Repositories
 
         public IEnumerable<Delivery> GetUncofirmedForDispatcher()
         {
-            IEnumerable<Delivery> returnD = context.Deliveries.ToList().Where(d => (d.DispatcherID == 0) && (d.StartTime < d.CreateTime));
+            IEnumerable<Delivery> returnD = context.Deliveries.ToList().Where(d => (d.DispatcherID == 0) && ((d.DeliveryStatus==0)||(d.DeliveryStatus == 1)));
             foreach (var item in returnD)
             {
                 item.StartAddress = context.Addresses.Where(a => a.FullAddressID == item.StartAddressID).First();
@@ -161,17 +175,48 @@ namespace KurirServer.Repositories
         {
             if(CourierID <= 0)
             {
-                return context.Deliveries.ToList();
+                return null;
+                //return context.Deliveries.ToList();
             }
 
             else
             {
-                return context.Deliveries.ToList().Where(d => d.CourierID == CourierID); ;
+                return context.Deliveries.ToList().Where(d => (d.CourierID == CourierID)&& ((d.DeliveryStatus == 0) || (d.DeliveryStatus == 1))); ;
             }
         }
 
-        
-        
+        public IEnumerable<Delivery> GetAllDeliveries()
+        {
+            return context.Deliveries.ToList();
+        }
+        public IEnumerable<Delivery> GetDeliveriesByDate(DateTime d1, DateTime d2)
+        {
+            return context.Deliveries.ToList().Where(x => ((x.CreateTime.Date >= d1.Date) && (x.CreateTime.Date <= d2.Date)));
+
+        }
+        public IEnumerable<Delivery> GetDeliveriesByDateCourierAndDispatch(DateTime d1, DateTime d2, int id)
+        {
+            return context.Deliveries.ToList().Where(x => ((x.CreateTime.Date >= d1.Date) && (x.DeliveryStatus==4) && (x.CreateTime.Date <= d2.Date) && ((x.CourierID == id)|| (x.DispatcherID == id))));
+        }
+        public IEnumerable<Delivery> GetDeliveriesByDateUserID(DateTime d1, DateTime d2, int id)
+        {
+            return context.Deliveries.ToList().Where(x => ((x.CreateTime.Date >= d1.Date) && (x.DeliveryStatus == 4) && (x.CreateTime.Date <= d2.Date)&& ((x.CourierID == id) || (x.DispatcherID == id))));
+        }
+
+        public IEnumerable<Delivery> GetDeliveriesByDateCourierID(DateTime d1, DateTime d2, int id)
+        {
+            return context.Deliveries.ToList().Where(x => ((x.CreateTime.Date >= d1.Date) && (x.CreateTime.Date <= d2.Date) && (x.CourierID == id)));
+
+        }
+
+        public IEnumerable<Delivery> GetDeliveriesByDateDispatcherID(DateTime d1, DateTime d2, int id)
+        {
+            return context.Deliveries.ToList().Where(x => ((x.CreateTime.Date >= d1.Date) && (x.CreateTime.Date <= d2.Date) && (x.DispatcherID == id)));
+
+        }
+
+
+
 
 
         /*    public async Task<Delivery> EditDelivery(Delivery newD)

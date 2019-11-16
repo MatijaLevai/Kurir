@@ -3,37 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.DispatcherPages.DeliveriesListPage">
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout>
-                <Label x:Name="Message" FontSize="Medium"/>
-                <Grid RowSpacing="2" Padding="5" >
+        <StackLayout>
+                <Label x:Name="Message" FontSize="Medium" IsEnabled="False" IsVisible="False"/>
+                <Grid Margin="1" VerticalOptions="FillAndExpand" >
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="3*"></RowDefinition>
-                    </Grid.RowDefinitions>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"></ColumnDefinition>
                         <ColumnDefinition Width="2*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
-                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="Auto"></ColumnDefinition>
 
                     </Grid.ColumnDefinitions>
+                <Label Grid.Row="0"  Grid.Column="4"  Grid.ColumnSpan="3" x:Name="Sorter"></Label>
+                <Switch x:Name="SwitchDecending" Grid.Row="0" Grid.Column="7" PropertyChanged="Switch_PropertyChanged"></Switch>
 
-                    <Label Grid.Column="0" Text="From"  HorizontalTextAlignment="Start"/>
-                    <Label Grid.Column="1" Text="To"  HorizontalTextAlignment="Start"/>
-                    <Label Grid.Column="2" Text="Price"  HorizontalTextAlignment="Start"/>
-                    <Label Grid.Column="3" Text="Ordered"  HorizontalTextAlignment="Start"/>
-                    <Label Grid.Column="4" Text="Status"  HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="0" Text="Od"  HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="1" Text="Do"  HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="2" Text="Cena" HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="3" Text="Poručeno"  HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="4" Text="Preuzeto"  HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="5" Text="Isporučeno"  HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="6" Text="Kurir"  HorizontalTextAlignment="Start"/>
+                <Label  Grid.Row="1" Grid.Column="7" Text="Status"  HorizontalTextAlignment="Start"/>
 
+                
 
-                </Grid>
-                <ListView x:Name="DeliveryList" ItemSelected="OnItemSelected" IsPullToRefreshEnabled="True" Refreshing="DeliveryList_Refreshing" >
+            </Grid>
+                <ListView VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Default" x:Name="DeliveryList" ItemSelected="OnItemSelected" IsPullToRefreshEnabled="True" Refreshing="DeliveryList_Refreshing" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
                                 <ViewCell.View>
-                                    <Grid RowSpacing="2" Padding="5" >
+                                    <Grid Padding="1" >
 
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="2*"></RowDefinition>
@@ -41,13 +49,13 @@
                                         <Grid.ColumnDefinitions>
 
                                             <ColumnDefinition Width="2*"></ColumnDefinition>
-
                                             <ColumnDefinition Width="2*"></ColumnDefinition>
-
                                             <ColumnDefinition Width="*"></ColumnDefinition>
-
-                                            <ColumnDefinition Width="2*"></ColumnDefinition>
-                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
 
 
 
@@ -61,17 +69,18 @@
                                         <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
 
                                         <Label Grid.Column="3" Text="{Binding CreateTime}"  HorizontalTextAlignment="Start"/>
+                                    <Label Grid.Column="4" Text="{Binding StartTime}"  HorizontalTextAlignment="Start"/>
+                                    <Label Grid.Column="5" Text="{Binding EndTime}"  HorizontalTextAlignment="Start"/>
+                                    <Label Grid.Column="6" Text="{Binding Courier.CourierFullName}" HorizontalTextAlignment="Start"></Label>
+                                        <Image Grid.Column="7" Source="{Binding DeliveryStatusImageSource}" Aspect="AspectFit"></Image>
 
-                                        <Image Grid.Column="4" Source="{Binding DeliveryStatusImageSource}" Aspect="AspectFit"></Image>
 
-
-                                    </Grid>
+                                </Grid>
                                 </ViewCell.View>
                             </ViewCell>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </StackLayout>
-        </ScrollView >
     </ContentPage.Content>
 </ContentPage>

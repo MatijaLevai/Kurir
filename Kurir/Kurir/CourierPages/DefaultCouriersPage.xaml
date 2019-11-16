@@ -3,6 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.CourierPages.DefaultCouriersPage"
              xmlns:pages="clr-namespace:Kurir.CourierPages">
+    <MasterDetailPage.ToolbarItems>
+        <ToolbarItem Text="Logout" Clicked="ToolbarItem_Clicked"></ToolbarItem>
+    </MasterDetailPage.ToolbarItems>
   <MasterDetailPage.Master>
     <pages:DefaultCouriersPageMaster x:Name="MasterPage" />
   </MasterDetailPage.Master>

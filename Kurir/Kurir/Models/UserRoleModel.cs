@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kurir.Models
 {
-    class UserRoleModel
+    public class UserRoleModel
     {
         public int UserRoleID { get; set; }
       

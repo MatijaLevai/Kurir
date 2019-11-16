@@ -3,9 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.CourierPages.DefaultCouriersPageMaster"
              Title="Master">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Logout" Clicked="ToolbarItem_Clicked"></ToolbarItem>
-    </ContentPage.ToolbarItems>
+   
     <StackLayout>
     <ListView x:Name="MenuItemsListView"
               SeparatorVisibility="None"
@@ -27,7 +25,7 @@
           <Label
               Grid.Column="1"
               Grid.Row="2"
-              Text="AppName"
+              Text="Eko kurir"
               Style="{DynamicResource SubtitleStyle}"/>
         </Grid>
       </ListView.Header>

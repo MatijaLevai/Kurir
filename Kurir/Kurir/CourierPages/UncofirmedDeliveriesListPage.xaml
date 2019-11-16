@@ -6,7 +6,7 @@
         <ScrollView>
                 <StackLayout>
                     <Label x:Name="Message" FontSize="Medium"/>
-                    <Grid RowSpacing="2" Padding="5" >
+                    <Grid Padding="1" >
                   
 
                     <Grid.RowDefinitions>
@@ -22,10 +22,10 @@
 
                     </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0" Text="From"  HorizontalTextAlignment="Start"/>
-                        <Label Grid.Column="1" Text="To"  HorizontalTextAlignment="Start"/>
-                        <Label Grid.Column="2" Text="Price"  HorizontalTextAlignment="Start"/>
-                    <Label Grid.Column="3" Text="Ordered"  HorizontalTextAlignment="Start"/>
+                        <Label Grid.Column="0" Text="Od"  HorizontalTextAlignment="Start"/>
+                        <Label Grid.Column="1" Text="Do"  HorizontalTextAlignment="Start"/>
+                        <Label Grid.Column="2" Text="Cena"  HorizontalTextAlignment="Start"/>
+                    <Label Grid.Column="3" Text="Vreme poručivanja"  HorizontalTextAlignment="Start"/>
 
 
                 </Grid>
@@ -54,9 +54,9 @@
                                         </Grid.ColumnDefinitions>
 
 
-                                            <Label Grid.Column="0" Text="{Binding StartAddress}"  HorizontalTextAlignment="Start"/>
+                                        <Label Grid.Column="0" Text="{Binding StartAddress.Address}"  HorizontalTextAlignment="Start"/>
 
-                                            <Label Grid.Column="1" Text="{Binding EndAddress}"  HorizontalTextAlignment="Start"/>
+                                        <Label Grid.Column="1" Text="{Binding EndAddress.Address}" HorizontalTextAlignment="Start"/>
 
                                             <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
 
@@ -67,8 +67,8 @@
                                     </Grid>
                                     </ViewCell.View>
                                 <ViewCell.ContextActions>
-                                    <MenuItem IconImageSource="zeleni50.png" Text="Confirm"  Clicked="ConfirmAction" CommandParameter="{Binding DeliveryID}" ></MenuItem>
-                                    <MenuItem IconImageSource="zuti50.png"  Text="Decline" Clicked="DeclineAction" CommandParameter="{Binding DeliveryID}" IsDestructive="True"></MenuItem>
+                                    <MenuItem IconImageSource="zeleni50.png" Text="Potvrdi"  Clicked="ConfirmAction" CommandParameter="{Binding DeliveryID}" ></MenuItem>
+                                    <MenuItem IconImageSource="zuti50.png"  Text="Odbi" Clicked="DeclineAction" CommandParameter="{Binding DeliveryID}" IsDestructive="True"></MenuItem>
                                 </ViewCell.ContextActions>
                                 </ViewCell>
                             </DataTemplate>

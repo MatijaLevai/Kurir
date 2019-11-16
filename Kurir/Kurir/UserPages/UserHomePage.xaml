@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Kurir.UserHomePage"
-             xmlns:pages="clr-namespace:Kurir">
+             x:Class="Kurir.UserPages.UserHomePage"
+             xmlns:pages="clr-namespace:Kurir.UserPages">
     
     <MasterDetailPage.Master>
     <pages:UserHomePageMaster x:Name="MasterPage" />

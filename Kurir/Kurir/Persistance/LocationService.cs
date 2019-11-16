@@ -28,6 +28,25 @@ namespace Kurir.Persistance
             ServerLink = Application.Current.Properties["ServerLink"].ToString() + "api/Locations/";
             _connection = DependencyService.Get<ISQLiteDb>().GetConnection();
         }
+        public async Task<LocationModel> GetByID(int id)
+        {
+            // GetLocationByID /
+                try
+            {
+                    string uri = ServerLink + "GetLocationByID/"+id;
+                    var response = await _client.GetAsync(uri);
+
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return JsonConvert.DeserializeObject<LocationModel>(responseString);
+                    }
+                    else return null;
+               
+            }
+            catch (Exception ex) { Console.WriteLine(ex.Message + ex.InnerException); return null; }
+
+        }
         public async Task<LocationModel> AddLocation(LocationModel l)
         {
             try
@@ -51,6 +70,7 @@ namespace Kurir.Persistance
             }
             catch (Exception ex) { Console.WriteLine(ex.Message+ex.InnerException); return null; }
         }
+
         public async Task<Location> GetCurrentLocation()
         {
             try
@@ -115,12 +135,13 @@ namespace Kurir.Persistance
             }
             catch (PermissionException pEx)
             {
+                Debug.WriteLine(pEx.Message + pEx.InnerException);
                 return null;
                 // Handle permission exception
             }
             catch (Exception ex)
             {
-
+                Debug.WriteLine(ex.Message + ex.InnerException);
                 return null;
                 // Unable to get location
             }

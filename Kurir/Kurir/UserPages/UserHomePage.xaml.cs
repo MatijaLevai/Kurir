@@ -1,4 +1,5 @@
 ﻿using Kurir.Persistance;
+using Kurir.UserPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace Kurir
+namespace Kurir.UserPages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class UserHomePage : MasterDetailPage
@@ -27,11 +28,23 @@ namespace Kurir
             UserHomePageMenuItem item = e.SelectedItem as UserHomePageMenuItem;
             if (item == null)
                 return;
+            
+            if (item.TargetType == typeof(StartAddressPage))
+            {
 
-            var page = (Page)Activator.CreateInstance(item.TargetType);
-            page.Title = item.Title;
+                var page =new NavigationPage(new StartAddressPage());
+                page.Title = item.Title;
 
-            Detail = new NavigationPage(page);
+                Detail = page;
+            }
+            else
+            {
+                var page = (Page)Activator.CreateInstance(item.TargetType);
+                page.Title = item.Title;
+
+                Detail = new NavigationPage(page);
+            }
+            
             IsPresented = false;
 
             MasterPage.ListView.SelectedItem = null;

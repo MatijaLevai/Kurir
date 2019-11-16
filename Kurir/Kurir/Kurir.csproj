@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ProduceAssemblyReference>true</ProduceAssemblyReference>
+    <ApplicationIcon>eko-kurir-logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -11,18 +12,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="crveni50.png" />
     <None Remove="Images\delivered.png" />
     <None Remove="Images\eko-kurir-logo.png" />
     <None Remove="Images\zeleni50.png" />
     <None Remove="Images\zuti50.png" />
+    <None Remove="logoEkoKurir.png" />
+    <None Remove="MapStyle.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="crveni50.png" />
     <EmbeddedResource Include="delivered.png" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Images\eko-kurir-logo.png" />
+    <EmbeddedResource Include="logoEkoKurir.png" />
     <EmbeddedResource Include="zeleni50.png" />
     <EmbeddedResource Include="zuti50.png" />
   </ItemGroup>
@@ -32,7 +38,6 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="2.1.1" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="2.1.1" />
     <PackageReference Include="Microsoft.AppCenter.Push" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.5.231" />
     <PackageReference Include="Xamarin.Forms" Version="4.2.0.709249" />
@@ -53,11 +58,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="MapStyle.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="AdminPages\AdminsPageMenuItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="CourierPages\DefaultCouriersPageMenuItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="DispatcherPages\DispatcherHomeMDPageMenuItem.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="DispatcherPages\EditDispatcherPage.xaml.cs">
       <DependentUpon>EditDispatcherPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="MapPageActiveCourier.xaml.cs">
+      <DependentUpon>MapPageActiveCourier.xaml</DependentUpon>
     </Compile>
     <Compile Update="UserPages\UserHomePageMenuItem.cs">
       <SubType>Code</SubType>
@@ -65,10 +83,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="AdminPages\DefultAdminPage.xaml">
+    <EmbeddedResource Update="AdminPages\AdminsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="AdminPages\AdminsPageDetail.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="AdminPages\AdminsPageMaster.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="CourierPages\ConfirmedDeliveriesListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="CourierPages\DeclineDeliveryReasonModalPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="CourierPages\DefaultCourierPage.xaml">
@@ -86,6 +113,9 @@
     <EmbeddedResource Update="CourierPages\DeliveriesHistoryListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="CourierPages\DeliveryDetailCourierPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="CourierPages\EditAccountPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -98,6 +128,9 @@
     <EmbeddedResource Update="CourierPages\UncofirmedDeliveriesListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="DispatcherPages\ActiveCourierListMapPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="DispatcherPages\ActiveCourierListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -107,7 +140,19 @@
     <EmbeddedResource Update="DispatcherPages\DeliveryDetailPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="DispatcherPages\DispatcherHomeMDPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="DispatcherPages\DispatcherHomeMDPageDetail.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="DispatcherPages\DispatcherHomeMDPageMaster.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="DispatcherPages\DispatcherHomePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="DispatcherPages\EditDeliveryDispatcherPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="DispatcherPages\EditDispatcherPage.xaml">
@@ -125,7 +170,10 @@
     <EmbeddedResource Update="DispatcherPages\UncofirmedDeliveriesListPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="MapPage.xaml">
+    <EmbeddedResource Update="MapPageActiveCourier.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UserPages\AddLocationToAddressPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="UserPages\DeliveryDetailPage.xaml">
@@ -134,16 +182,19 @@
     <EmbeddedResource Update="UserPages\DeliveryHistory.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="DispatcherPages\DefaultDispatcherPage.xaml">
+    <EmbeddedResource Update="UserPages\EditAccount.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="UserPages\EditAccount.xaml">
+    <EmbeddedResource Update="UserPages\EndAddressPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="UserPages\NewDelivery.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SuperAdminPages\DefaultSuperAdminPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UserPages\StartAddressPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="UserPages\UserHomePage.xaml">

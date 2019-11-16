@@ -22,8 +22,10 @@ namespace Kurir.UWP
             this.InitializeComponent();
 
             LoadApplication(new Kurir.App());
-
             Xamarin.FormsMaps.Init("Asji15gO1XMlGuAY-CtztLimsiCN4kdtVD-K9uAxKyFN5grWwT4n5jbC_zSNYFE9");
+          
+            //try { Xamarin.FormsMaps.Init("AlWR1u - 4e7Y720S3XsQXFSJTKvJDjQmrZB6nTcFdJite01Y8TJofCZ1LjRcfQzUR"); }
+            //catch { Xamarin.FormsMaps.Init("Asji15gO1XMlGuAY-CtztLimsiCN4kdtVD-K9uAxKyFN5grWwT4n5jbC_zSNYFE9"); }
         }
     }
 }

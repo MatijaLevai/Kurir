@@ -57,7 +57,7 @@ namespace Kurir.Models
                 }
             }
         }
-
+        public int ActiveUserRoleID { get; set; }
         public string Phone
         {
             get
@@ -134,7 +134,11 @@ namespace Kurir.Models
        
         public bool Valid { get; set; }
         public string Message { get; set; }
-
+        public int Procenat { get; set; }
+        public override string ToString()
+        {
+            return FirstName+" "+LastName;
+        }
         private void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));//if null do nothing, else invoke method

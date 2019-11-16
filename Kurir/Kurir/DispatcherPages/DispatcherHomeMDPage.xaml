@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kurir.DispatcherPages.DispatcherHomeMDPage"
+             xmlns:pages="clr-namespace:Kurir.DispatcherPages">
+    <MasterDetailPage.ToolbarItems>
+        <ToolbarItem Text="Log Out" Clicked="LoogOutButton_Clicked"/>
+    </MasterDetailPage.ToolbarItems>
+  <MasterDetailPage.Master>
+    <pages:DispatcherHomeMDPageMaster x:Name="MasterPage" />
+  </MasterDetailPage.Master>
+  <MasterDetailPage.Detail>
+    <NavigationPage>
+      <x:Arguments>
+        <pages:DispatcherHomeMDPageDetail />
+      </x:Arguments>
+    </NavigationPage>
+  </MasterDetailPage.Detail>
+</MasterDetailPage>

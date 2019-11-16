@@ -3,10 +3,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.CourierPages.DeliveriesHistoryListPage">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+        <StackLayout VerticalOptions="FillAndExpand">
+            <Label x:Name="Message" FontSize="Medium"/>
+            <Grid Padding="1" >
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Text="Od"  HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="1" Text="Do"  HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="2" Text="Cena"  HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="3" Text="Poručena"  HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="4" Text="Status"  HorizontalTextAlignment="Start"/>
+
+
+            </Grid>
+            <ListView VerticalOptions="FillAndExpand" VerticalScrollBarVisibility="Default" x:Name="DeliveryList" ItemSelected="OnItemSelected" IsPullToRefreshEnabled="True" Refreshing="DeliveryList_Refreshing" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <Grid >
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="2*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+
+
+
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Text="{Binding StartAddress.Address}"  HorizontalTextAlignment="Start"/>
+                                    <Label  Grid.Column="1" Text="{Binding EndAddress.Address}"  HorizontalTextAlignment="Start"/>
+                                    <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
+                                    <Label Grid.Column="3" Text="{Binding CreateTime}"  HorizontalTextAlignment="Start"/>
+                                    <Image Grid.Column="4" Source="{Binding DeliveryStatusImageSource}" Aspect="AspectFit"></Image>
+                                </Grid>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

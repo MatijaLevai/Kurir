@@ -50,5 +50,14 @@ namespace KurirServer.Repositories
             
 
         }
+        public IEnumerable<Role> GetAllRoles()
+        {
+            return context.Roles;
+        }
+
+        public UserRole GetUserRoleByID(int id)
+        {
+          return  context.UserRoles.Where(ur=>ur.UserRoleID==id).FirstOrDefault();
+        }
     }
 }

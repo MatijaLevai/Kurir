@@ -3,10 +3,79 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.CourierPages.StartedDeliveriesListPage">
     <ContentPage.Content>
+        <ScrollView>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Label x:Name="Message" FontSize="Medium"/>
+            <Grid Padding="1" >
+
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+
+
+
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0" Text="Od"  HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="1" Text="Do"  HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="2" Text="Cena"  HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="3" Text="Vreme poručivanja"  HorizontalTextAlignment="Start"/>
+
+
+            </Grid>
+            <ListView x:Name="DeliveryList" ItemSelected="OnItemSelected" IsPullToRefreshEnabled="True" Refreshing="DeliveryList_Refreshing">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <Grid RowSpacing="2" Padding="5" >
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="3*"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions ColumnSpacing="1" Padding="1">
+
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+
+
+
+                                    </Grid.ColumnDefinitions>
+
+
+                                    <Label Grid.Column="0" Text="{Binding StartAddress.Address}"  HorizontalTextAlignment="Start"/>
+
+                                    <Label Grid.Column="1" Text="{Binding EndAddress.Address}"  HorizontalTextAlignment="Start"/>
+
+                                    <Label Grid.Column="2" Text="{Binding DeliveryPrice}"  HorizontalTextAlignment="Start"/>
+
+                                    <Label Grid.Column="3" Text="{Binding CreateTime}"  HorizontalTextAlignment="Start"/>
+
+
+
+                                </Grid>
+                            </ViewCell.View>
+                            <ViewCell.ContextActions>
+                                <MenuItem IconImageSource="zeleni50.png" Text="Finish"  Clicked="FinishAction" CommandParameter="{Binding DeliveryID}" ></MenuItem>
+                                <MenuItem  Text="Vidi na mapi"  Clicked="DirectionAction" CommandParameter="{Binding DeliveryID}" ></MenuItem>
+
+                                </ViewCell.ContextActions>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
+    </ScrollView >
     </ContentPage.Content>
 </ContentPage>
