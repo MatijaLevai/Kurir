@@ -172,53 +172,82 @@ namespace Kurir
 
         private async void Login_Clicked(object sender, EventArgs e)
         {
-
-            try
+            bool valid = false;
+            if (LoginMail.Text != null && LoginPass != null)
             {
-                var user = new LoginUserModel { Pass = LoginPass.Text, Mail = LoginMail.Text };
-                var userResponse =await userService.Login(user);
-                if (string.IsNullOrWhiteSpace(userResponse.Message))
+                try
                 {
-                    Application.Current.Properties["Mail"] = userResponse.Mail;
-                    Application.Current.Properties["UserID"] = userResponse.UserID;
-                    Application.Current.Properties["Pass"] = userResponse.Pass;
-                    Application.Current.Properties["Name"] = userResponse.FirstName;
-                    if (!Application.Current.Properties.ContainsKey("User"))
-                        Application.Current.Properties.Add("User", JsonConvert.SerializeObject(userResponse));
-                    else Application.Current.Properties["User"] = JsonConvert.SerializeObject(userResponse);
-                    await Application.Current.SavePropertiesAsync();
-                    await Navigation.PushAsync(new UserRolePage(userResponse));
-                    
+                    MailAddress email = new MailAddress(LoginMail.Text);
+                    valid = true;
                 }
-                else
+                catch
                 {
-                    await DisplayAlert("Eror", "response contains" + userResponse.Message, "try again.");
+                    await DisplayAlert("Greška","Adresa elektronske pošte nije ispravna.","ok");
                 }
-                
             }
-            catch (Exception ex)
+            else
             {
-                
-                Debug.WriteLine(ex.Message);
-                await DisplayAlert("Error",ex.Message,"ok");
-                return;
+                await DisplayAlert("Greška", "Molimo popunite sva polja.", "ok");
+            }
+            if (valid)
+            {
+                try
+                {
+                    var user = new LoginUserModel { Pass = LoginPass.Text, Mail = LoginMail.Text };
+                    var userResponse = await userService.Login(user);
+                    if (userResponse == null)
+                    {
+
+                    }
+                    else if (string.IsNullOrWhiteSpace(userResponse.Message))
+                    {
+                        Application.Current.Properties["Mail"] = userResponse.Mail;
+                        Application.Current.Properties["UserID"] = userResponse.UserID;
+                        Application.Current.Properties["Pass"] = userResponse.Pass;
+                        Application.Current.Properties["Name"] = userResponse.FirstName;
+                        if (!Application.Current.Properties.ContainsKey("User"))
+                            Application.Current.Properties.Add("User", JsonConvert.SerializeObject(userResponse));
+                        else Application.Current.Properties["User"] = JsonConvert.SerializeObject(userResponse);
+                        await Application.Current.SavePropertiesAsync();
+                        await Navigation.PushAsync(new UserRolePage(userResponse));
+
+                    }
+                    else
+                    {
+                        await DisplayAlert("Greška", userResponse.Message + Environment.NewLine + "pokušaj ponovo.", "Ok");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                    Debug.WriteLine(ex.Message);
+                    await DisplayAlert("Error", ex.Message, "ok");
+                    return;
+                }
             }
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
-            if (Application.Current.Properties.ContainsKey("ServerLink")) Application.Current.Properties["ServerLink"] = "https://kurirserver.conveyor.cloud/";
-            else Application.Current.Properties.Add("ServerLink", "https://kurirserver.conveyor.cloud/");
+            //if (Application.Current.Properties.ContainsKey("ServerLink"))
+            //{ Application.Current.Properties["ServerLink"] = "https://kurirserver.conveyor.cloud/"; }
+            //else
+            //{ Application.Current.Properties.Add("ServerLink", "https://kurirserver.conveyor.cloud/"); }
 
-            switch (Device.RuntimePlatform)
-            {
-                case Device.Android:
-                BackgroundColor = Color.FromHex("#f5f5f5");
-                BarTextColor = Color.FromHex("#f5f5f5");
-                break;
-            }
-            await _connection.CreateTableAsync<LocationModel>();
-            await _connection.CreateTableAsync<RegisterUserModel>();
+            //switch 
+            //if (Device.RuntimePlatform == Device.Android)
+            //{
+            //    BackgroundImageSource = "eko-kurir-logo.png";
+            //}
+            //{
+            //    case Device.Android:
+            //    BackgroundColor = Color.FromHex("#f5f5f5");
+            //    BarTextColor = Color.FromHex("#f5f5f5");
+            //    break;
+            //}
+            //await _connection.CreateTableAsync<LocationModel>();
+           // await _connection.CreateTableAsync<RegisterUserModel>();
             base.OnAppearing();
             #region Vi[ak
             //if (Application.Current.Properties.ContainsKey("User"))

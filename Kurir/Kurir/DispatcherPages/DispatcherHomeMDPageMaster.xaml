@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.DispatcherPages.DispatcherHomeMDPageMaster"
              Title="Master">
-  <StackLayout>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Log Out" Clicked="LoogOutButton_Clicked"/>
+    </ContentPage.ToolbarItems>
+    <StackLayout>
     <ListView x:Name="MenuItemsListView"
               SeparatorVisibility="None"
               HasUnevenRows="true"

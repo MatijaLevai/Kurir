@@ -59,8 +59,8 @@ namespace Kurir.Droid
                 .SetContentIntent(pendingIntent)
                 .SetContentTitle(title)
                 .SetContentText(message)
-                .SetSmallIcon(Resource.Drawable.ic_taxi)
-                .SetColor(Resource.Color.colorPrimaryDark)
+                .SetSmallIcon(Resource.Drawable.EkoKurirLogo)
+                .SetColor(Resource.Color.abc_color_highlight_material)
                 .SetDefaults((int)NotificationDefaults.Sound | (int)NotificationDefaults.Vibrate);
 
             Notification notification = builder.Build();

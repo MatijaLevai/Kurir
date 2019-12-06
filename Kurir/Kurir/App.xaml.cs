@@ -1,42 +1,89 @@
 ﻿using Xamarin.Forms;
 using System.Net.Http;
+using System.Threading;
+using Xamarin.Essentials;
 
 namespace Kurir
 {
     public partial class App : Application
     {
         public static HttpClient client = new HttpClient();
+        public static string LocalServerLink = "https://kurirserver.conveyor.cloud/";//localhost:44355/";
+        public static string InternetServerLink = "https://kurirserver.conveyor.cloud/";
+        public static bool ServerActive = false;
+        
 
-
+       
         public App()
         {
            
-            if (Current.Properties.ContainsKey("ServerLink")) Current.Properties["ServerLink"] = "https://kurirserver.conveyor.cloud/";
-            else Current.Properties.Add("ServerLink", "https://kurirserver.conveyor.cloud/");
-
-            
             InitializeComponent();
-
-
-            //Current.Properties["GoogleApiKey"] = "AIzaSyDch3NOgOI5gnYpfoc9lwiTU0Z-coMgnK4";
-            //Current.Properties["ServerLink"] = "https://192.168.1.2:45456/";
-            //Current.Properties["ServerLink"] = "https://localhost:44367"; 
-            //Current.Properties["ServerLink"] = "http://localhost:59794";
-            //DependencyService.Get<INotificationManager>().Initialize();
+           
+           
         }
        
-        protected override void OnStart()
+        protected override async void OnStart()
         {
-            
-            if (!Current.Properties.ContainsKey("User"))
+
+
+                string currentServerLink = "";
+                HttpResponseMessage response;
+                try
+                {
+                    response = await client.GetAsync(InternetServerLink + "api/BaraBara");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        currentServerLink = InternetServerLink;
+                        ServerActive = true;
+                    }
+                    else
+                    {
+                        ServerActive = false;
+                    }
+                }
+                catch
+                {
+                    ServerActive = false;
+                }
+                if (!ServerActive)
+                {
+                    try
+                    {
+                        response = await client.GetAsync(LocalServerLink + "api/BaraBara");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            currentServerLink = LocalServerLink;
+                            ServerActive = true;
+                        }
+                        else
+                        {
+                            ServerActive = false;
+                        }
+                    }
+                    catch
+                    {
+                        ServerActive = false;
+                    }
+                }
+            if (ServerActive)
             {
-                Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
-                
+                if (Current.Properties.ContainsKey("ServerLink"))
+                    Current.Properties["ServerLink"] = currentServerLink;
+                else
+                    Current.Properties.Add("ServerLink", currentServerLink);
+
+                Current.MainPage = new NavigationPage(new MainPage());
+
             }
             else
             {
-                Current.MainPage = new NavigationPage(new MainPage());
+                Application.Current.MainPage = new NavigationPage(new NoServicePage());
+
             }
+
+
+
+
 
         }
 
@@ -49,5 +96,6 @@ namespace Kurir
         {
             // Handle when your app resumes
         }
+        
     }
 }

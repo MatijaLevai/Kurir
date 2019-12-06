@@ -244,7 +244,13 @@ namespace Kurir.DispatcherPages
         {
             var obj = sender as ListView;
             var objMD = obj.SelectedItem as DeliveryModel;
-            await Navigation.PushModalAsync(new DeliveryDetailPage(objMD));
+            string answer = await DisplayActionSheet("Pogledaj detalje dostave ili ažuriraj.","Odustani",null,"Ažuriraj","Detalji");
+            if (answer == "Detalji")
+            { await Navigation.PushModalAsync(new DeliveryDetailPage(objMD)); }
+            else if (answer == "Ažuriraj")
+            {
+                await Navigation.PushModalAsync(new EditDeliveryDispatcherPage(objMD.ConvertToExtended()));
+            }
         }
     }
 }

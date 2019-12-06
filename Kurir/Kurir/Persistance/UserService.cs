@@ -34,19 +34,23 @@ namespace Kurir.Persistance
             if (msg.IsSuccessStatusCode)
             {
                 string jsonContent = await msg.Content.ReadAsStringAsync();
-                var userID =Convert.ToInt32(jsonContent);
-                if (userID > 0)
+                try
+                {
+                    var userID = Convert.ToInt32(jsonContent);
                     userNew.UserID = userID;
-                var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userNew.UserID).FirstOrDefaultAsync();
-                if (userSQLite == null)
-                {
-                    int rowsAdded = await _connection.InsertAsync(userNew);
+
+                    //var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userNew.UserID).FirstOrDefaultAsync();
+                    //if (userSQLite == null)
+                    //{
+                    //    int rowsAdded = await _connection.InsertAsync(userNew);
+                    //}
+                    //else
+                    //{
+                    //    var responseSQLite = await _connection.UpdateAsync(userNew);
+                    //}
+                    return userNew.UserID.ToString();
                 }
-                else
-                {
-                    var responseSQLite = await _connection.UpdateAsync(userNew);
-                }
-                return userNew.UserID.ToString();
+                catch { return "Registration failed, try again."; }
 
             }
             else return "Registration failed, try again.";
@@ -93,26 +97,29 @@ namespace Kurir.Persistance
             string jsonUser = JsonConvert.SerializeObject(newUser);
             HttpContent httpContent = new StringContent(jsonUser, Encoding.UTF8, "application/json");
             HttpResponseMessage response = null;
-            try { response = await _client.PostAsync(uri, httpContent); }
-            catch (Exception ex) { return new RegisterUserModel { Message = "Login failed, try again." + ex.Message }; }
-            if (response != null && response.IsSuccessStatusCode)
+             response = await _client.PostAsync(uri, httpContent);
+            
+           if (response.IsSuccessStatusCode)
             {
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var userResponse = JsonConvert.DeserializeObject<RegisterUserModel>(responseContent);
-                var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userResponse.UserID).FirstOrDefaultAsync();
-                if (userSQLite == null)
-                {
-                    int rowsAdded = await _connection.InsertAsync(userResponse);
-                }
-                else
-                {
-                    var responseSQLite = await _connection.UpdateAsync(userResponse);
-                }
+                //var userSQLite = await _connection.Table<RegisterUserModel>().Where(u => u.UserID == userResponse.UserID).FirstOrDefaultAsync();
+                //if (userSQLite == null)
+                //{
+                //    int rowsAdded = await _connection.InsertAsync(userResponse);
+                //}
+                //else
+                //{
+                //    var responseSQLite = await _connection.DeleteAsync(userSQLite);
+                //    responseSQLite = await _connection.InsertAsync(userResponse);
+                //}
                 return userResponse;
+            } 
+            else { if (response.StatusCode==System.Net.HttpStatusCode.BadGateway) return new RegisterUserModel { Message = "Server ne radi." };
+                else { return new RegisterUserModel { Message = response.Content.ToString() }; }
             }
-            else {return new RegisterUserModel { Message = "Login failed, try again."}; }
-         }
+        }
         public async Task<bool> LogOut(int userID)
         {
             string uri = ServerLink + "Logout/" + userID;

@@ -52,7 +52,7 @@ namespace Kurir.AdminPages
                     Application.Current.Properties.Clear();
                     Application.Current.Properties.Add("ServerLink", link);
                     await Application.Current.SavePropertiesAsync();
-                    await Navigation.PushAsync(new WelcomeTabbedPage());
+                    Application.Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
 
                 }
                 else await DisplayAlert("error", "Server Error", "ok.");

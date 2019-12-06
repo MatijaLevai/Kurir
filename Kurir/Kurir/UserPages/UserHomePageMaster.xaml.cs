@@ -64,7 +64,7 @@ namespace Kurir.UserPages
                     Application.Current.Properties.Remove("UserID");
                     Application.Current.Properties.Remove("Pass");
                     Application.Current.Properties.Remove("Name");
-                    await Navigation.PushAsync(new WelcomeTabbedPage());
+                    Application.Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
 
                 }
                 else await DisplayAlert("error", "Server Error", "ok.");

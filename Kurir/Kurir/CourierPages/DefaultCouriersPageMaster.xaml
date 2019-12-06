@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Kurir.CourierPages.DefaultCouriersPageMaster"
              Title="Master">
-   
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Logout" Clicked="ToolbarItem_Clicked"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
     <StackLayout>
     <ListView x:Name="MenuItemsListView"
               SeparatorVisibility="None"

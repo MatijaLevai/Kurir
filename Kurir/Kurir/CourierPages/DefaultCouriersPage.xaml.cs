@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 using System.Timers;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -20,52 +20,53 @@ namespace Kurir.CourierPages
         private DeliveryService deliveryService;
         private LocationService locationService;
         Location LastKnownlocation = new Location();
-        private Timer LocationUpdateTimer;
+        List<DeliveryModel> couriersDeliveryList;
+       // private Timer LocationUpdateTimer;
         INotificationManager notificationManager;
-        int notificationNumber = 0;
+        //int notificationNumber = 0;
 
-        
-        private async void OnTimedEvent(Object source, ElapsedEventArgs e)
-        {
-            LocationUpdateTimer.Stop();
-            try
-            {
-                Location Newlocation = await locationService.GetCurrentLocation();
-                if (Newlocation != LastKnownlocation)
-                    LastKnownlocation = Newlocation;
-                if (await locationService.AddLocation(ParseLastKnownLocation()) != null)
-                { }
-            }
-            catch (Exception ex) {
-                await DisplayAlert("ex location service", ex.Message + ex.InnerException, "ok");
-            }
-            if (Device.RuntimePlatform == Device.Android)
-            {
-                try
-                {
-                    if (Application.Current.Properties.ContainsKey("UserID"))
-                    {
-                        if (await userService.CheckIfCurrentUserRoleIsCourier(Convert.ToInt32(Application.Current.Properties["UserID"])))
-                        {
-                            var list = await deliveryService.GetUncofirmedForCourier();
-                            if (list.Count() > 0)
-                            {
-                                notificationNumber++;
-                                string title = $"Local Notification #{notificationNumber} BaraBara";
-                                string message = $"You have now received {notificationNumber} notifications!" + Environment.NewLine + "Stigla nova dostava.";
-                                notificationManager.ScheduleNotification(title, message);
-                            }
-                        }
 
-                    }
-                }
-                catch (Exception ex)
-                {
-                    await DisplayAlert("ex notification service", ex.Message + ex.InnerException, "ok");
-                }
-            }
-            LocationUpdateTimer.Start();
-        }
+        //private async void OnTimedEvent(Object source, ElapsedEventArgs e)
+        //{
+        //    LocationUpdateTimer.Stop();
+        //    try
+        //    {
+        //        Location Newlocation = await locationService.GetCurrentLocation();
+        //        if (Newlocation != LastKnownlocation)
+        //            LastKnownlocation = Newlocation;
+        //        if (await locationService.AddLocation(ParseLastKnownLocation()) != null)
+        //        { }
+        //    }
+        //    catch (Exception ex) {
+        //        await DisplayAlert("ex location service", ex.Message + ex.InnerException, "ok");
+        //    }
+        //    if (Device.RuntimePlatform == Device.Android)
+        //    {
+        //        try
+        //        {
+        //            if (Application.Current.Properties.ContainsKey("UserID"))
+        //            {
+        //                if (await userService.CheckIfCurrentUserRoleIsCourier(Convert.ToInt32(Application.Current.Properties["UserID"])))
+        //                {
+        //                    var list = await deliveryService.GetUncofirmedForCourier();
+        //                    if (list.Count() > 0)
+        //                    {
+        //                        notificationNumber++;
+        //                        string title = $"Local Notification #{notificationNumber} BaraBara";
+        //                        string message = $"You have now received {notificationNumber} notifications!" + Environment.NewLine + "Stigla nova dostava.";
+        //                        notificationManager.ScheduleNotification(title, message);
+        //                    }
+        //                }
+
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            await DisplayAlert("ex notification service", ex.Message + ex.InnerException, "ok");
+        //        }
+        //    }
+        //    LocationUpdateTimer.Start();
+        //}
         private LocationModel ParseLastKnownLocation()
         {
             try
@@ -89,15 +90,17 @@ namespace Kurir.CourierPages
             }
             catch (Exception ex) { Console.WriteLine(ex.InnerException + ex.Message); return new LocationModel(); };
         }
-        protected async override void OnAppearing()
+        protected override async void OnAppearing()
         {
+            
 
             base.OnAppearing();
             if (await InitialLocationService())
             { }
-           
+
 
         }
+       
         private async Task<bool> InitialLocationService()
         {
             // try
@@ -129,25 +132,38 @@ namespace Kurir.CourierPages
         }
         public DefaultCouriersPage()
         {
+
             InitializeComponent();
             MasterPage.ListView.ItemSelected += ListView_ItemSelected;
             NavigationPage.SetHasBackButton(this,false);
             locationService = new LocationService();
-            LocationUpdateTimer = new Timer();
-            LocationUpdateTimer.Interval = 25000;
+            //LocationUpdateTimer = new Timer();
+            Device.StartTimer(TimeSpan.FromSeconds(30), () =>
+            {
+                // Do something
+                TimerUpdate();
+                return true;
 
-            // Hook up the Elapsed event for the timer. 
-            LocationUpdateTimer.Elapsed += OnTimedEvent;
+                // True = Repeat again, False = Stop the timer
+            });
+            couriersDeliveryList = new List<DeliveryModel>();
+            //LocationUpdateTimer.Interval = 25000;
 
-            // Have the timer fire repeated events (true is the default)
-            LocationUpdateTimer.AutoReset = false;
 
-            // Start the timer
-            LocationUpdateTimer.Enabled = true;
+            //// Hook up the Elapsed event for the timer. 
+            //LocationUpdateTimer.Elapsed += OnTimedEvent;
+
+            //// Have the timer fire repeated events (true is the default)
+            //LocationUpdateTimer.AutoReset = false;
+
+            //// Start the timer
+            //LocationUpdateTimer.Enabled = true;
             deliveryService = new DeliveryService();
             userService = new UserService();
             if (Device.RuntimePlatform == Device.Android)
             {
+                
+
                 notificationManager = DependencyService.Get<INotificationManager>();
                 notificationManager.NotificationReceived += (sender, eventArgs) =>
                 {
@@ -155,32 +171,65 @@ namespace Kurir.CourierPages
                     ShowNotification(evtData.Title, evtData.Message);
                 };
             }
-           
+            
         }
-        private async void ToolbarItem_Clicked(object sender, EventArgs e)
+        private async void TimerUpdate()
         {
             try
             {
-                int usrID = Int32.Parse(Application.Current.Properties["UserID"].ToString());
-
-                if (await userService.LogOut(usrID))
-                {
-
-                    //Application.Current.Properties.Remove("Mail");
-                    // Application.Current.Properties.Remove("UserID");
-                    // Application.Current.Properties.Remove("Pass");
-                    // Application.Current.Properties.Remove("Name");
-                    var link = Application.Current.Properties["ServerLink"].ToString();
-                    Application.Current.Properties.Clear();
-                    Application.Current.Properties.Add("ServerLink", link);
-                    await Application.Current.SavePropertiesAsync();
-                    await Navigation.PushAsync(new WelcomeTabbedPage());
-
-                }
-                else await DisplayAlert("error", "Server Error", "ok.");
+                Location Newlocation = await locationService.GetCurrentLocation();
+                if (Newlocation != LastKnownlocation)
+                    LastKnownlocation = Newlocation;
+                if (await locationService.AddLocation(ParseLastKnownLocation()) != null)
+                { }
             }
             catch (Exception ex)
-            { await DisplayAlert("error", ex.Message, "ok."); }
+            {
+                await DisplayAlert("ex location service", ex.Message + ex.InnerException, "ok");
+            }
+            if (Device.RuntimePlatform == Device.Android)
+            {
+                try
+                {
+                    if (Application.Current.Properties.ContainsKey("UserID"))
+                    {
+                        if (await userService.CheckIfCurrentUserRoleIsCourier(Convert.ToInt32(Application.Current.Properties["UserID"])))
+                        {
+                            var list = await deliveryService.GetUncofirmedForCourier();
+                            if (list.Count() > 0)
+                            {
+                                foreach (var item in list)
+                                {
+                                    if (!Contains(item))
+                                    {
+                                        couriersDeliveryList.Add(item);
+                                        string title = $"Od : " + item.StartAddress.Address;
+                                        string message = $"Do : " + item.EndAddress.Address;
+                                        notificationManager.ScheduleNotification(title, message);
+                                    }
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlert("ex notification service", ex.Message + ex.InnerException, "ok");
+
+                }
+            }
+
+        }
+        private bool Contains(DeliveryModel item)
+        {
+            foreach (var itm in couriersDeliveryList)
+            {
+                if (itm.DeliveryID == item.DeliveryID)
+                    return true;
+            }
+             return false;
         }
         private void ShowNotification(string title, string message)
         {
@@ -205,6 +254,8 @@ namespace Kurir.CourierPages
         }
         protected override bool OnBackButtonPressed()
         {
+            //if (Device.RuntimePlatform == Device.Android)
+            //{ HideService.BackPress(); }
             return true;
             //return base.OnBackButtonPressed();
         }

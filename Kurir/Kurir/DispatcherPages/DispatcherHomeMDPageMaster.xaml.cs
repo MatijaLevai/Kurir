@@ -1,4 +1,5 @@
 ﻿using Kurir.Models;
+using Kurir.Persistance;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,13 @@ namespace Kurir.DispatcherPages
     public partial class DispatcherHomeMDPageMaster : ContentPage
     {
         public ListView ListView;
-       
+        private UserService userService;
+
+
         public DispatcherHomeMDPageMaster()
         {
             InitializeComponent();
-
+            userService = new UserService();
             DispatchNameGet();
             BindingContext = new DispatcherHomeMDPageMasterViewModel();
             ListView = MenuItemsListView;
@@ -41,6 +44,31 @@ namespace Kurir.DispatcherPages
             }
             else { Application.Current.MainPage = new MainPage();
                 }
+        }
+        private async void LoogOutButton_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                int usrID = Int32.Parse(Application.Current.Properties["UserID"].ToString());
+
+                if (await userService.LogOut(usrID))
+                {
+
+                    //Application.Current.Properties.Remove("Mail");
+                    // Application.Current.Properties.Remove("UserID");
+                    // Application.Current.Properties.Remove("Pass");
+                    // Application.Current.Properties.Remove("Name");
+                    var link = Application.Current.Properties["ServerLink"].ToString();
+                    Application.Current.Properties.Clear();
+                    Application.Current.Properties.Add("ServerLink", link);
+                    await Application.Current.SavePropertiesAsync();
+                    Application.Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
+
+                }
+                else await DisplayAlert("error", "Server Error", "ok.");
+            }
+            catch (Exception ex)
+            { await DisplayAlert("error", ex.Message, "ok."); }
         }
         class DispatcherHomeMDPageMasterViewModel : INotifyPropertyChanged
         {
@@ -72,6 +100,7 @@ namespace Kurir.DispatcherPages
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
             #endregion
+            
         }
     }
 }

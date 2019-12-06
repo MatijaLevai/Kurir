@@ -164,10 +164,10 @@ namespace Kurir.DispatcherPages
                         PotencialDelivery.CreateTime = DateTime.Now;
 
                        
-                        if (await StartAddressCheck())
+                        if (!await StartAddressCheck())
                             await DisplayAlert("Greska", "", "Potvrdi");
 
-                        if (await EndAddressCheck())
+                        if (!await EndAddressCheck())
                             await DisplayAlert("Greska", "", "Potvrdi");
                         DeliveryModel dtodel = PotencialDelivery;
                         dtodel.StartAddress = null;
@@ -178,7 +178,7 @@ namespace Kurir.DispatcherPages
                         if (PostDelivery != null)
                         {
                             await DisplayAlert("BaraBara", "Dostava je poslata kuriru", "Potvrdi.");
-                            await Navigation.PopToRootAsync();
+                            Application.Current.MainPage = new NavigationPage(new DispatcherHomeMDPage());
 
                         }
                         else

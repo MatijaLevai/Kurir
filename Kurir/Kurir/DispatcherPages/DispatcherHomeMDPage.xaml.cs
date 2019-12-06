@@ -13,11 +13,11 @@ namespace Kurir.DispatcherPages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DispatcherHomeMDPage : MasterDetailPage
     {
-        private UserService userService;
+       
 
         public DispatcherHomeMDPage()
         {
-            userService = new UserService();
+
             InitializeComponent();
             MasterPage.ListView.ItemSelected += ListView_ItemSelected;
         }
@@ -36,30 +36,6 @@ namespace Kurir.DispatcherPages
 
             MasterPage.ListView.SelectedItem = null;
         }
-        private async void LoogOutButton_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                int usrID = Int32.Parse(Application.Current.Properties["UserID"].ToString());
-
-                if (await userService.LogOut(usrID))
-                {
-
-                    //Application.Current.Properties.Remove("Mail");
-                    // Application.Current.Properties.Remove("UserID");
-                    // Application.Current.Properties.Remove("Pass");
-                    // Application.Current.Properties.Remove("Name");
-                    var link = Application.Current.Properties["ServerLink"].ToString();
-                    Application.Current.Properties.Clear();
-                    Application.Current.Properties.Add("ServerLink", link);
-                    await Application.Current.SavePropertiesAsync();
-                    await Navigation.PushAsync(new WelcomeTabbedPage());
-
-                }
-                else await DisplayAlert("error", "Server Error", "ok.");
-            }
-            catch (Exception ex)
-            { await DisplayAlert("error", ex.Message, "ok."); }
-        }
+       
     }
 }

@@ -94,5 +94,6 @@ namespace Kurir.Droid
                 DependencyService.Get<INotificationManager>().ReceiveNotification(title, message);
             }
         }
+        
     }
 }

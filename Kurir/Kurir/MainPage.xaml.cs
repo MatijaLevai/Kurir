@@ -30,42 +30,54 @@ namespace Kurir
         protected override async void OnAppearing()
         {
 
-               // try
-               // {
-        
+            // try
+            // {
 
-        RegisterUserModel user = JsonConvert.DeserializeObject<RegisterUserModel>(Application.Current.Properties["User"].ToString());
-        UserRoleModel ur = await userRoleService.Get(user.ActiveUserRoleID);
-            if (ur != null)
+            if (App.ServerActive)
             {
-                switch (ur.RoleID)
+
+                if (!Application.Current.Properties.ContainsKey("User"))
                 {
-                    case 1:
-                        Application.Current.MainPage = new NavigationPage(new DefaultSuperAdminPage());
-                        break;
-                    case 2:
-                        Application.Current.MainPage = new NavigationPage(new AdminsPage());
-                        break;
-                    case 3:
-                        Application.Current.MainPage = new NavigationPage(new UserHomePage());
-                        break;
-                    case 4:
-                        DefaultCouriersPage main = new DefaultCouriersPage();
-                        //main.Master = new DefaultCouriersPageMaster();
-                        //main.Detail = new DefaultCouriersPageDetail();
-                        Application.Current.MainPage = new NavigationPage(main);
-                        break;
-                    case 5:
-                        Application.Current.MainPage = new NavigationPage(new DispatcherHomeMDPage());
-                        break;
+
+                    Application.Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
+
+                }
+                else
+                {
+                    RegisterUserModel user = JsonConvert.DeserializeObject<RegisterUserModel>(Application.Current.Properties["User"].ToString());
+                    UserRoleModel ur = await userRoleService.Get(user.ActiveUserRoleID);
+                    if (ur != null)
+                    {
+                        switch (ur.RoleID)
+                        {
+                            case 1:
+                                Application.Current.MainPage = new NavigationPage(new DefaultSuperAdminPage());
+                                break;
+                            case 2:
+                                Application.Current.MainPage = new NavigationPage(new AdminsPage());
+                                break;
+                            case 3:
+                                Application.Current.MainPage = new NavigationPage(new UserHomePage());
+                                break;
+                            case 4:
+                                DefaultCouriersPage main = new DefaultCouriersPage();
+                                Application.Current.MainPage = new NavigationPage(main);
+                                break;
+                            case 5:
+                                Application.Current.MainPage = new NavigationPage(new DispatcherHomeMDPage());
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Application.Current.Properties.Remove("User");
+                        Application.Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
+                    }
                 }
             }
-            else
-            {
-                Application.Current.Properties.Remove("User");
-                Application.Current.MainPage = new NavigationPage(new WelcomeTabbedPage());
+            else {
+                Application.Current.MainPage = new NavigationPage(new NoServicePage());
             }
-
                 //catch (Exception)
                 //{
                 //    //await DisplayAlert("Greska", ex.Message + ex.InnerException, "ok"); 

@@ -69,24 +69,35 @@ namespace KurirServer.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> Login(LoginUserModel logUser)
         {
-            try
+            User usr;
+            User user;
+            if (logUser != null)
             {
-                var usr = mapper.Map<User>(logUser);
-                var user = await userRepository.GetUserByEmailAsync(usr.Mail);
-                if (user.Pass == usr.Pass)
-                {
-                    if (await userRepository.MakeUserActive(user.UserID))
-                    {
-                        return  Ok(user);
-                    }
-                    else return BadRequest();
+                usr = mapper.Map<User>(logUser);
+            
+                     
+                    user = await userRepository.GetUserByEmailAsync(usr.Mail);
+                if (user == null)
+                { 
+                   return StatusCode(StatusCodes.Status500InternalServerError, "Korisnik sa unetom adresom elektronske pošte nije pronađen.");
                 }
-                else return BadRequest();
+                else
+                {
+                    if (user.Pass == usr.Pass)
+                    {
+                        if (await userRepository.MakeUserActive(user.UserID))
+                        {
+                            return Ok(user);
+                        }
+                        else return BadRequest("Greška na serveru. Pokušaj ponovo");
+                    }
+                    else return BadRequest("Šifra nije ispravna.");
+                }
+
             }
-            catch(Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
+         else return BadRequest("Podaci nisu u ispravnom formatu.");
+
+            
         }//GetCourierModel
         [Route("GetCourierModel/{id}")]
         [HttpGet]

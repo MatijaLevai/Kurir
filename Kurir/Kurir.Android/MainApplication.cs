@@ -17,9 +17,12 @@ namespace Kurir.Droid
     
     public class MainApplication : Application, Application.IActivityLifecycleCallbacks
     {
+       
+
         public MainApplication(IntPtr handle, JniHandleOwnership transer)
           : base(handle, transer)
         {
+            
         }
 
         public override void OnCreate()
@@ -28,7 +31,7 @@ namespace Kurir.Droid
             RegisterActivityLifecycleCallbacks(this);
             //A great place to initialize Xamarin.Insights and Dependency Services!
         }
-
+        
         public override void OnTerminate()
         {
             base.OnTerminate();
