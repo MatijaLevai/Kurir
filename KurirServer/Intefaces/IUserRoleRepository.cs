@@ -9,7 +9,7 @@ namespace KurirServer.Intefaces
 {
     public interface IUserRoleRepository
     {
-
+        IEnumerable<UserRole> GetAllUserRoles();
         IEnumerable<UserRole> GetUserRoles(int UserID);
         int AddUserRole(int UserID, int RoleID = 3);
         IEnumerable<Role> GetAllRoles();

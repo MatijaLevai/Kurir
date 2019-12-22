@@ -43,6 +43,12 @@ namespace KurirServer.Controllers
             }
 
         }
+        [Route("GetAllUserRoles")]
+        [HttpGet]
+        public IEnumerable<UserRole> GetAllUserRoles()
+        {
+            return userRoleRepository.GetAllUserRoles();
+        }
         [Route("Add")]
         [HttpPost]
         public async Task<ActionResult<bool>> AddUserRole(UserRole ur)

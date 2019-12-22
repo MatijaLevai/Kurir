@@ -50,6 +50,10 @@ namespace KurirServer.Repositories
             
 
         }
+        public IEnumerable<UserRole> GetAllUserRoles()
+        {
+           return context.UserRoles;
+        }
         public IEnumerable<Role> GetAllRoles()
         {
             return context.Roles;
